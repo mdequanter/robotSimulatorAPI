@@ -7,10 +7,10 @@ from PIL import Image
 api = BotopiaAPI("http://localhost:8780")
 
 CAM = {"view": "robot", "width": 160}
-env = api.create("skid", lane="track"); eid = env["id"]
+env = api.create("ackermann", lane="track"); eid = env["id"]
 obs, jpg = api.reset(eid, lane="track", image=CAM)
 
-for step in range(400):
+for step in range(20000):
     img = np.asarray(Image.open(io.BytesIO(jpg)).convert("L"), dtype=np.float32) / 255
     road = img[70:, :] > 0.45                  # onderste deel van het beeld: lichte pixels = weg
     if road.sum() < 50:                        # geen weg te zien: draai ter plaatse
