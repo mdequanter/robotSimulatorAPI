@@ -187,7 +187,7 @@ Base URL `http://localhost:8780/api`. All bodies are JSON.
 | `frame` | the internal simulation step (default 1/60 s); a step with `dt` 0.05 runs 3 frames |
 | `until` | `"idle"`: `dt` is the maximum, the step ends as soon as a running skill has finished |
 | `image` | `{ "view": "robot", "width": 64, "quality": 0.9 }`: the answer also has `"image"`, that JPEG in base64, without an extra request (training from pixels) |
-| `view` | `scene` (the 3D view), `robot` (the robot's own front camera, 4:3, `width` 32–1280), `mask` (the track band in the robot camera's view, white on black PNG: a ready-made label for segmentation), `external` (a fixed camera, arms), `real` (the real USB camera, OpenMANIPULATOR-X page); robots with a RealSense D435 (the xArms): `depth` / `external_depth` (depth in mm as a lossless PNG, mm = red · 256 + green, 0 = no depth) and `depthcolor` / `external_depthcolor` (the same in colour) |
+| `view` | `scene` (the 3D view), `robot` (the robot's own front camera, 4:3, `width` 32–1280), `mask` (the track band in the robot camera's view, white on black PNG: a ready-made label for segmentation), `external` (a fixed camera, arms), `real` (the real USB camera, OpenMANIPULATOR-X page); robots with a RealSense D435 (the xArms' wrist camera): `depth` (depth in mm as a lossless PNG, mm = red · 256 + green, 0 = no depth) and `depthcolor` (the same in colour) |
 | `start`, `offset`, `yaw` (reset, ε track) | metres along the track, metres beside the centre line (+ = left), degrees off the track direction |
 
 `info.commands` lists every button of a robot's console as a ready-made action `{group, label, line, action}`.
@@ -726,11 +726,16 @@ together at up to 120°/s. Base frame: origin on the table under the arm, x forw
 arm in its look-down pose and scatters the blocks (with a `seed`: always the same). The robot camera
 (`view: "robot"`) is the RealSense D435 on the wrist; the gripper's fingers show at the bottom of its picture. A second
 D435 on a tripod beside the table sees the whole arm (`view: "external"`, also shown on the page).
-Both D435s also give **depth**, aligned to their colour picture as a real D435 with `rs.align`: z-depth (along the
-optical axis) in millimetres, nothing nearer than 10.5 cm or further than 10 m (0). `view: "depth"` /
-`"external_depth"` is a lossless PNG (mm = red · 256 + green); `"depthcolor"` / `"external_depthcolor"` the same in
-colour. On the page, *RealSense depth view* shows both pictures-in-picture as depth (also `?depth` in the address).
-The simulated cameras are pinhole cameras with a 55° vertical field of view (4 : 3).
+The wrist D435 also gives **depth**, aligned to its colour picture as a real D435 with `rs.align`: z-depth (along
+the optical axis) in millimetres, nothing nearer than 10.5 cm or further than 10 m (0). `view: "depth"` is a
+lossless PNG (mm = red · 256 + green), `"depthcolor"` the same in colour. The external camera is a normal camera
+(no depth). On the page, *RealSense depth view* shows the wrist picture-in-picture as depth (also `?depth` in the
+address), with a cross on what lies under the gripper: along the gripper's axis from the fingertips, the first table
+or block surface, with the depth the D435 measures there, how far it is under the fingertips and what it is. The
+cross sits where the camera sees that point, which is not the middle of the picture when the gripper is low (the
+camera is beside the gripper). The same in the telemetry: `extra.below = { depth_mm, gap_mm, height_mm, block, u, v }`
+(u, v: the pixel in a 640 × 480 wrist picture). The simulated cameras are pinhole cameras with a 55° vertical field
+of view (4 : 3).
 
 ### The real xArm 6 / 7: one Python interface, digital twin, follow
 
@@ -745,12 +750,15 @@ print(arm.joints(), arm.tcp())
 jpeg = arm.camera()               # wrist camera: sim image or the real RealSense D435 over USB
 jpeg = arm.camera("external")     # the fixed camera that sees the whole arm
 mm = arm.depth()                  # wrist depth: numpy uint16, millimetres, 0 = none (sim or the real D435)
+print(arm.below())                # simulator: what lies under the gripper (depth_mm, gap_mm, height_mm, block, u, v)
 intr = arm.intrinsics()           # fx, fy, cx, cy (pixels) of those pictures
 x, y, z = deproject(intr, 320, 240, mm[240, 320])   # a pixel → a point in the camera frame (m, RealSense axes)
 ```
 
-The real RealSense streams colour and depth and aligns the depth to the colour picture (`rs.align`), so `camera()`
-and `depth()` match pixel for pixel, as in the simulator. `depth_colormap(mm)` makes a coloured picture of it.
+The real wrist RealSense streams colour and depth and aligns the depth to the colour picture (`rs.align`), so
+`camera()` and `depth()` match pixel for pixel, as in the simulator. `depth_colormap(mm)` makes a coloured picture of
+it. The real external camera is a normal USB webcam: `connect(ip, wrist_serial="…", external_camera=1)` (its OpenCV
+index; `pip install opencv-python`); `depth("external")` is None.
 
 Every move is checked first (joint limits, fingertips at least 5 mm above the table). For the xArm 7 the inverse
 kinematics keeps the extra joint (upper arm roll, joint 3) near 0° and the base and flange within ±270°. The real arm needs

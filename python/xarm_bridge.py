@@ -5,19 +5,20 @@ this program does, on a PC in the robot's network:
 
     browser (indexXArm7.php)  <-- WebSocket ws://localhost:8770 -->  xarm_bridge.py  <-- xArm SDK -->  xArm 6
                                                                          |
-                                              two RealSense D435 over USB (optional): wrist + external
+                          a RealSense D435 on the wrist + a USB webcam that sees the whole arm (optional)
 
 What the page can do through it:
   * digital twin: the real arm's joints are shown as a blue see-through arm in the simulator;
   * follow (only when you tick it on the page): the real arm follows the simulated one, speed-limited;
   * the cameras: the wrist camera and the external camera (the whole arm) appear on the page.
-    With the page's "RealSense depth view" ticked, it sends their depth pictures instead (in colour).
+    With the page's "RealSense depth view" ticked, it sends the wrist D435's depth instead (in colour).
 
-    pip install xarm-python-sdk websockets pyrealsense2 pillow numpy
+    pip install xarm-python-sdk websockets pyrealsense2 pillow numpy opencv-python
     python xarm_bridge.py --ip 10.2.172.20            # your arm's IP (see UFACTORY Studio); 6 or 7 axes: asked
     python xarm_bridge.py --fake --model 7            # no robot: a pretend xArm 7, to try the page
     python xarm_bridge.py --list-cameras              # the RealSense serial numbers, then:
-    python xarm_bridge.py --ip 10.2.172.20 --wrist-camera 123456789012 --external-camera 210987654321
+    python xarm_bridge.py --ip 10.2.172.20 --wrist-camera 123456789012 --external-camera 1
+                                                      # --external-camera: the webcam's OpenCV index (0, 1, ...)
 
 Then open the simulator page of the same model (indexXArm7.php for an xArm 7), "Real robot" → Connect.
 
@@ -54,7 +55,7 @@ def depth_jpeg(camera, quality=70, width=480):
 
 class Bridge:
     def __init__(self, robot, cameras, max_speed, cam_fps):
-        self.robot, self.cameras = robot, cameras            # {"wrist": RealSense, "external": RealSense}
+        self.robot, self.cameras = robot, cameras            # {"wrist": RealSense, "external": UsbCamera}
         self.max_speed, self.cam_fps = max_speed, cam_fps
         self.clients, self.owner = set(), None          # owner: the page that makes the arm follow
         self.follow, self.last_target, self.msg = False, 0.0, ""
@@ -155,7 +156,7 @@ class Bridge:
         while True:
             if self.clients:
                 try:
-                    if self.depth_view and getattr(camera, "depth", None):
+                    if self.depth_view and name == "wrist" and getattr(camera, "depth", None):   # only the wrist D435 has depth
                         jpg = await asyncio.to_thread(depth_jpeg, camera, 70, 480)
                     else:
                         jpg = await asyncio.to_thread(camera.jpeg, 70, 480)
@@ -178,18 +179,21 @@ async def main_async(args):
         robot = xarm_robot.RealXArm(args.ip, camera=False, speed_limit=args.max_speed)
         print(f"Connected: an xArm {robot.model}")
     robot.min_z = args.min_z
-    # Cameras: one RealSense and no serials → it is the wrist camera; two → give both serial numbers.
+    # Cameras: the wrist RealSense D435 (colour + depth) and, if given, a USB webcam for the external view.
     cameras = {}
     if not args.no_camera:
-        for name, serial in (("wrist", args.wrist_camera), ("external", args.external_camera)):
-            if name == "external" and not serial:
-                continue
+        try:
+            cameras["wrist"] = xarm_robot.RealSense(args.wrist_camera)
+            print("RealSense wrist camera: on" + (f" (serial {args.wrist_camera})" if args.wrist_camera else ""))
+        except Exception as e:
+            print(f"RealSense wrist camera not available ({e}); go on without it")
+        if args.external_camera is not None:
             try:
-                cameras[name] = xarm_robot.RealSense(serial)
-                print(f"RealSense {name} camera: on" + (f" (serial {serial})" if serial else ""))
+                cameras["external"] = xarm_robot.UsbCamera(args.external_camera)
+                print(f"External camera: on (webcam {args.external_camera})")
             except Exception as e:
-                print(f"RealSense {name} camera not available ({e}); go on without it")
-    if args.fake and not args.no_camera and not (args.wrist_camera or args.external_camera):
+                print(f"External camera not available ({e}); go on without it")
+    if args.fake and not args.no_camera and not (args.wrist_camera or args.external_camera is not None):
         cameras = {name: xarm_robot.FakeCamera(name) for name in ("wrist", "external")}   # pretend images
     bridge = Bridge(robot, cameras, args.max_speed, args.camera_fps)
     async with websockets.serve(bridge.client, args.host, args.port, max_size=2 ** 22):
@@ -210,8 +214,8 @@ def main():
     ap.add_argument("--max-speed", type=float, default=30, help="°/s, at most, while following")
     ap.add_argument("--min-z", type=float, default=0.01, help="fingertips at least this high above the table (m)")
     ap.add_argument("--no-camera", action="store_true", help="no cameras")
-    ap.add_argument("--wrist-camera", help="serial number of the RealSense on the wrist (with two cameras)")
-    ap.add_argument("--external-camera", help="serial number of the RealSense that sees the whole arm")
+    ap.add_argument("--wrist-camera", help="serial number of the RealSense on the wrist (with several RealSenses)")
+    ap.add_argument("--external-camera", type=int, help="OpenCV index (0, 1, ...) of the USB webcam that sees the whole arm")
     ap.add_argument("--list-cameras", action="store_true", help="show the RealSense cameras and their serial numbers")
     ap.add_argument("--camera-fps", type=float, default=10)
     args = ap.parse_args()

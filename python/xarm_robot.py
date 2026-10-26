@@ -12,13 +12,13 @@
     print(arm.joints(), arm.tcp())
     jpeg = arm.camera()                   # wrist camera: the simulator's image or the real RealSense D435
     jpeg = arm.camera("external")         # the fixed camera that sees the whole arm
-    mm = arm.depth()                      # its depth (RealSense D435): numpy uint16, millimetres, 0 = none
+    mm = arm.depth()                      # its depth (the wrist RealSense D435): numpy uint16, millimetres, 0 = none
     x, y, z = deproject(arm.intrinsics(), 320, 240, mm[240, 320])   # a pixel → a point in the camera frame (m)
     arm.close()
 
-Two real RealSense cameras on one PC are told apart by their serial number:
-    python -c "import xarm_robot; xarm_robot.list_cameras()"
-    arm = connect("10.2.172.20", wrist_serial="…", external_serial="…")
+The wrist camera is a RealSense D435 (colour and depth); the external camera is a normal USB webcam:
+    python -c "import xarm_robot; xarm_robot.list_cameras()"          # the RealSense serial numbers
+    arm = connect("10.2.172.20", wrist_serial="…", external_camera=1)  # external: the webcam's OpenCV index
 
 The same script then runs on both. Units: metres, degrees, mm (gripper), seconds.
 Base frame: origin where the arm stands on the table, x forward, y left, z up. The "gripper point" is
@@ -228,7 +228,7 @@ class XArm:
         return None
 
     def depth(self, which="wrist"):
-        """Depth picture of the wrist or the external RealSense: uint16 array of mm (0 = none), or None."""
+        """Depth picture of the wrist RealSense D435: uint16 array of mm (0 = none), or None (no depth camera)."""
         return None
 
     def intrinsics(self, which="wrist"):
@@ -304,8 +304,17 @@ class SimXArm(XArm):
         return self.api.frame(self.id, 0.9, "robot" if which == "wrist" else "external", 640)
 
     def depth(self, which="wrist"):
-        """Depth of the wrist or external D435 (640 × 480 mm, aligned to camera()); 0 = no depth."""
-        return depth_from_png(self.api.frame(self.id, 1, "depth" if which == "wrist" else "external_depth", 640))
+        """Depth of the wrist D435 (640 × 480 mm, aligned to camera()); 0 = no depth. The external camera
+        is a normal camera: None."""
+        if which != "wrist":
+            return None
+        return depth_from_png(self.api.frame(self.id, 1, "depth", 640))
+
+    def below(self):
+        """Simulator: what lies under the gripper, along its axis, as the wrist D435 sees it: depth_mm (its
+        depth there), gap_mm (under the fingertips), height_mm (above the table), block (id or None) and
+        u, v (where it is in the 640 × 480 picture)."""
+        return self._step(dt=1 / 30)["extra"].get("below")
 
     def blocks(self):
         """Simulator only: the coloured blocks (id, color, x, y, z, yawDeg, held)."""
@@ -471,6 +480,31 @@ class RealSense:
         self.pipe.stop()
 
 
+class UsbCamera:
+    """A normal USB camera (webcam) through OpenCV (pip install opencv-python): the external camera.
+    index: OpenCV's camera number (0, 1, ...; a laptop's own camera is usually 0)."""
+
+    def __init__(self, index=0, width=640, height=480):
+        import cv2
+        self.cv2 = cv2
+        self.cap = cv2.VideoCapture(int(index))
+        if not self.cap.isOpened():
+            raise RuntimeError(f"no camera at index {index}")
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+
+    def jpeg(self, quality=80, width=None):
+        ok, frame = self.cap.read()
+        if not ok:
+            raise RuntimeError("the camera gave no picture")
+        if width:
+            frame = self.cv2.resize(frame, (width, round(frame.shape[0] * width / frame.shape[1])))
+        return self.cv2.imencode(".jpg", frame, [self.cv2.IMWRITE_JPEG_QUALITY, quality])[1].tobytes()
+
+    def close(self):
+        self.cap.release()
+
+
 class RealXArm(XArm):
     """The real arm through UFACTORY's SDK (pip install xarm-python-sdk); camera: RealSense over USB.
 
@@ -478,7 +512,7 @@ class RealXArm(XArm):
     safety settings (collision sensitivity, reduced mode, safety boundary in UFACTORY Studio) still
     apply: set them before you start."""
 
-    def __init__(self, ip, camera=True, speed_limit=60, model=None, wrist_serial=None, external_serial=None):
+    def __init__(self, ip, camera=True, speed_limit=60, model=None, wrist_serial=None, external_camera=None):
         from xarm.wrapper import XArmAPI
         self.arm = XArmAPI(ip, is_radian=False)
         self.ip, self.speed_limit = ip, speed_limit
@@ -492,14 +526,17 @@ class RealXArm(XArm):
         self.arm.set_gripper_speed(3000)
         self._cams = {}
         if camera:
-            # One camera and no serials: it is the wrist camera. Two: give both serial numbers.
-            for name, serial in (("wrist", wrist_serial), ("external", external_serial)):
-                if serial is None and name == "external":
-                    continue
+            # The wrist camera: a RealSense D435 (serial number: which one, when there are several).
+            try:
+                self._cams["wrist"] = RealSense(wrist_serial)
+            except Exception as e:                       # not connected, or no pyrealsense2
+                print(f"RealSense wrist camera not available: {e}")
+            # The external camera: a normal USB webcam (its OpenCV index), if given.
+            if external_camera is not None:
                 try:
-                    self._cams[name] = RealSense(serial)
-                except Exception as e:                   # not connected, or no pyrealsense2
-                    print(f"RealSense {name} camera not available: {e}")
+                    self._cams["external"] = UsbCamera(external_camera)
+                except Exception as e:
+                    print(f"External camera not available: {e}")
         self._last_grip = None
 
     def enable(self):
@@ -557,7 +594,8 @@ class RealXArm(XArm):
         return cam.jpeg() if cam else None
 
     def depth(self, which="wrist"):
-        """Depth of that RealSense, aligned to camera(): uint16 array of mm (0 = none), None if it isn't there."""
+        """Depth of the wrist RealSense, aligned to camera(): uint16 array of mm (0 = none); None if it isn't
+        there (the external camera is a normal webcam)."""
         cam = self._cams.get(which)
         return cam.depth() if cam else None
 

@@ -211,8 +211,8 @@ async function closeEnv(env) {
 // image: { view: 'robot' | 'scene', width, quality } adds a JPEG (base64) of that view after the step,
 // in the same call (training from camera images).
 // mask: the track band in the robot's view (PNG); external: a fixed camera (xArm); real: the real USB camera (OM-X page);
-// depth / depthcolor (and external_…): a RealSense D435's depth, mm as a PNG (mm = R·256 + G) or coloured.
-const VIEWS = ['scene', 'robot', 'mask', 'external', 'real', 'depth', 'depthcolor', 'external_depth', 'external_depthcolor'];
+// depth / depthcolor: the depth of a RealSense D435 (the xArm's wrist camera), mm as a PNG (mm = R·256 + G) or coloured.
+const VIEWS = ['scene', 'robot', 'mask', 'external', 'real', 'depth', 'depthcolor'];
 const imageExpr = image => image ? `window.botopiaEnv.frame(${Number(image.quality ?? 0.9)}, ${JSON.stringify(VIEWS.includes(image.view) ? image.view : 'robot')}, ${Math.max(16, Math.min(1280, Number(image.width) || 84))}).split(',')[1]` : 'undefined';
 // until: 'idle' ends the step early when a running skill has finished (dt is then the maximum).
 async function stepEnv(env, { action = {}, dt = 0.05, frame = 1 / 60, image = null, until = null }) {

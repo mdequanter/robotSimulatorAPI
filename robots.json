@@ -8398,9 +8398,7 @@
     "mask",
     "depth",
     "depthcolor",
-    "external",
-    "external_depth",
-    "external_depthcolor"
+    "external"
    ],
    "commands": [],
    "telemetry": {
@@ -8548,9 +8546,7 @@
     "mask",
     "depth",
     "depthcolor",
-    "external",
-    "external_depth",
-    "external_depthcolor"
+    "external"
    ],
    "commands": [],
    "telemetry": {
@@ -16451,9 +16447,7 @@
     "mask",
     "depth",
     "depthcolor",
-    "external",
-    "external_depth",
-    "external_depthcolor"
+    "external"
    ],
    "commands": [],
    "telemetry": {
@@ -16611,9 +16605,7 @@
     "mask",
     "depth",
     "depthcolor",
-    "external",
-    "external_depth",
-    "external_depthcolor"
+    "external"
    ],
    "commands": [],
    "telemetry": {
