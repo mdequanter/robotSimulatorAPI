@@ -524,6 +524,8 @@ up, 706 squat ↔ stand, 801 run), velocity with 7105 `{"velocity": [vx, vy, ω]
 state, gestures with 7106 on `rt/api/arm/request` (12, 15, 17–27; 99 lowers the arms). On the start square (lane `free`) the G1 starts
 sitting on a chair (state 3): send 4 to stand up, then 200 to walk; in front of the chair, facing away from it, 3 sits
 it down on the chair again. In the obstacle lanes it starts standing, in state 200.
+G1 skin (looks only, the robot behaves the same): `options={"skin": "technopolis"}` (`indexG1.php?skin=technopolis`, or *Skin*
+under Setup) gives it silver shells and the light-blue TECHNOPOLIS T-shirt; the default is `unitree` (white shells).
 
 ### Unitree Go2-W
 

@@ -44,9 +44,14 @@ function body() {
 
 // Data folder, shut off from the web (Apache); the PHP built-in server never serves it either.
 if (!is_dir(DATA_DIR)) {
-    mkdir(DATA_DIR, 0775, true);
-    file_put_contents(DATA_DIR . '/.htaccess', "Require all denied\nDeny from all\n");
-    file_put_contents(DATA_DIR . '/index.html', '');
+    @mkdir(DATA_DIR, 0775, true);
+    @file_put_contents(DATA_DIR . '/.htaccess', "Require all denied\nDeny from all\n");
+    @file_put_contents(DATA_DIR . '/index.html', '');
+}
+// Without a writable data folder no session can be stored: say so, instead of a bare error 500 later.
+if (!is_dir(DATA_DIR) || !is_writable(DATA_DIR)) {
+    $user = function_exists('posix_geteuid') ? (posix_getpwuid(posix_geteuid())['name'] ?? '') : get_current_user();
+    reply(500, ['error' => 'the data folder is missing or not writable for PHP (user ' . $user . '): ' . DATA_DIR]);
 }
 
 $route = $_GET['r'] ?? '';
