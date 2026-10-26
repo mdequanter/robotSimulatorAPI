@@ -11,6 +11,7 @@ What the page can do through it:
   * digital twin: the real arm's joints are shown as a blue see-through arm in the simulator;
   * follow (only when you tick it on the page): the real arm follows the simulated one, speed-limited;
   * the cameras: the wrist camera and the external camera (the whole arm) appear on the page.
+    With the page's "RealSense depth view" ticked, it sends their depth pictures instead (in colour).
 
     pip install xarm-python-sdk websockets pyrealsense2 pillow numpy
     python xarm_bridge.py --ip 10.2.172.20            # your arm's IP (see UFACTORY Studio); 6 or 7 axes: asked
@@ -39,6 +40,18 @@ import xarm_robot  # noqa: E402
 WATCHDOG = 1.0          # s without a target while following → stop
 
 
+def depth_jpeg(camera, quality=70, width=480):
+    """The camera's depth picture in colour (near blue … far red, black: no depth), as a JPEG."""
+    from io import BytesIO
+    from PIL import Image
+    mm = camera.depth()
+    im = Image.fromarray(xarm_robot.depth_colormap(mm))
+    im = im.resize((width, round(im.height * width / im.width)))
+    buf = BytesIO()
+    im.save(buf, "JPEG", quality=quality)
+    return buf.getvalue()
+
+
 class Bridge:
     def __init__(self, robot, cameras, max_speed, cam_fps):
         self.robot, self.cameras = robot, cameras            # {"wrist": RealSense, "external": RealSense}
@@ -46,6 +59,7 @@ class Bridge:
         self.clients, self.owner = set(), None          # owner: the page that makes the arm follow
         self.follow, self.last_target, self.msg = False, 0.0, ""
         self.joints, self.grip = None, None
+        self.depth_view = False                         # the page shows the depth pictures (its depth view)
 
     async def broadcast(self, message):
         data = json.dumps(message)
@@ -66,7 +80,9 @@ class Bridge:
 
     async def handle(self, ws, m):
         cmd = m.get("cmd")
-        if cmd == "enable":
+        if cmd == "depth":                              # the page's "RealSense depth view": send depth, not colour
+            self.depth_view = bool(m.get("on"))
+        elif cmd == "enable":
             await asyncio.to_thread(self.robot.enable)
             self.msg = "motors enabled"
         elif cmd == "stop":
@@ -139,7 +155,10 @@ class Bridge:
         while True:
             if self.clients:
                 try:
-                    jpg = await asyncio.to_thread(camera.jpeg, 70, 480)
+                    if self.depth_view and getattr(camera, "depth", None):
+                        jpg = await asyncio.to_thread(depth_jpeg, camera, 70, 480)
+                    else:
+                        jpg = await asyncio.to_thread(camera.jpeg, 70, 480)
                     await self.broadcast({"type": "camera", "name": name, "jpeg": base64.b64encode(jpg).decode()})
                 except Exception as e:
                     print(f"{name} camera: {e}")

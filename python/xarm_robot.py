@@ -1,6 +1,6 @@
 """One Python interface for the UFACTORY xArm 6 and xArm 7: the Botopia simulator or the real arm.
 
-    from xarm_robot import connect
+    from xarm_robot import connect, deproject
     arm = connect("sim", model=7)         # the xArm 7 simulator (Node API: node server.mjs)
     arm = connect("10.2.172.20")          # the real arm (pip install xarm-python-sdk); 6 or 7 axes: it asks the arm
     arm = connect("fake", model=7)        # a pretend arm inside Python: try a script without robot or simulator
@@ -12,6 +12,8 @@
     print(arm.joints(), arm.tcp())
     jpeg = arm.camera()                   # wrist camera: the simulator's image or the real RealSense D435
     jpeg = arm.camera("external")         # the fixed camera that sees the whole arm
+    mm = arm.depth()                      # its depth (RealSense D435): numpy uint16, millimetres, 0 = none
+    x, y, z = deproject(arm.intrinsics(), 320, 240, mm[240, 320])   # a pixel → a point in the camera frame (m)
     arm.close()
 
 Two real RealSense cameras on one PC are told apart by their serial number:
@@ -50,6 +52,45 @@ TOOL = 0.155          # gripper point from the flange (m)
 TIP = 0.175           # fingertips from the flange
 GRIP_MAX = 85.0       # mm
 MIN_Z = 0.005         # fingertips never lower than this above the table (m)
+
+# ---------- Depth (RealSense D435) ----------
+# Depth pictures are numpy arrays of millimetres (uint16, as the D435's z16 stream), aligned to the colour
+# picture; 0 = no depth there. The simulator's cameras: 640 × 480, 55° vertical field of view.
+SIM_FOV_V = 55.0
+
+
+def depth_from_png(png):
+    """The simulator's depth picture (PNG bytes, mm = red · 256 + green) as a uint16 array of mm."""
+    from io import BytesIO
+    from PIL import Image
+    a = np.asarray(Image.open(BytesIO(png)).convert("RGB")).astype(np.uint16)
+    return a[..., 0] * 256 + a[..., 1]
+
+
+def depth_colormap(mm, near=None, far=None):
+    """A depth array as a coloured RGB picture (uint8): near blue … far red, black where there is no depth.
+    near / far in mm (default: the 2nd and 98th percentile of the valid depths)."""
+    valid = mm > 0
+    if not valid.any():
+        return np.zeros(mm.shape + (3,), np.uint8)
+    lo = near if near is not None else np.percentile(mm[valid], 2)
+    hi = far if far is not None else np.percentile(mm[valid], 98)
+    t = np.clip((mm.astype(np.float32) - lo) / max(1.0, hi - lo), 0, 1)
+    rgb = np.stack([np.clip(1.5 - abs(4 * t - 3), 0, 1), np.clip(1.5 - abs(4 * t - 2), 0, 1), np.clip(1.5 - abs(4 * t - 1), 0, 1)], -1)
+    rgb[~valid] = 0
+    return (rgb * 255).astype(np.uint8)
+
+
+def sim_intrinsics(width=640, height=480, fov_v=SIM_FOV_V):
+    """Pinhole intrinsics (pixels) of a simulator camera: fx, fy, cx, cy."""
+    f = (height / 2) / math.tan(math.radians(fov_v) / 2)
+    return {"width": width, "height": height, "fx": f, "fy": f, "cx": width / 2, "cy": height / 2}
+
+
+def deproject(intr, u, v, mm):
+    """Pixel (u, v) at depth mm → point in the camera frame (m): x right, y down, z forward (RealSense)."""
+    z = mm / 1000.0
+    return ((u - intr["cx"]) * z / intr["fx"], (v - intr["cy"]) * z / intr["fy"], z)
 
 
 def fk(q, model=6, tool=TOOL):
@@ -186,6 +227,14 @@ class XArm:
     def camera(self, which="wrist"):
         return None
 
+    def depth(self, which="wrist"):
+        """Depth picture of the wrist or the external RealSense: uint16 array of mm (0 = none), or None."""
+        return None
+
+    def intrinsics(self, which="wrist"):
+        """Pinhole intrinsics of that camera's (colour-aligned) pictures: fx, fy, cx, cy in pixels."""
+        return sim_intrinsics()
+
     def sleep(self, seconds):
         time.sleep(seconds)
 
@@ -253,6 +302,10 @@ class SimXArm(XArm):
     def camera(self, which="wrist"):
         """JPEG of the wrist camera or of the external camera (the whole arm)."""
         return self.api.frame(self.id, 0.9, "robot" if which == "wrist" else "external", 640)
+
+    def depth(self, which="wrist"):
+        """Depth of the wrist or external D435 (640 × 480 mm, aligned to camera()); 0 = no depth."""
+        return depth_from_png(self.api.frame(self.id, 1, "depth" if which == "wrist" else "external_depth", 640))
 
     def blocks(self):
         """Simulator only: the coloured blocks (id, color, x, y, z, yawDeg, held)."""
@@ -358,23 +411,50 @@ class FakeCamera:
         im.save(buf, "JPEG", quality=quality)
         return buf.getvalue()
 
+    def depth(self):
+        """A pretend depth picture: the table 500 mm away, a 4 cm block in the middle."""
+        mm = np.full((480, 640), 500, np.uint16)
+        mm[200:280, 280:360] = 460
+        return mm
+
+    def intrinsics(self):
+        return sim_intrinsics()
+
     def close(self):
         pass
 
 
 class RealSense:
-    """A RealSense D435's colour camera over USB (pip install pyrealsense2). serial: which camera,
-    when there are several (see list_cameras); None = the first one found."""
+    """A RealSense D435 over USB (pip install pyrealsense2): colour, and depth aligned to the colour
+    picture. serial: which camera, when there are several (see list_cameras); None = the first one found."""
 
-    def __init__(self, serial=None, width=640, height=480, fps=30):
+    def __init__(self, serial=None, width=640, height=480, fps=30, depth=True):
         import pyrealsense2 as rs
         self.pipe = rs.pipeline()
         cfg = rs.config()
         if serial:
             cfg.enable_device(str(serial))
         cfg.enable_stream(rs.stream.color, width, height, rs.format.rgb8, fps)
-        self.pipe.start(cfg)
-        self.serial = serial
+        if depth:
+            cfg.enable_stream(rs.stream.depth, width, height, rs.format.z16, fps)
+        profile = self.pipe.start(cfg)
+        self.serial, self.has_depth = serial, depth
+        self.align = rs.align(rs.stream.color) if depth else None
+        # Depth units (m per step; 0.001 on a D435): to millimetres.
+        self.mm_per_unit = profile.get_device().first_depth_sensor().get_depth_scale() * 1000 if depth else 1
+        i = profile.get_stream(rs.stream.color).as_video_stream_profile().get_intrinsics()
+        self._intr = {"width": i.width, "height": i.height, "fx": i.fx, "fy": i.fy, "cx": i.ppx, "cy": i.ppy}
+
+    def depth(self):
+        """Depth aligned to the colour picture: uint16 array of mm (0 = no depth), or None without depth."""
+        if not self.has_depth:
+            return None
+        frames = self.align.process(self.pipe.wait_for_frames(2000))
+        d = np.asanyarray(frames.get_depth_frame().get_data())
+        return d if self.mm_per_unit == 1 else (d * self.mm_per_unit).astype(np.uint16)
+
+    def intrinsics(self):
+        return dict(self._intr)
 
     def jpeg(self, quality=80, width=None):
         from io import BytesIO
@@ -475,6 +555,15 @@ class RealXArm(XArm):
         """JPEG of the wrist camera or of the external camera, None if it isn't there."""
         cam = self._cams.get(which)
         return cam.jpeg() if cam else None
+
+    def depth(self, which="wrist"):
+        """Depth of that RealSense, aligned to camera(): uint16 array of mm (0 = none), None if it isn't there."""
+        cam = self._cams.get(which)
+        return cam.depth() if cam else None
+
+    def intrinsics(self, which="wrist"):
+        cam = self._cams.get(which)
+        return cam.intrinsics() if cam else sim_intrinsics()
 
     def stop(self):
         self.arm.set_state(4)                           # stop the motion; enable() to go on

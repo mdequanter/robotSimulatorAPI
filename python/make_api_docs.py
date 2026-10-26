@@ -36,11 +36,14 @@ EXTRA["rbvogui"] = EXTRA["rbkairos"]
 def cards():
     """index.php cards: page → (title, text, category, image)."""
     s = open(os.path.join(ROOT, "index.php"), encoding="utf-8").read()
+    # The groups of robots: <section class="group"> with <h3>Title <span>subtitle</span></h3> (older
+    # pages: an <h2> per group).
     out, cat = {}, "Drive types"
-    for part in re.split(r"(<h2[^>]*>.*?</h2>)", s):
-        m = re.match(r"<h2[^>]*>(.*?)</h2>", part)
+    for part in re.split(r'(<div class="group-head">\s*<h3>.*?</h3>|<h2[^>]*>.*?</h2>)', s, flags=re.S):
+        m = re.match(r'<div class="group-head">\s*<h3>(.*?)</h3>|<h2[^>]*>(.*?)</h2>', part, re.S)
         if m:
-            cat = html.unescape(re.sub("<[^>]+>", "", m.group(1)))
+            title = re.sub(r"<span>.*?</span>", "", m.group(1) or m.group(2), flags=re.S)
+            cat = html.unescape(re.sub("<[^>]+>", "", title)).strip()
             continue
         for c in re.findall(r'<article class="card">(.*?)</article>', part, re.S):
             h = re.search(r'<h3><a href="([^"]+)">(.*?)</a></h3>', c)

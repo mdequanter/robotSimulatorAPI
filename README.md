@@ -187,7 +187,7 @@ Base URL `http://localhost:8780/api`. All bodies are JSON.
 | `frame` | the internal simulation step (default 1/60 s); a step with `dt` 0.05 runs 3 frames |
 | `until` | `"idle"`: `dt` is the maximum, the step ends as soon as a running skill has finished |
 | `image` | `{ "view": "robot", "width": 64, "quality": 0.9 }`: the answer also has `"image"`, that JPEG in base64, without an extra request (training from pixels) |
-| `view` | `scene` (the 3D view), `robot` (the robot's own front camera, 4:3, `width` 32–1280), `mask` (the track band in the robot camera's view, white on black PNG: a ready-made label for segmentation), `external` (a fixed camera, arms), `real` (the real USB camera, OpenMANIPULATOR-X page) |
+| `view` | `scene` (the 3D view), `robot` (the robot's own front camera, 4:3, `width` 32–1280), `mask` (the track band in the robot camera's view, white on black PNG: a ready-made label for segmentation), `external` (a fixed camera, arms), `real` (the real USB camera, OpenMANIPULATOR-X page); robots with a RealSense D435 (the xArms): `depth` / `external_depth` (depth in mm as a lossless PNG, mm = red · 256 + green, 0 = no depth) and `depthcolor` / `external_depthcolor` (the same in colour) |
 | `start`, `offset`, `yaw` (reset, ε track) | metres along the track, metres beside the centre line (+ = left), degrees off the track direction |
 
 `info.commands` lists every button of a robot's console as a ready-made action `{group, label, line, action}`.
@@ -726,25 +726,38 @@ together at up to 120°/s. Base frame: origin on the table under the arm, x forw
 arm in its look-down pose and scatters the blocks (with a `seed`: always the same). The robot camera
 (`view: "robot"`) is the RealSense D435 on the wrist; the gripper's fingers show at the bottom of its picture. A second
 D435 on a tripod beside the table sees the whole arm (`view: "external"`, also shown on the page).
+Both D435s also give **depth**, aligned to their colour picture as a real D435 with `rs.align`: z-depth (along the
+optical axis) in millimetres, nothing nearer than 10.5 cm or further than 10 m (0). `view: "depth"` /
+`"external_depth"` is a lossless PNG (mm = red · 256 + green); `"depthcolor"` / `"external_depthcolor"` the same in
+colour. On the page, *RealSense depth view* shows both pictures-in-picture as depth (also `?depth` in the address).
+The simulated cameras are pinhole cameras with a 55° vertical field of view (4 : 3).
 
 ### The real xArm 6 / 7: one Python interface, digital twin, follow
 
 `python/xarm_robot.py` gives the simulator and the real arm the same Python interface, so one script runs on both:
 
 ```python
-from xarm_robot import connect
+from xarm_robot import connect, deproject
 arm = connect("sim", model=7)     # the xArm 7 simulator · "10.2.172.20": the real arm (6 or 7 axes: it asks) · "fake": a pretend arm
 arm.move_to(0.35, 0.0, 0.20)      # gripper point (m, base frame), gripper pointing down, inverse kinematics in Python
 arm.set_gripper(75); arm.move_to(0.35, 0.0, 0.027); arm.set_gripper(0)
 print(arm.joints(), arm.tcp())
 jpeg = arm.camera()               # wrist camera: sim image or the real RealSense D435 over USB
 jpeg = arm.camera("external")     # the fixed camera that sees the whole arm
+mm = arm.depth()                  # wrist depth: numpy uint16, millimetres, 0 = none (sim or the real D435)
+intr = arm.intrinsics()           # fx, fy, cx, cy (pixels) of those pictures
+x, y, z = deproject(intr, 320, 240, mm[240, 320])   # a pixel → a point in the camera frame (m, RealSense axes)
 ```
+
+The real RealSense streams colour and depth and aligns the depth to the colour picture (`rs.align`), so `camera()`
+and `depth()` match pixel for pixel, as in the simulator. `depth_colormap(mm)` makes a coloured picture of it.
 
 Every move is checked first (joint limits, fingertips at least 5 mm above the table). For the xArm 7 the inverse
 kinematics keeps the extra joint (upper arm roll, joint 3) near 0° and the base and flange within ±270°. The real arm needs
 `pip install xarm-python-sdk` (and `pyrealsense2` for the camera); `python/xarm_demo.py --robot sim | fake | <ip>`
-is a pick-and-place example.
+is a pick-and-place example. With a depth camera it first looks at the place and measures how high the stack there
+is (the table beside it in the same picture rows minus the highest spot round the middle), then puts the block on
+top: it builds a tower without knowing where the blocks are (`--no-depth`: use `--under` instead).
 
 A web page can't reach the arm's control box itself (plain TCP, port 502), so `python/xarm_bridge.py` runs on a PC
 in the robot's network and connects the simulator page (WebSocket `ws://localhost:8770`) to the arm (SDK) and the

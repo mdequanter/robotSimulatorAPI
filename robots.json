@@ -798,7 +798,7 @@
    "name": "Quadruped (XL430)",
    "title": "Quadruped",
    "text": "Go2 clone with an OpenMANIPULATOR-X arm",
-   "category": "Legged robots",
+   "category": "Legs and snakes",
    "image": "img/quadruped.jpg",
    "interfaces": [],
    "drive": [
@@ -1070,7 +1070,7 @@
    "name": "Mini quadruped (AD002)",
    "title": "Mini quadruped",
    "text": "With Adeept AD002 micro servos",
-   "category": "Legged robots",
+   "category": "Legs and snakes",
    "image": "img/mini.jpg",
    "interfaces": [],
    "drive": [
@@ -1225,7 +1225,7 @@
    "name": "Wheel-Legged Robot Simulator",
    "title": "Wheel-legged",
    "text": "Wheels on its feet, like the Go2-W",
-   "category": "Legged robots",
+   "category": "Legs and snakes",
    "image": "img/wheellegs.jpg",
    "interfaces": [],
    "drive": [
@@ -1379,7 +1379,7 @@
    "name": "Wheeled Ostrich Simulator",
    "title": "Wheeled ostrich",
    "text": "Two legs with wheels, balancing",
-   "category": "Legged robots",
+   "category": "Legs and snakes",
    "image": "img/ostrich.jpg",
    "interfaces": [],
    "drive": [
@@ -1465,7 +1465,7 @@
    "commands": [],
    "telemetry": {
     "tiltDeg": 1,
-    "speed": 0.008,
+    "speed": 0.007,
     "legLength": 0.28,
     "mode": "ground",
     "fallen": false,
@@ -1478,7 +1478,7 @@
    "name": "Humanoid Legs Simulator",
    "title": "Humanoid legs",
    "text": "From the pelvis down",
-   "category": "Legged robots",
+   "category": "Legs and snakes",
    "image": "img/humanoid.jpg",
    "interfaces": [],
    "drive": [
@@ -1640,7 +1640,7 @@
    "name": "Snake Robot Simulator",
    "title": "Snake robot",
    "text": "4 to 12 Dynamixel XL430 in a chain",
-   "category": "Snake robot",
+   "category": "Legs and snakes",
    "image": "img/snake.jpg",
    "interfaces": [],
    "drive": [
@@ -1739,7 +1739,7 @@
    "name": "iRobot Create 3 Simulator",
    "title": "iRobot Create 3",
    "text": "Educational robot with real sensors",
-   "category": "Drive types",
+   "category": "Wheeled robots",
    "image": "img/create3.jpg",
    "interfaces": [],
    "drive": [
@@ -1822,7 +1822,7 @@
    "name": "Unitree Go2 Simulator",
    "title": "Unitree Go2 Pro",
    "text": "Robot dog: sport mode, tricks, lights and obstacle avoidance",
-   "category": "Real robots, real interfaces",
+   "category": "Robot dogs",
    "image": "img/go2.jpg",
    "interfaces": [
     {
@@ -2660,7 +2660,7 @@
    "name": "Unitree G1 Simulator",
    "title": "Unitree G1",
    "text": "Humanoid: FSM states, walking and arm gestures",
-   "category": "Real robots, real interfaces",
+   "category": "Humanoids and bipeds",
    "image": "img/g1.jpg",
    "interfaces": [
     {
@@ -3410,7 +3410,7 @@
    "name": "TurtleBot 4 Simulator",
    "title": "TurtleBot 4 / Lite",
    "text": "The ROS 2 robot: Create 3 base, LiDAR, OAK-D camera and a dock",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/turtlebot4.jpg",
    "interfaces": [
     {
@@ -3901,10 +3901,10 @@
       "range_min": 0.15,
       "range_max": 12,
       "ranges": [
-       10.224,
-       10.311,
-       10.191,
-       10.349,
+       10.385,
+       10.24,
+       10.267,
+       10.281,
        "…"
       ]
      },
@@ -3947,7 +3947,7 @@
    "name": "Unitree Go2-W Simulator",
    "title": "Unitree Go2-W",
    "text": "Wheel-legged Go2: rolls like a car, steps like a dog",
-   "category": "Real robots, real interfaces",
+   "category": "Robot dogs",
    "image": "img/go2w.jpg",
    "interfaces": [
     {
@@ -4631,7 +4631,7 @@
    "name": "Unitree R1 Simulator",
    "title": "Unitree R1 / R1 Air",
    "text": "Light humanoid with its own state machine: Lock, Run, dances and kung fu",
-   "category": "Real robots, real interfaces",
+   "category": "Humanoids and bipeds",
    "image": "img/r1.jpg",
    "interfaces": [
     {
@@ -5567,7 +5567,7 @@
    "name": "ROSbot XL Simulator",
    "title": "Husarion ROSbot XL",
    "text": "The ROS 2 platform with mecanum or rubber wheels, LiDAR and camera",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/rosbotxl.jpg",
    "interfaces": [
     {
@@ -5874,7 +5874,7 @@
        null,
        null,
        null,
-       10.412,
+       10.398,
        "…"
       ]
      },
@@ -5919,7 +5919,7 @@
    "name": "Leo Rover Simulator",
    "title": "Leo Rover",
    "text": "Outdoor ROS 2 rover with rocker suspension and four hub motors",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/leorover.jpg",
    "interfaces": [
     {
@@ -6252,7 +6252,7 @@
       "vector": "{…}"
      },
      "/firmware/battery": {
-      "data": 11.901
+      "data": 11.898
      },
      "/joint_states": {
       "header": "{…}",
@@ -6292,7 +6292,7 @@
    "name": "Petoi Bittle X Simulator",
    "title": "Petoi Bittle X",
    "text": "Palm-sized robot dog with its real OpenCat skills, driven by serial tokens",
-   "category": "Real robots, real interfaces",
+   "category": "Robot dogs",
    "image": "img/bittle.jpg",
    "interfaces": [
     {
@@ -6870,7 +6870,7 @@
    "name": "Roboworks Simulator",
    "title": "Roboworks Rosbot 2 / Mecabot 2",
    "text": "ROS 2 education kits: car steering or mecanum wheels, LSLiDAR and Astra camera",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/roboworks.jpg",
    "interfaces": [
     {
@@ -7102,10 +7102,10 @@
       "range_min": 0.05,
       "range_max": 30,
       "ranges": [
-       10.417,
-       10.404,
-       10.415,
-       10.421,
+       10.406,
+       10.414,
+       10.408,
+       10.403,
        "…"
       ]
      },
@@ -7123,7 +7123,7 @@
    "name": "Roboworks Simulator",
    "title": "Roboworks Rosbot 2 / Mecabot 2",
    "text": "ROS 2 education kits: car steering or mecanum wheels, LSLiDAR and Astra camera",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/mecabot.jpg",
    "interfaces": [
     {
@@ -7366,10 +7366,10 @@
       "range_min": 0.05,
       "range_max": 30,
       "ranges": [
-       10.42,
-       10.416,
-       10.415,
-       10.42,
+       10.394,
+       10.401,
+       10.403,
+       10.4,
        "…"
       ]
      },
@@ -7386,7 +7386,7 @@
    "name": "UGV Rover Simulator",
    "title": "Waveshare UGV Rover",
    "text": "Six-wheel ROS 2 rover with LiDAR and a pan-tilt camera, also driven by ESP32 JSON",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/ugvrover.jpg",
    "interfaces": [
     {
@@ -7899,10 +7899,10 @@
       "range_min": 0.15,
       "range_max": 12,
       "ranges": [
-       10.207,
-       10.329,
-       10.187,
-       10.226,
+       10.258,
+       10.311,
+       10.196,
+       10.366,
        "…"
       ]
      }
@@ -7940,7 +7940,7 @@
    "name": "JetBot Simulator",
    "title": "JetBot",
    "text": "NVIDIA's Jetson Nano robot kit, driven with the jetbot Python library",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/jetbot.jpg",
    "interfaces": [
     {
@@ -8132,7 +8132,7 @@
    "name": "JetRacer Simulator",
    "title": "JetRacer",
    "text": "Jetson Nano RC car: NvidiaRacecar steering and throttle in Python",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/jetracer.jpg",
    "interfaces": [
     {
@@ -8396,7 +8396,11 @@
     "scene",
     "robot",
     "mask",
-    "external"
+    "depth",
+    "depthcolor",
+    "external",
+    "external_depth",
+    "external_depthcolor"
    ],
    "commands": [],
    "telemetry": {
@@ -8412,37 +8416,37 @@
      {
       "id": "red1",
       "color": "red",
-      "x": -0.328,
-      "y": -0.014,
+      "x": -0.386,
+      "y": 0.364,
       "z": 0.02,
-      "yawDeg": 99,
+      "yawDeg": 34.3,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": -0.498,
-      "y": -0.118,
+      "x": 0.147,
+      "y": 0.22,
       "z": 0.02,
-      "yawDeg": 77.1,
+      "yawDeg": 32.7,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": 0.242,
-      "y": -0.252,
+      "x": 0.366,
+      "y": 0.45,
       "z": 0.02,
-      "yawDeg": 82.6,
+      "yawDeg": 42.9,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": -0.271,
-      "y": -0.14,
+      "x": 0.406,
+      "y": 0.379,
       "z": 0.02,
-      "yawDeg": 129.4,
+      "yawDeg": 92.4,
       "held": false
      },
      "…"
@@ -8542,7 +8546,11 @@
     "scene",
     "robot",
     "mask",
-    "external"
+    "depth",
+    "depthcolor",
+    "external",
+    "external_depth",
+    "external_depthcolor"
    ],
    "commands": [],
    "telemetry": {
@@ -8558,37 +8566,37 @@
      {
       "id": "red1",
       "color": "red",
-      "x": -0.495,
-      "y": 0.09,
+      "x": -0.304,
+      "y": -0.423,
       "z": 0.02,
-      "yawDeg": 115.3,
+      "yawDeg": 127.2,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": -0.139,
-      "y": 0.447,
+      "x": 0.147,
+      "y": -0.444,
       "z": 0.02,
-      "yawDeg": 128.1,
+      "yawDeg": 22.3,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": 0.218,
-      "y": 0.37,
+      "x": -0.328,
+      "y": 0.052,
       "z": 0.02,
-      "yawDeg": 123.5,
+      "yawDeg": 94.2,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": -0.333,
-      "y": 0.429,
+      "x": 0.277,
+      "y": -0.285,
       "z": 0.02,
-      "yawDeg": 50.1,
+      "yawDeg": 178.5,
       "held": false
      },
      "…"
@@ -8761,37 +8769,37 @@
      {
       "id": "red1",
       "color": "red",
-      "x": -0.166,
-      "y": 0.325,
+      "x": -0.092,
+      "y": -0.352,
       "z": 0.02,
-      "yawDeg": 16,
+      "yawDeg": 95,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": 0.384,
-      "y": -0.314,
+      "x": -0.196,
+      "y": 0.409,
       "z": 0.02,
-      "yawDeg": 101.6,
+      "yawDeg": 119.9,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": 0.39,
-      "y": 0.374,
+      "x": 0.547,
+      "y": -0.023,
       "z": 0.02,
-      "yawDeg": 163.6,
+      "yawDeg": 23.8,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": 0.028,
-      "y": 0.528,
+      "x": 0.183,
+      "y": -0.215,
       "z": 0.02,
-      "yawDeg": 25.1,
+      "yawDeg": 8.4,
       "held": false
      },
      "…"
@@ -8804,7 +8812,7 @@
    "name": "XGO-Lite3 Simulator",
    "title": "XGO-Lite3 / Mini2",
    "text": "Desktop robot dog with an arm and gripper, programmed in Python with xgolib",
-   "category": "Real robots, real interfaces",
+   "category": "Robot dogs",
    "image": "img/xgo.jpg",
    "interfaces": [
     {
@@ -9497,7 +9505,7 @@
    "name": "XGO-Mini2 Simulator",
    "title": "XGO-Lite3 / Mini2",
    "text": "Desktop robot dog with an arm and gripper, programmed in Python with xgolib",
-   "category": "Real robots, real interfaces",
+   "category": "Robot dogs",
    "image": "img/xgo.jpg",
    "interfaces": [
     {
@@ -10190,7 +10198,7 @@
    "name": "Unitree A2 Simulator",
    "title": "Unitree A2 / AS2",
    "text": "Industrial quadrupeds driven with the unitree_sdk2 sport API",
-   "category": "Real robots, real interfaces",
+   "category": "Robot dogs",
    "image": "img/a2.jpg",
    "interfaces": [
     {
@@ -10787,7 +10795,7 @@
    "name": "Unitree AS2 Simulator",
    "title": "Unitree A2 / AS2",
    "text": "Industrial quadrupeds driven with the unitree_sdk2 sport API",
-   "category": "Real robots, real interfaces",
+   "category": "Robot dogs",
    "image": "img/as2.jpg",
    "interfaces": [
     {
@@ -11481,7 +11489,7 @@
    "name": "AgiBot D1 Simulator",
    "title": "AgiBot D1 Edu",
    "text": "Robot dog driven with the HighLevel functions of AgiBot's official SDK",
-   "category": "Real robots, real interfaces",
+   "category": "Robot dogs",
    "image": "img/agibotd1.jpg",
    "interfaces": [
     {
@@ -12002,7 +12010,7 @@
    "name": "Unitree H2 Simulator",
    "title": "Unitree H2",
    "text": "Full-size 1.82 m humanoid, programmed with unitree_sdk2's high-level API",
-   "category": "Real robots, real interfaces",
+   "category": "Humanoids and bipeds",
    "image": "img/h2.jpg",
    "interfaces": [
     {
@@ -12899,7 +12907,7 @@
    "name": "Booster K1 Simulator",
    "title": "Booster K1",
    "text": "RoboCup kid-size humanoid with the Booster SDK: modes, dances and kicks",
-   "category": "Real robots, real interfaces",
+   "category": "Humanoids and bipeds",
    "image": "img/boosterk1.jpg",
    "interfaces": [
     {
@@ -13760,7 +13768,7 @@
    "name": "LimX TRON 1 Simulator",
    "title": "LimX TRON 1",
    "text": "Biped with swappable feet: point feet, soles or wheels",
-   "category": "Real robots, real interfaces",
+   "category": "Humanoids and bipeds",
    "image": "img/tron1.jpg",
    "interfaces": [
     {
@@ -14093,7 +14101,7 @@
    "name": "LimX TRON 1 Simulator",
    "title": "LimX TRON 1",
    "text": "Biped with swappable feet: point feet, soles or wheels",
-   "category": "Real robots, real interfaces",
+   "category": "Humanoids and bipeds",
    "image": "img/tron1w.jpg",
    "interfaces": [
     {
@@ -14430,7 +14438,7 @@
    "name": "Husarion Panther Simulator",
    "title": "Husarion Panther",
    "text": "55 kg outdoor UGV: off-road or mecanum wheels, LED bumper lights, ROS 2",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/panther.jpg",
    "interfaces": [
     {
@@ -14829,7 +14837,7 @@
        null,
        null,
        null,
-       10.566,
+       10.52,
        "…"
       ]
      }
@@ -14846,7 +14854,7 @@
    "name": "Robotnik SUMMIT-XL Simulator",
    "title": "Robotnik SUMMIT-XL",
    "text": "Indoor / outdoor research robot: skid or mecanum, laser and PTZ camera, ROS 2",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/summitxl.jpg",
    "interfaces": [
     {
@@ -15082,10 +15090,10 @@
       "range_min": 0.06,
       "range_max": 20,
       "ranges": [
-       13.101,
-       12.937,
-       12.583,
-       12.504,
+       13.116,
+       12.93,
+       12.565,
+       12.47,
        "…"
       ]
      },
@@ -15138,7 +15146,7 @@
    "name": "Robotnik RB-KAIROS+ Simulator",
    "title": "Robotnik RB-KAIROS+ / RB-VOGUI+",
    "text": "Mobile manipulators: an omnidirectional base with a UR5e arm that picks blocks from a table",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/rbkairos.jpg",
    "interfaces": [
     {
@@ -15614,9 +15622,9 @@
       "range_max": 30,
       "ranges": [
        null,
-       11.061,
+       11.044,
        null,
-       11.186,
+       11.167,
        "…"
       ]
      },
@@ -15629,10 +15637,10 @@
       "range_min": 0.1,
       "range_max": 30,
       "ranges": [
-       6.54,
-       6.531,
-       6.622,
-       6.608,
+       6.526,
+       6.53,
+       6.609,
+       6.615,
        "…"
       ]
      },
@@ -15726,7 +15734,7 @@
    "name": "Robotnik RB-VOGUI+ Simulator",
    "title": "Robotnik RB-KAIROS+ / RB-VOGUI+",
    "text": "Mobile manipulators: an omnidirectional base with a UR5e arm that picks blocks from a table",
-   "category": "Real robots, real interfaces",
+   "category": "Wheeled robots",
    "image": "img/rbvogui.jpg",
    "interfaces": [
     {
@@ -16241,10 +16249,10 @@
       "range_min": 0.1,
       "range_max": 30,
       "ranges": [
-       0.595,
-       6.531,
-       6.547,
-       7.281,
+       0.578,
+       6.524,
+       6.537,
+       7.275,
        "…"
       ]
      },
@@ -16257,10 +16265,10 @@
       "range_min": 0.1,
       "range_max": 30,
       "ranges": [
-       9.466,
-       9.469,
-       9.562,
-       9.575,
+       9.471,
+       9.454,
+       9.585,
+       9.574,
        "…"
       ]
      },
@@ -16441,7 +16449,11 @@
     "scene",
     "robot",
     "mask",
-    "external"
+    "depth",
+    "depthcolor",
+    "external",
+    "external_depth",
+    "external_depthcolor"
    ],
    "commands": [],
    "telemetry": {
@@ -16457,37 +16469,37 @@
      {
       "id": "red1",
       "color": "red",
-      "x": -0.118,
-      "y": -0.256,
+      "x": 0.213,
+      "y": -0.392,
       "z": 0.02,
-      "yawDeg": 177.6,
+      "yawDeg": 126.1,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": 0.289,
-      "y": 0.017,
+      "x": -0.372,
+      "y": -0.125,
       "z": 0.02,
-      "yawDeg": 72,
+      "yawDeg": 50.7,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": -0.082,
-      "y": 0.323,
+      "x": 0.087,
+      "y": -0.378,
       "z": 0.02,
-      "yawDeg": 116.3,
+      "yawDeg": 91.5,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": 0.37,
-      "y": -0.25,
+      "x": -0.21,
+      "y": -0.39,
       "z": 0.02,
-      "yawDeg": 81.6,
+      "yawDeg": 87,
       "held": false
      },
      "…"
@@ -16597,7 +16609,11 @@
     "scene",
     "robot",
     "mask",
-    "external"
+    "depth",
+    "depthcolor",
+    "external",
+    "external_depth",
+    "external_depthcolor"
    ],
    "commands": [],
    "telemetry": {
@@ -16613,37 +16629,37 @@
      {
       "id": "red1",
       "color": "red",
-      "x": -0.311,
-      "y": -0.478,
+      "x": -0.37,
+      "y": 0.142,
       "z": 0.02,
-      "yawDeg": 175.4,
+      "yawDeg": 6,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": 0.122,
-      "y": -0.451,
+      "x": -0.452,
+      "y": -0.313,
       "z": 0.02,
-      "yawDeg": 24.7,
+      "yawDeg": 134.3,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": -0.298,
-      "y": 0.408,
+      "x": 0.169,
+      "y": -0.307,
       "z": 0.02,
-      "yawDeg": 179.2,
+      "yawDeg": 53.1,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": -0.415,
-      "y": 0.005,
+      "x": -0.509,
+      "y": 0.266,
       "z": 0.02,
-      "yawDeg": 175.9,
+      "yawDeg": 94.4,
       "held": false
      },
      "…"
@@ -16761,7 +16777,7 @@
       "color": "wood",
       "x": 0.167,
       "y": 0,
-      "z": 0.068,
+      "z": 0.083,
       "yawDeg": 0,
       "held": false
      },
@@ -16770,7 +16786,7 @@
       "color": "wood",
       "x": 0.167,
       "y": 0,
-      "z": 0.022,
+      "z": 0.037,
       "yawDeg": 0,
       "held": false
      },
@@ -16779,7 +16795,7 @@
       "color": "wood",
       "x": 0.167,
       "y": 0,
-      "z": 0.007,
+      "z": 0.022,
       "yawDeg": 0,
       "held": false
      },
@@ -16788,7 +16804,7 @@
       "color": "wood",
       "x": 0.167,
       "y": 0,
-      "z": 0.083,
+      "z": 0.007,
       "yawDeg": 0,
       "held": false
      },
