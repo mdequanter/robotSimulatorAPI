@@ -525,7 +525,8 @@ state, gestures with 7106 on `rt/api/arm/request` (12, 15, 17–27; 99 lowers th
 sitting on a chair (state 3): send 4 to stand up, then 200 to walk; in front of the chair, facing away from it, 3 sits
 it down on the chair again. In the obstacle lanes it starts standing, in state 200.
 G1 skin (looks only, the robot behaves the same): `options={"skin": "technopolis"}` (`indexG1.php?skin=technopolis`, or *Skin*
-under Setup) gives it silver shells and the light-blue TECHNOPOLIS T-shirt; the default is `unitree` (white shells).
+under Setup) gives it silver shells and the light-blue TECHNOPOLIS T-shirt, `"dinno"` silver shells and a T-shirt in the
+Dinno logo's colours (black to blue) with the Dinno logo and robotics.dinno.be; the default is `unitree` (white shells).
 
 ### Unitree Go2-W
 
