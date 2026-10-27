@@ -1,6 +1,6 @@
 // Botopia simulator REST API for training (reinforcement learning).
 //
-//   node server.mjs [--port 8780] [--show] [--browsers 4] [--chrome "path/to/chrome"] [--site URL or folder]
+//   node server.mjs [--port 8780] [--show] [--browsers 4] [--chrome "path/to/chrome"] [--site URL or folder] [--key rsk_...]
 //
 // Needs only Node.js 22+ (built-in fetch and WebSocket) and Google Chrome / Chromium. The server
 // serves the simulator pages itself, starts Chrome headless (--show: visible, redrawn every step) and runs every
@@ -10,6 +10,7 @@
 // The simulator pages come from --site: a folder with the simulator site, or a URL whose pages are
 // fetched once and kept in memory. Default: the folder above this one when it holds the site (as on
 // the web server, where this repository is the site's api/ folder), else https://robotics.dinno.be/.
+// That site needs an account: --key (or ROBOTSIM_KEY) is the API key from its account page.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -24,6 +25,7 @@ const SITE_ARG = arg('site', isSite(path.join(API_DIR, '..')) ? path.join(API_DI
 const SITE_URL = /^https?:\/\//.test(SITE_ARG) ? SITE_ARG.replace(/\/?$/, '/') : null;
 const ROOT = SITE_URL ? null : path.resolve(SITE_ARG);                         // the simulator site on disk
 if (ROOT && !isSite(ROOT)) { console.error(`--site ${ROOT}: no simulator site there (index.php, common/sim.js)`); process.exit(1); }
+const KEY = arg('key', process.env.ROBOTSIM_KEY || '');
 const PORT = Number(arg('port', 8780));
 const SHOW = process.argv.includes('--show');
 // Headless Chrome draws all its tabs in ONE (software) GPU process, so several browsers render in
@@ -66,19 +68,31 @@ function serveFile(res, file) {
     res.end(data);
   });
 }
-const remoteCache = new Map();        // path → Promise of { status, type, data }
+const remoteCache = new Map();        // path → Promise of { status, type, data, why }
+// A file of the site at SITE_URL, fetched once. The robot pages are only served with an account's API key
+// (--key); the scripts, models and images are open. Without a valid key the site answers 401 / 403 with its
+// reason as plain text, or redirects a request without a key to the sign-in page.
+function remoteFile(pathname) {
+  if (!remoteCache.has(pathname)) {
+    const p = fetch(new URL('.' + pathname, SITE_URL), { headers: KEY ? { 'X-Robotsim-Key': KEY } : {}, redirect: 'manual' }).then(async r => {
+      const data = Buffer.from(await r.arrayBuffer());
+      const plain = (r.headers.get('content-type') || '').startsWith('text/plain');
+      return { status: r.status, type: TYPES[path.extname(pathname)] || r.headers.get('content-type') || 'application/octet-stream', data,
+        why: r.status === 302 ? 'sign in needed: start the API with --key and the API key from the account page'
+          : plain ? data.toString('utf8').slice(0, 300) : `HTTP ${r.status}` };
+    });
+    p.then(r => { if (r.status !== 200) remoteCache.delete(pathname); }, () => remoteCache.delete(pathname));
+    remoteCache.set(pathname, p);
+  }
+  return remoteCache.get(pathname);
+}
+const remoteError = r => `${SITE_URL}: ${r.why}`;
 function serveStatic(req, res, pathname) {
   if (pathname === '/') pathname = '/index.php';
   if (/\/\./.test(pathname)) return send(res, 403, { error: 'forbidden' });       // .git, .htaccess, …
   if (SITE_URL) {
-    if (!remoteCache.has(pathname)) {
-      const p = fetch(new URL('.' + pathname, SITE_URL)).then(async r => ({ status: r.status,
-        type: TYPES[path.extname(pathname)] || r.headers.get('content-type') || 'application/octet-stream', data: Buffer.from(await r.arrayBuffer()) }));
-      p.then(r => { if (r.status !== 200) remoteCache.delete(pathname); }, () => remoteCache.delete(pathname));
-      remoteCache.set(pathname, p);
-    }
-    return remoteCache.get(pathname).then(r => {
-      if (r.status !== 200) return send(res, r.status, { error: `${SITE_URL}: ${r.status}` });
+    return remoteFile(pathname).then(r => {
+      if (r.status !== 200) return send(res, r.status === 302 ? 401 : r.status, { error: remoteError(r) });
       res.writeHead(200, { 'Content-Type': r.type, 'Content-Length': r.data.length });
       res.end(r.data);
     }, err => send(res, 502, { error: `${SITE_URL} not reachable: ${err.message}` }));
@@ -186,6 +200,11 @@ async function createEnv({ robot, lane = 'free', seed = null, options = {} }) {
   const page = ROBOTS[robot];
   const extra = new URLSearchParams(Object.entries(options || {}).map(([k, v]) => [k, String(v)])).toString();
   const url = `http://127.0.0.1:${PORT}/${page}${page.includes('?') ? '&' : '?'}env=1&shot${extra ? '&' + extra : ''}`;
+  // From the web site: is this robot open with our key? Else say why, instead of a tab that never starts.
+  if (SITE_URL) {
+    const r = await remoteFile('/' + page.split('?')[0]);
+    if (r.status !== 200) throw Object.assign(new Error(remoteError(r)), { status: r.status === 403 ? 403 : 401 });
+  }
   const tab = await openTab(url);
   for (let i = 0; i < 200 && !(await tab.evaluate('!!window.botopiaEnv').catch(() => false)); i++) await sleep(100);
   if (!(await tab.evaluate('!!window.botopiaEnv').catch(() => false))) throw new Error(`page did not start: ${tab.errors.join('; ') || url}`);
@@ -301,6 +320,7 @@ for (let i = 0; i < BROWSERS; i++) await startChrome(i);
 server.listen(PORT, () => {
   console.log(`Botopia simulator API on http://localhost:${PORT}/api/  (simulators: http://localhost:${PORT}/)`);
   console.log(`Simulator pages from ${SITE_URL || ROOT}`);
+  if (SITE_URL && !KEY) console.log(`No --key: ${SITE_URL} only opens the robots with the API key from ${SITE_URL}account.php`);
   console.log(`Chrome ${SHOW ? 'visible' : `headless × ${BROWSERS}`}, robots: ${Object.keys(ROBOTS).join(', ')}`);
 });
 const stop = async () => {

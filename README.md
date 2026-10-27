@@ -44,8 +44,11 @@ There is no `npm install`. Run all commands from inside this folder.
 ```bash
 git clone https://github.com/mdequanter/robotSimulatorAPI.git
 cd robotSimulatorAPI
-node server.mjs --show        # terminal 1; leave it running (--show: watch in a Chrome window)
+node server.mjs --show --key rsk_...   # terminal 1; leave it running (--show: watch in a Chrome window)
 ```
+
+The robots on https://robotics.dinno.be/ need an account (a free first day, then a subscription). Sign in
+there, open **Account** and make an API key; pass it with `--key` or set the environment variable `ROBOTSIM_KEY`.
 
 ```text
 Botopia simulator API on http://localhost:8780/api/  (simulators: http://localhost:8780/)
@@ -156,10 +159,11 @@ node server.mjs [options]       # http://localhost:8780/api/
 | `--browsers N` | headless Chrome instances that draw in parallel (default: one per 4 CPU cores, at most 4) |
 | `--chrome "path"` | where Chrome is, if it is not found (or set the `CHROME` environment variable) |
 | `--site URL or folder` | where the simulator pages come from, see below |
+| `--key rsk_...` | your API key from the account page of the site (or set `ROBOTSIM_KEY`); needed for the robots from https://robotics.dinno.be/ |
 
 The server also serves the simulator pages, so no web server or PHP is needed. It takes them from
 `--site`: by default `https://robotics.dinno.be/` (each page is fetched once and kept in memory, so the first start of a
-robot needs internet), or the folder above this repository when that holds the simulator site (as on
+robot needs internet, and an API key: `--key`), or the folder above this repository when that holds the simulator site (as on
 the web server, where this repository is the site's `api/` folder). To try local changes to the
 simulators: `node server.mjs --site ../robotSimulator`.
 
