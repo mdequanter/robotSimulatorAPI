@@ -55,6 +55,15 @@ if (!is_dir(DATA_DIR) || !is_writable(DATA_DIR)) {
 }
 
 $route = $_GET['r'] ?? '';
+// On the simulator site (auth.php one folder up) only a signed-in page with access may open a session;
+// clients then reach the robot through that session's code. Without auth.php the API stays open.
+if ($route === 'register' && is_file(__DIR__ . '/../auth.php')) {
+    require __DIR__ . '/../auth.php';
+    try { $allowed = hasAccess(); }
+    catch (Throwable $e) { error_log('robotsim API: account check failed: ' . $e->getMessage()); reply(500, ['error' => 'the account check failed']); }
+    if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
+    if (!$allowed) reply(403, ['error' => 'sign in on the simulator site first: your free day is over or you are not signed in']);
+}
 $session = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $_GET['session'] ?? ''));
 if ($session !== '' && (strlen($session) < 4 || strlen($session) > 16)) reply(400, ['error' => 'session code: 4 to 16 letters or digits']);
 $file = DATA_DIR . '/' . $session . '.json';
