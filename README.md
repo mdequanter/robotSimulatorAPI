@@ -44,7 +44,7 @@ There is no `npm install`. Run all commands from inside this folder.
 ```bash
 git clone https://github.com/mdequanter/robotSimulatorAPI.git
 cd robotSimulatorAPI
-node server.mjs --show --key rsk_...   # terminal 1; leave it running (--show: watch in a Chrome window)
+node server.mjs --show --key rsk_xxxxxxxx   # terminal 1; leave it running (--show: watch in a Chrome window)
 ```
 
 The robots on https://robotics.dinno.be/ need an account (a free first day, then a subscription). Sign in
@@ -107,7 +107,7 @@ Plug it into stable-baselines3 with `BotopiaGymEnv` (see [The Python client](#th
 
 ## Example scripts and tutorials
 
-Start the server first (`node server.mjs`), then run a script from this folder, e.g.
+Start the server first (`node server.mjs --key rsk_xxxxxxxx`, your API key from the Account page of the site), then run a script from this folder, e.g.
 `python python/corridor_rl.py train`.
 
 | Script | What it does | Needs (`pip install`) |
