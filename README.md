@@ -122,6 +122,7 @@ Start the server first (`node server.mjs --key rsk_xxxxxxxx`, your API key from 
 | [`sort_rl.py`](python/sort_rl.py) | [tutorial 4](https://robotics.dinno.be/tutorial-rl-sorting.html): Q-learning over skills, the quadruped sorts cubes | – |
 | [`arm_reach_her.py`](python/arm_reach_her.py) | [tutorial 5](https://robotics.dinno.be/tutorial-rl-arm-reach.html): SAC + Hindsight Experience Replay, the arm touches a point | `stable-baselines3 gymnasium` |
 | [`stand_rl.py`](python/stand_rl.py) | [tutorial 6](https://robotics.dinno.be/tutorial-rl-stand-row.html): the OpenMANIPULATOR-X stands blocks in a row | – |
+| [`go2_track_yolo.py`](python/go2_track_yolo.py) | [tutorial 12](https://robotics.dinno.be/tutorial-rl-go2-path.html): the Unitree Go2 follows the path with the YOLO model of tutorial 3 and a PPO policy, in the simulator and on the real Go2 | `ultralytics stable-baselines3 gymnasium` (`unitree_webrtc_connect` for the real dog) |
 | [`xarm_robot.py`](python/xarm_robot.py), [`xarm_demo.py`](python/xarm_demo.py), [`xarm_bridge.py`](python/xarm_bridge.py) | one Python interface for the simulated and the real xArm, see [below](#the-real-xarm-6--7-one-python-interface-digital-twin-follow) | `xarm-python-sdk` (real arm) |
 
 The tutorial scripts take a command: `baseline`, `train`, `eval` or `watch` (see `--help`). Training
