@@ -38,6 +38,7 @@ HALF_BAND = 0.35         # the path is 70 cm wide
 CAM_W = 320              # camera images for YOLO: 320 × 240
 MW, MH = 64, 48          # path mask the policy sees
 THROTTLE = 0.6           # fixed speed: this tutorial is about steering
+OPTIONS = {}             # page options of every simulator it opens, e.g. {"world": "park"} (--world)
 
 
 # ---------- 1. Dataset ----------
@@ -61,7 +62,7 @@ def make_dataset(api, folder, n_train, n_val, robots, seed=1):
     """Camera images from random spots on the track (also beside the centre line and at an angle, so
     YOLO sees the path from every view a driving robot gets), labels from the simulator's mask view."""
     rng = np.random.default_rng(seed)
-    envs = {r: api.create(r, "track")["id"] for r in robots}
+    envs = {r: api.create(r, "track", options=OPTIONS)["id"] for r in robots}
     for split, n in (("train", n_train), ("val", n_val)):
         os.makedirs(f"{folder}/images/{split}", exist_ok=True)
         os.makedirs(f"{folder}/labels/{split}", exist_ok=True)
@@ -124,7 +125,7 @@ class Car:
 
     def __init__(self, api, robot, dt=0.1, reward="squared", options=None):
         self.api, self.dt, self.reward_kind = api, dt, reward
-        self.id = api.create(robot, "track", options=options)["id"]
+        self.id = api.create(robot, "track", options={**OPTIONS, **(options or {})})["id"]
 
     def command(self, steer):
         return {"drive": {"fwd": THROTTLE, "turn": float(np.clip(steer, -1, 1))}}
@@ -257,6 +258,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("command", choices=["dataset", "yolo", "rl", "baseline", "eval", "watch"])
     ap.add_argument("--url", default="http://localhost:8780")
+    ap.add_argument("--world", choices=["course", "park"], default="course",
+                    help="where the ε track lies: the obstacle course, or the park (grass, a hedge, bushes and trees)")
     ap.add_argument("--robot", default="ackermann")
     ap.add_argument("--data", default="track_data", help="dataset folder")
     ap.add_argument("--images", type=int, default=1500, help="dataset: training images (+ 20 %% for validation)")
@@ -269,6 +272,8 @@ def main():
     ap.add_argument("--device", default="cpu", help="cpu, cuda (0) or auto")
     ap.add_argument("--gif", help="watch: save the lap as an animated GIF")
     args = ap.parse_args()
+    if args.world != "course":
+        OPTIONS["world"] = args.world
     api = BotopiaAPI(args.url)
 
     if args.command == "dataset":

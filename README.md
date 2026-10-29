@@ -485,6 +485,15 @@ botopiaEnv.reset({ lane: 'gravel', seed: 1 })
 botopiaEnv.step({ drive: { fwd: 1 } }, { dt: 0.1 })   // in normal mode the page also keeps running
 ```
 
+Environments instead of the obstacle course (Setup → Environment, `?world=` in the page, `options={"world": …}` in
+the API): `botopia` (the Kyosho Mini-Z 50x50 Race track), `corridor` (the Corridor Environment) and `park` (the ε
+track as an earth path in the grass, with pebbles, puddles, a hedge in the middle of the loop, bushes and trees; the
+lane `track` works there as on the course, so `track_yolo.py` and `go2_track_yolo.py` take `--world park`).
+
+```python
+env = api.create("go2", "track", options={"world": "park"})
+```
+
 URL switches: `?env=1` lock-step (used by the Node API: the page stands still between steps),
 `?remote=1` remote mode (PHP API), `?lane=step6` start in a lane, `?auto=corridor` autopilot through
 the corridor, `?door=free` door mode in the door lane, `?fixedfps=30` fixed time step, `?shot` 3D view only.

@@ -16,6 +16,7 @@ functions), start the simulators with  node server.mjs --key rsk_xxxxxxxx  and r
     python go2_track_yolo.py watch                 # the same lap in real time, in the visible simulator (server --show)
     python go2_track_yolo.py watch --map --route "50.8417,4.3229 50.8425,4.3240"   # with the GPS map of the page
     python go2_track_yolo.py watch --route saved_paths/gnss-laerbeekbos.json      # a route from a JSON file
+    python go2_track_yolo.py watch --world park    # the track in the park: grass, a hedge, bushes and trees
     python go2_track_yolo.py real --ip 192.168.1.42   # on the real Go2 (pip install unitree_webrtc_connect)
 
 Tutorial: https://robotics.dinno.be/tutorial-rl-go2-path.html
@@ -58,7 +59,7 @@ def check(api, yolo, robots, n=40, seed=3):
     """How well YOLO finds the path, per robot: IoU of its mask with the simulator's true mask."""
     rng = np.random.default_rng(seed)
     for robot in robots:
-        i, scores = api.create(robot, "track")["id"], []
+        i, scores = api.create(robot, "track", options=track_yolo.OPTIONS)["id"], []
         for _ in range(n):
             _, cam = api.reset(i, lane="track", start=float(rng.uniform(0, 42.56)), offset=float(rng.uniform(-0.3, 0.3)),
                                yaw=float(rng.uniform(-20, 20)), image={"view": "robot", "width": CAM_W, "quality": 0.92})
@@ -201,6 +202,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("command", choices=["check", "dataset", "finetune", "rl", "eval", "watch", "real"])
     ap.add_argument("--url", default="http://localhost:8780")
+    ap.add_argument("--world", choices=["course", "park"], default="course",
+                    help="where the ε track lies: the obstacle course, or the park (grass, a hedge, bushes and trees)")
     ap.add_argument("--data", default="go2_data", help="dataset folder")
     ap.add_argument("--images", type=int, default=800, help="dataset: training images (+ 20 %% for validation)")
     ap.add_argument("--epochs", type=int, default=15, help="finetune: training epochs")
@@ -218,6 +221,8 @@ def main():
     ap.add_argument("--route", help='eval / watch: GPS route "lat,lon lat,lon ..." or a JSON file with its points: the dog walks rounds until its end (implies --map)')
     ap.add_argument("--laps", type=int, default=1, help="eval / watch: rounds of the track (with --route: as many as the route needs)")
     args = ap.parse_args()
+    if args.world != "course":
+        track_yolo.OPTIONS["world"] = args.world
     finetuned = "runs/segment/track_go2/weights/best.pt"
     if args.yolo is None:                         # fine-tuned on the Go2 if you did, else the one of tutorial 8
         args.yolo = finetuned if os.path.exists(finetuned) else TUTORIAL3_YOLO
