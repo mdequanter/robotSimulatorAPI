@@ -15,12 +15,14 @@ functions), start the simulators with  node server.mjs --key rsk_xxxxxxxx  and r
     python go2_track_yolo.py eval                  # a lap with YOLO in the loop (and --masks sim)
     python go2_track_yolo.py watch                 # the same lap in real time, in the visible simulator (server --show)
     python go2_track_yolo.py watch --map --route "50.8417,4.3229 50.8425,4.3240"   # with the GPS map of the page
+    python go2_track_yolo.py watch --route saved_paths/gnss-laerbeekbos.json      # a route from a JSON file
     python go2_track_yolo.py real --ip 192.168.1.42   # on the real Go2 (pip install unitree_webrtc_connect)
 
 Tutorial: https://robotics.dinno.be/tutorial-rl-go2-path.html
 """
 import argparse
 import io
+import json
 import math
 import os
 import sys
@@ -87,9 +89,10 @@ class MapCar(Car):
     page too (in the --show window), and the route goes with the first step. Every metre the dog walks on
     the track is a metre along the route; it prints the waypoints as it reaches them."""
 
-    def __init__(self, api, robot, route=None):
+    def __init__(self, api, robot, route=None, notes=None):
         super().__init__(api, robot, options={"map": 1})
         self.pending = {"route": route, "start": True} if route else None
+        self.notes = notes or []
 
     def command(self, steer):
         action = super().command(steer)
@@ -101,14 +104,30 @@ class MapCar(Car):
         for e in r["events"]:
             if e.get("type") == "waypoint":
                 print(f"waypoint {e['index']} reached: {e['lat']:.6f}, {e['lon']:.6f}")
+                if e["index"] < len(self.notes) and self.notes[e["index"]]:
+                    print(f"    {self.notes[e['index']]}")
             elif e.get("type") == "route_end":
                 print(f"end of the route: {e['distance']:.0f} m")
         return super().result(r)
 
 
 def parse_route(text):
-    """ "lat,lon lat,lon ..." (or ; between the points) → [[lat, lon], ...] """
-    return [[float(v) for v in p.split(",")] for p in text.replace(";", " ").split()]
+    """ "lat,lon lat,lon ..." (or ; between the points), or a JSON file: [[lat, lon], ...], or
+    {"points": [{"lat": …, "lon": … (or "lng"), "instruction": "…"}, ...]} → ([[lat, lon], ...], [instruction, ...])"""
+    if not os.path.isfile(text):
+        return [[float(v) for v in p.split(",")] for p in text.replace(";", " ").split()], []
+    with open(text, encoding="utf-8") as f:
+        data = json.load(f)
+    points = data.get("points", data.get("route", [])) if isinstance(data, dict) else data
+    route, notes = [], []
+    for p in points:
+        if isinstance(p, dict):
+            route.append([float(p["lat"]), float(p.get("lon", p.get("lng")))])
+            notes.append(p.get("instruction") or p.get("name") or "")
+        else:
+            route.append([float(p[0]), float(p[1])])
+            notes.append("")
+    return route, notes
 
 
 def route_length(route):
@@ -196,7 +215,7 @@ def main():
     ap.add_argument("--speed", type=float, help="real: forward speed in m/s (default 0.4, as in training)")
     ap.add_argument("--seconds", type=float, default=60, help="real: walk at most this long")
     ap.add_argument("--map", action="store_true", help="eval / watch: show the GPS map of the page (click waypoints there, or --route)")
-    ap.add_argument("--route", help='eval / watch: GPS route "lat,lon lat,lon ...": the dog walks rounds until its end (implies --map)')
+    ap.add_argument("--route", help='eval / watch: GPS route "lat,lon lat,lon ..." or a JSON file with its points: the dog walks rounds until its end (implies --map)')
     ap.add_argument("--laps", type=int, default=1, help="eval / watch: rounds of the track (with --route: as many as the route needs)")
     args = ap.parse_args()
     finetuned = "runs/segment/track_go2/weights/best.pt"
@@ -245,11 +264,11 @@ def main():
     yolo = YoloMasks(args.yolo, args.device) if args.masks == "yolo" else None
     laps = args.laps
     if args.map or args.route:
-        route = parse_route(args.route) if args.route else None
+        route, notes = parse_route(args.route) if args.route else (None, None)
         if route:
             laps = max(laps, math.ceil(route_length(route) / TRACK_LENGTH))
             print(f"Route of {len(route)} waypoints, {route_length(route):.0f} m: {laps} rounds of the track")
-        car = MapCar(api, ROBOT, route)
+        car = MapCar(api, ROBOT, route, notes)
     else:
         car = Car(api, ROBOT)
     max_time = laps * TRACK_LENGTH / (THROTTLE * V_NORMAL) * 1.5      # 1.5 × the time it needs at its speed
