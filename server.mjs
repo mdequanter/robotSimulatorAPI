@@ -235,6 +235,7 @@ const VIEWS = ['scene', 'robot', 'mask', 'external', 'real', 'depth', 'depthcolo
 const imageExpr = image => image ? `window.botopiaEnv.frame(${Number(image.quality ?? 0.9)}, ${JSON.stringify(VIEWS.includes(image.view) ? image.view : 'robot')}, ${Math.max(16, Math.min(1280, Number(image.width) || 84))}).split(',')[1]` : 'undefined';
 // until: 'idle' ends the step early when a running skill has finished (dt is then the maximum).
 async function stepEnv(env, { action = {}, dt = 0.05, frame = 1 / 60, image = null, until = null }) {
+  usedBy = env.robot; usedAt = Date.now();
   const r = await env.tab.evaluate(`(() => { const r = window.botopiaEnv.step(${JSON.stringify(action)}, ${JSON.stringify({ dt, frame, render: SHOW, until })});
     r.image = ${imageExpr(image)}; return r; })()`);
   const out = { obs: r.obs, events: r.events, reward: reward(env.lastObs, r), done: r.obs.done };
@@ -243,6 +244,20 @@ async function stepEnv(env, { action = {}, dt = 0.05, frame = 1 / 60, image = nu
   env.steps++;
   if (env.tab.errors.length) out.pageErrors = env.tab.errors.splice(0);
   return out;
+}
+
+// ---------- Hours of a class ----------
+// The key of a class member (the class environment on the site): every minute in which an environment was
+// stepped counts as an hour of "API" in the progress of the class. Other keys: the site answers 401 and
+// nothing more is reported.
+let usedAt = 0, usedBy = '';
+if (SITE_URL && KEY) {
+  const beat = setInterval(() => {
+    if (Date.now() - usedAt > 60000) return;
+    fetch(new URL('classtrack.php', SITE_URL), { method: 'POST', body: new URLSearchParams({ kind: 'api', page: usedBy }),
+      headers: { 'X-Robotsim-Key': KEY } }).then(r => { if (r.status === 401) clearInterval(beat); }, () => { /* offline: the next minute */ });
+  }, 60000);
+  beat.unref();
 }
 
 // ---------- HTTP ----------
