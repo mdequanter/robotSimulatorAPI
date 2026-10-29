@@ -14,12 +14,14 @@ functions), start the simulators with  node server.mjs --key rsk_xxxxxxxx  and r
     python go2_track_yolo.py rl --resume           # and on: the dog needs about 500 000 steps (~20 min)
     python go2_track_yolo.py eval                  # a lap with YOLO in the loop (and --masks sim)
     python go2_track_yolo.py watch                 # the same lap in real time, in the visible simulator (server --show)
+    python go2_track_yolo.py watch --map --route "50.8417,4.3229 50.8425,4.3240"   # with the GPS map of the page
     python go2_track_yolo.py real --ip 192.168.1.42   # on the real Go2 (pip install unitree_webrtc_connect)
 
 Tutorial: https://robotics.dinno.be/tutorial-rl-go2-path.html
 """
 import argparse
 import io
+import math
 import os
 import sys
 import time
@@ -30,7 +32,7 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import track_yolo  # noqa: E402
 from botopia import BotopiaAPI  # noqa: E402
-from track_yolo import CAM_W, Car, YoloMasks, lap, make_dataset, make_vec_env, report, sim_mask  # noqa: E402
+from track_yolo import CAM_W, TRACK_LENGTH, Car, YoloMasks, lap, make_dataset, make_vec_env, report, sim_mask  # noqa: E402
 
 ROBOT = "go2"
 # The Go2 simulator turns a drive command into velocities as the joystick of the app does, at speed
@@ -78,6 +80,44 @@ class Steering:
         stack = np.stack([self.prev, mask], axis=2)
         self.prev = mask
         return float(self.policy.predict(stack, deterministic=True)[0][0])
+
+
+class MapCar(Car):
+    """The Go2 with the GPS map of the simulator page (common/gpsmap.js): ?map=1 shows the map in the API's
+    page too (in the --show window), and the route goes with the first step. Every metre the dog walks on
+    the track is a metre along the route; it prints the waypoints as it reaches them."""
+
+    def __init__(self, api, robot, route=None):
+        super().__init__(api, robot, options={"map": 1})
+        self.pending = {"route": route, "start": True} if route else None
+
+    def command(self, steer):
+        action = super().command(steer)
+        if self.pending:
+            action["gps"], self.pending = self.pending, None
+        return action
+
+    def result(self, r):
+        for e in r["events"]:
+            if e.get("type") == "waypoint":
+                print(f"waypoint {e['index']} reached: {e['lat']:.6f}, {e['lon']:.6f}")
+            elif e.get("type") == "route_end":
+                print(f"end of the route: {e['distance']:.0f} m")
+        return super().result(r)
+
+
+def parse_route(text):
+    """ "lat,lon lat,lon ..." (or ; between the points) → [[lat, lon], ...] """
+    return [[float(v) for v in p.split(",")] for p in text.replace(";", " ").split()]
+
+
+def route_length(route):
+    """Metres along the route (haversine, as the page does)."""
+    r, total = 6371008.8, 0.0
+    for (la1, lo1), (la2, lo2) in zip(route, route[1:]):
+        a = math.sin(math.radians(la2 - la1) / 2) ** 2 +             math.cos(math.radians(la1)) * math.cos(math.radians(la2)) * math.sin(math.radians(lo2 - lo1) / 2) ** 2
+        total += 2 * r * math.asin(min(1.0, math.sqrt(a)))
+    return total
 
 
 def run_real(args):
@@ -155,6 +195,9 @@ def main():
     ap.add_argument("--ip", help="real: the Go2's IP address")
     ap.add_argument("--speed", type=float, help="real: forward speed in m/s (default 0.4, as in training)")
     ap.add_argument("--seconds", type=float, default=60, help="real: walk at most this long")
+    ap.add_argument("--map", action="store_true", help="eval / watch: show the GPS map of the page (click waypoints there, or --route)")
+    ap.add_argument("--route", help='eval / watch: GPS route "lat,lon lat,lon ...": the dog walks rounds until its end (implies --map)')
+    ap.add_argument("--laps", type=int, default=1, help="eval / watch: rounds of the track (with --route: as many as the route needs)")
     args = ap.parse_args()
     finetuned = "runs/segment/track_go2/weights/best.pt"
     if args.yolo is None:                         # fine-tuned on the Go2 if you did, else the one of tutorial 8
@@ -200,8 +243,18 @@ def main():
         return
 
     yolo = YoloMasks(args.yolo, args.device) if args.masks == "yolo" else None
-    car = Car(api, ROBOT)
-    r = lap(car, Steering(args.policy), masks=args.masks, yolo=yolo, realtime=args.command == "watch")
+    laps = args.laps
+    if args.map or args.route:
+        route = parse_route(args.route) if args.route else None
+        if route:
+            laps = max(laps, math.ceil(route_length(route) / TRACK_LENGTH))
+            print(f"Route of {len(route)} waypoints, {route_length(route):.0f} m: {laps} rounds of the track")
+        car = MapCar(api, ROBOT, route)
+    else:
+        car = Car(api, ROBOT)
+    max_time = laps * TRACK_LENGTH / (THROTTLE * V_NORMAL) * 1.5      # 1.5 × the time it needs at its speed
+    r = lap(car, Steering(args.policy), masks=args.masks, yolo=yolo, realtime=args.command == "watch",
+            laps=laps, max_time=max_time)
     report(f"Go2, PPO steering, masks from {args.masks.upper()}", r)
     car.close()
 

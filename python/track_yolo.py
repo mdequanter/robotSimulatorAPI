@@ -122,9 +122,9 @@ def noisy(mask, rng):
 class Car:
     """One simulator: steering → drive command, step result → reward."""
 
-    def __init__(self, api, robot, dt=0.1, reward="squared"):
+    def __init__(self, api, robot, dt=0.1, reward="squared", options=None):
         self.api, self.dt, self.reward_kind = api, dt, reward
-        self.id = api.create(robot, "track")["id"]
+        self.id = api.create(robot, "track", options=options)["id"]
 
     def command(self, steer):
         return {"drive": {"fwd": THROTTLE, "turn": float(np.clip(steer, -1, 1))}}
@@ -215,9 +215,9 @@ def make_vec_env(n, robot, url, max_steps=300, reward="squared"):
 
 
 # ---------- 4. A lap ----------
-def lap(car, steer_fn, masks="sim", yolo=None, max_time=150, frames=None, realtime=False):
-    """One lap from the start line. masks "sim": the policy gets the simulator's mask; "yolo": the
-    camera image goes through YOLO first. Reports how far from the middle it drove."""
+def lap(car, steer_fn, masks="sim", yolo=None, max_time=150, frames=None, realtime=False, laps=1):
+    """One lap from the start line (or `laps` rounds). masks "sim": the policy gets the simulator's mask;
+    "yolo": the camera image goes through YOLO first. Reports how far from the middle it drove."""
     view = "mask" if masks == "sim" else "robot"
     img, obs = car.reset(start=0.0, view=view)
     offs, n_off, was_off, t, ms = [], 0, False, 0.0, []
@@ -236,11 +236,11 @@ def lap(car, steer_fn, masks="sim", yolo=None, max_time=150, frames=None, realti
         was_off = off
         if frames is not None:
             frames.append((car.api.frame(car.id, 0.85), mask))
-        if realtime:
-            time.sleep(car.dt)
-        if car.driven >= TRACK_LENGTH:
+        if realtime:                                                    # YOLO and the step took part of dt already
+            time.sleep(max(0.0, car.dt - (time.time() - t0)))
+        if car.driven >= laps * TRACK_LENGTH:
             break
-    return {"time": t if car.driven >= TRACK_LENGTH else None, "mean": float(np.mean(offs)), "max": float(np.max(offs)),
+    return {"time": t if car.driven >= laps * TRACK_LENGTH else None, "mean": float(np.mean(offs)), "max": float(np.max(offs)),
             "off": n_off, "mask_ms": 1000 * float(np.mean(ms))}
 
 

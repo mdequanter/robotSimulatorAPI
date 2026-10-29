@@ -537,6 +537,13 @@ G1 skin (looks only, the robot behaves the same): `options={"skin": "technopolis
 under Setup) gives it silver shells and the light-blue TECHNOPOLIS T-shirt, `"dinno"` silver shells and a T-shirt in the
 Dinno logo's colours (black to blue) with the Dinno logo and robotics.dinno.be; the default is `unitree` (white shells).
 
+Go2 GPS map (`common/gpsmap.js`): every metre the dog walks, also in rounds on a track, is a metre along a route of
+waypoints on a map. Set the route with `{"gps": {"route": [[lat, lon], …], "start": true}}` (also `stop`, `mode`:
+`exact` / `estimated`, `rate` 1 … 10 Hz); `extra.gps` gives the position on the map, the events `waypoint` and
+`route_end` say when it gets there. The API's page has no map panel; `options={"map": 1}` shows it anyway (in the
+`--show` window). `python go2_track_yolo.py watch --route "50.8417,4.3229 50.8425,4.3240"` follows the path with
+YOLO + PPO until the end of the route, with the map in view.
+
 ### Unitree Go2-W
 
 Unitree Go2-W (`go2w`, `indexGo2W.php`): the Go2 with a hub-motor wheel on every leg. It drives on its wheels with
