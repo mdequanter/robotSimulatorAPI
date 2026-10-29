@@ -124,6 +124,7 @@ Start the server first (`node server.mjs --key rsk_xxxxxxxx`, your API key from 
 | [`stand_rl.py`](python/stand_rl.py) | [tutorial 11](https://robotics.dinno.be/tutorial-rl-stand-row.html): the OpenMANIPULATOR-X stands blocks in a row | – |
 | [`go2_track_yolo.py`](python/go2_track_yolo.py) | [tutorial 12](https://robotics.dinno.be/tutorial-rl-go2-path.html): the Unitree Go2 follows the path with the YOLO model of tutorial 8 and a PPO policy, in the simulator and on the real Go2 | `ultralytics stable-baselines3 gymnasium` (`unitree_webrtc_connect` for the real dog) |
 | [`xarm_robot.py`](python/xarm_robot.py), [`xarm_demo.py`](python/xarm_demo.py), [`xarm_bridge.py`](python/xarm_bridge.py) | one Python interface for the simulated and the real xArm, see [below](#the-real-xarm-6--7-one-python-interface-digital-twin-follow) | `xarm-python-sdk` (real arm) |
+| [`tello_bridge.py`](python/tello_bridge.py) | the Tello EDU simulator page flies a real DJI Tello EDU and shows its video, see [below](#dji-tello-edu) | `websockets av pillow` |
 
 The tutorial scripts take a command: `baseline`, `train`, `eval` or `watch` (see `--help`). Training
 on a GPU: `--device cuda`, see [Getting started](https://robotics.dinno.be/tutorial-getting-started.html#gpu).
@@ -298,6 +299,7 @@ name.
 | `ugvrover` | fwd, turn (teleop keys) | L, R (one channel per side) | – | ros, serial | topics {`/odom`, `/odom/odom_raw`, `/voltage`, `/scan` (360 ranges, null = no echo)}, feedback {T:1001 …}, gimbal {pan, tilt}, leds, mode, ros, serial |
 | `jetbot` | fwd, turn (gamepad keys) | left, right | – | python | motors {left, right: {value, alpha, beta}}, script, python |
 | `jetracer` | fwd, turn (gamepad keys) | throttle (dc), steering (servo) | – | python | car {steering, throttle, steering_gain, steering_offset, throttle_gain}, script, python |
+| `tello` | fwd, turn, strafe, up (the app's sticks) | `m1` … `m4` (read only) | – | tello | phase (landed / takeoff / flying / landing / flip / falling), sdk, height_cm, battery, flight_s, flight_left_s, max_height_m, stream, downvision, mission_pads, pad, busy, state (the SDK state packet), tello (last answers) |
 | `xgo` / `xgomini` | fwd, turn, strafe (the app's joystick) | – | 15 servos (`m11` … `m43` legs, `m51` gripper, `m52` `m53` arm) | xgo | model, action, actionName, move {x, y, turn}, gait, pace, markTime, height_mm, attitude {r, p, y}, imu, lying, arm {x, z, claw}, cube {x, y, z, held}, motors, blocked, xgo (last answers) |
 | `a2` / `as2` | fwd, turn, strafe (the remote) | – | 12 joints (`FL_hip`, `FL_thigh`, `FL_calf`, …) | sdk | model, sportmodestate {mode (FSM 0–15), mode_name, progress, position, velocity, yaw_speed, body_height}, gait, speed_level, trajectory, sdk (last answers) |
 | `agibotd1` | fwd, turn, strafe (the remote) | – | 12 joints | sdk | ctrl_mode (0 / 1 / 18 / 21 / 51), position, body_velocity, battery, move, two_leg, sdk (last answers) |
@@ -374,6 +376,7 @@ Each step returns the events that happened during that step:
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
+| `tello` | `tello`: the answer of the drone to a Tello SDK command (`command`, `code`, `reply`) | no |
 | `sdk` | `a2`, `as2`, `agibotd1`, `h2`: the answer of the maker's SDK call (code, data) | no |
 | `booster` | `boosterk1`: the status of a B1LocoClient call (0, 400, 409, 501, 502) | no |
 | `ws` | `tron1`, `tron1w`: an answer or push of the TRON 1 WebSocket (`title` response_… / notify_…, `data.result`) | no |
@@ -694,6 +697,27 @@ JetBot (`jetbot`) and JetRacer (`jetracer`): driven with the Python lines of the
 runs in simulation time and the answer comes back as a `python` event. JetBot: `Robot()` with forward / backward / left /
 right / stop / set_motors and `left_motor` / `right_motor` `.value`. JetRacer: `NvidiaRacecar()` with steering, throttle,
 steering_gain (−0.65), steering_offset and throttle_gain (0.8).
+
+### DJI Tello EDU
+
+DJI Tello EDU (`tello`, `indexTello.php`): a mini drone flown with the Tello SDK, the text commands it takes over UDP:
+`{"tello": "command"}`, `{"tello": ["takeoff", "forward 100", "cw 90"]}`, `{"tello": "go 0 0 60 40 m1"}`. The answer
+(`ok`, `error …`, a value) comes back as a `tello` event when the drone is done; `extra.state` is its state packet. The drive
+axes include `up` (`{"drive": {"up": 0.5}}` climbs, like the keys R / F). The page has a Python bar with real Python
+(Pyodide) and djitellopy (`?python=1`), two cameras (`view=robot`: the front camera, `view=bottom`: the black-and-white
+bottom camera), four mission pads on the floor, a height limit (`?maxh=2`, Setup) and 10 minutes of flight on a battery
+(`?flight=540` starts with 9 minutes used).
+
+**A real Tello EDU:** `python/tello_bridge.py` runs on a PC on the Tello's Wi-Fi and connects the page to the drone
+(WebSocket `ws://localhost:8771` ⇄ UDP 8889 / 8890 / 11111). The page then shows its battery, height and video, and with
+*Fly the real Tello* ticked every command of the page goes to the real drone as well.
+
+```bash
+pip install websockets av pillow
+python tello_bridge.py                       # the Tello at 192.168.10.1 (its own Wi-Fi)
+python tello_bridge.py --ip 192.168.1.42     # a Tello EDU that joined your network
+python tello_bridge.py --fake                # try the page without a drone
+```
 
 ### XGO-Lite3 / XGO-Mini2
 
