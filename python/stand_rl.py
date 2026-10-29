@@ -1,4 +1,4 @@
-"""Reinforcement learning tutorial 6: the OpenMANIPULATOR-X stands the tower blocks up in a row.
+"""Reinforcement learning tutorial 11: the OpenMANIPULATOR-X stands the tower blocks up in a row.
 
 Six tower-game blocks (75 × 25 × 15 mm) lie in a stack in front of the arm. The job: take them one by
 one and stand each one on its small end (15 × 25 mm) in a row, an arc round the arm, in front of it. The

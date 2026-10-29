@@ -1,4 +1,4 @@
-"""Reinforcement learning tutorial 2: drive the ε track as fast as possible, seeing only the camera.
+"""Reinforcement learning tutorial 7: drive the ε track as fast as possible, seeing only the camera.
 
 The robot (Ackermann car by default) gets nothing but the image of its own front camera: no
 position, no map, no speed. It learns to steer and to choose its speed with PPO and a convolutional

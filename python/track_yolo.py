@@ -1,4 +1,4 @@
-"""Tutorial 3: a YOLO segmentation model finds the path, reinforcement learning keeps the robot in the
+"""Tutorial 8: a YOLO segmentation model finds the path, reinforcement learning keeps the robot in the
 middle of it.
 
     camera image ──► YOLO11n-seg (Ultralytics) ──► mask of the path ──► PPO policy ──► steering

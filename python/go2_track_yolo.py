@@ -1,4 +1,4 @@
-"""The Unitree Go2 follows the path of the ε track: the YOLO model of tutorial 3 finds the path in the Go2's
+"""The Unitree Go2 follows the path of the ε track: the YOLO model of tutorial 8 finds the path in the Go2's
 camera image, a PPO policy steers the dog so it stays in the middle. First in the simulator, then on the
 real Go2 over WebRTC.
 
@@ -7,9 +7,9 @@ real Go2 over WebRTC.
 Put this file in the python/ folder of robotSimulatorAPI, next to botopia.py and track_yolo.py (it uses their
 functions), start the simulators with  node server.mjs --key rsk_xxxxxxxx  and run:
 
-    python go2_track_yolo.py check                 # does the YOLO model of tutorial 3 find the path in the Go2's camera?
+    python go2_track_yolo.py check                 # does the YOLO model of tutorial 8 find the path in the Go2's camera?
     python go2_track_yolo.py dataset               # Go2 camera images + labels   (~1 min)
-    python go2_track_yolo.py finetune              # retrain YOLO on them, from the tutorial-3 weights (~10 min CPU)
+    python go2_track_yolo.py finetune              # retrain YOLO on them, from the tutorial-8 weights (~10 min CPU)
     python go2_track_yolo.py rl                    # train the steering policy on the Go2   (~20 min)
     python go2_track_yolo.py rl --resume           # and on: the dog needs about 500 000 steps (~20 min)
     python go2_track_yolo.py eval                  # a lap with YOLO in the loop (and --masks sim)
@@ -35,7 +35,7 @@ from track_yolo import CAM_W, Car, YoloMasks, lap, make_dataset, make_vec_env, r
 ROBOT = "go2"
 # The Go2 simulator turns a drive command into velocities as the joystick of the app does, at speed
 # level "normal": forward 1.0 m/s and turning 2.2 rad/s at full stick (indexGo2.php, SPEED).
-# The car of tutorial 3 drives at 0.6; the dog reacts later (it needs a step or two before its body
+# The car of tutorial 8 drives at 0.6; the dog reacts later (it needs a step or two before its body
 # turns) and leaves the path in the sharp bends of the ε track at that speed, even with a controller that
 # knows its exact offset. At 0.4 it keeps up. So: forward 0.4 m/s, the policy steers −1 … 1, and on the
 # real dog that is Move(x = 0.4 m/s, z = steer · 2.2).
@@ -145,7 +145,7 @@ def main():
     ap.add_argument("--data", default="go2_data", help="dataset folder")
     ap.add_argument("--images", type=int, default=800, help="dataset: training images (+ 20 %% for validation)")
     ap.add_argument("--epochs", type=int, default=15, help="finetune: training epochs")
-    ap.add_argument("--yolo", default=None, help="YOLO weights (default: the fine-tuned ones if they exist, else tutorial 3's)")
+    ap.add_argument("--yolo", default=None, help="YOLO weights (default: the fine-tuned ones if they exist, else tutorial 8's)")
     ap.add_argument("--steps", type=int, default=250_000, help="rl: training steps (the dog needs about 500 000: then rl --resume)")
     ap.add_argument("--envs", type=int, default=8, help="rl: simulators at the same time")
     ap.add_argument("--policy", default="go2_path_ppo.zip")
@@ -157,7 +157,7 @@ def main():
     ap.add_argument("--seconds", type=float, default=60, help="real: walk at most this long")
     args = ap.parse_args()
     finetuned = "runs/segment/track_go2/weights/best.pt"
-    if args.yolo is None:                         # fine-tuned on the Go2 if you did, else the one of tutorial 3
+    if args.yolo is None:                         # fine-tuned on the Go2 if you did, else the one of tutorial 8
         args.yolo = finetuned if os.path.exists(finetuned) else TUTORIAL3_YOLO
 
     if args.command == "real":

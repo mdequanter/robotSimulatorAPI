@@ -101,7 +101,7 @@ env.close()
 ```
 
 Plug it into stable-baselines3 with `BotopiaGymEnv` (see [The Python client](#the-python-client)), or follow
-[tutorial 1](https://robotics.dinno.be/tutorial-rl-corridor.html).
+[tutorial 6](https://robotics.dinno.be/tutorial-rl-corridor.html).
 
 ---
 
@@ -116,13 +116,13 @@ Start the server first (`node server.mjs --key rsk_xxxxxxxx`, your API key from 
 | [`testAckermann.py`](python/testAckermann.py) | Ackermann car follows the track using its camera (hand-written) | `numpy pillow` |
 | [`botopia.py`](python/botopia.py) | run it for a demo: a random driver and four robots | – |
 | [`camera_view.py`](python/camera_view.py) | live window with the robot's camera; drive with the keys | `numpy opencv-python` |
-| [`corridor_rl.py`](python/corridor_rl.py) | [tutorial 1](https://robotics.dinno.be/tutorial-rl-corridor.html): PPO, the fastest lap through the corridor | `stable-baselines3 gymnasium pillow` |
-| [`track_vision_rl.py`](python/track_vision_rl.py) | [tutorial 2](https://robotics.dinno.be/tutorial-rl-vision.html): PPO with a CNN, drive the ε track from the camera | `stable-baselines3 gymnasium pillow` |
-| [`track_yolo.py`](python/track_yolo.py) | [tutorial 3](https://robotics.dinno.be/tutorial-yolo-track.html): YOLO segmentation finds the path, RL keeps the robot in the middle | `ultralytics stable-baselines3 gymnasium` |
-| [`sort_rl.py`](python/sort_rl.py) | [tutorial 4](https://robotics.dinno.be/tutorial-rl-sorting.html): Q-learning over skills, the quadruped sorts cubes | – |
-| [`arm_reach_her.py`](python/arm_reach_her.py) | [tutorial 5](https://robotics.dinno.be/tutorial-rl-arm-reach.html): SAC + Hindsight Experience Replay, the arm touches a point | `stable-baselines3 gymnasium` |
-| [`stand_rl.py`](python/stand_rl.py) | [tutorial 6](https://robotics.dinno.be/tutorial-rl-stand-row.html): the OpenMANIPULATOR-X stands blocks in a row | – |
-| [`go2_track_yolo.py`](python/go2_track_yolo.py) | [tutorial 12](https://robotics.dinno.be/tutorial-rl-go2-path.html): the Unitree Go2 follows the path with the YOLO model of tutorial 3 and a PPO policy, in the simulator and on the real Go2 | `ultralytics stable-baselines3 gymnasium` (`unitree_webrtc_connect` for the real dog) |
+| [`corridor_rl.py`](python/corridor_rl.py) | [tutorial 6](https://robotics.dinno.be/tutorial-rl-corridor.html): PPO, the fastest lap through the corridor | `stable-baselines3 gymnasium pillow` |
+| [`track_vision_rl.py`](python/track_vision_rl.py) | [tutorial 7](https://robotics.dinno.be/tutorial-rl-vision.html): PPO with a CNN, drive the ε track from the camera | `stable-baselines3 gymnasium pillow` |
+| [`track_yolo.py`](python/track_yolo.py) | [tutorial 8](https://robotics.dinno.be/tutorial-yolo-track.html): YOLO segmentation finds the path, RL keeps the robot in the middle | `ultralytics stable-baselines3 gymnasium` |
+| [`sort_rl.py`](python/sort_rl.py) | [tutorial 9](https://robotics.dinno.be/tutorial-rl-sorting.html): Q-learning over skills, the quadruped sorts cubes | – |
+| [`arm_reach_her.py`](python/arm_reach_her.py) | [tutorial 10](https://robotics.dinno.be/tutorial-rl-arm-reach.html): SAC + Hindsight Experience Replay, the arm touches a point | `stable-baselines3 gymnasium` |
+| [`stand_rl.py`](python/stand_rl.py) | [tutorial 11](https://robotics.dinno.be/tutorial-rl-stand-row.html): the OpenMANIPULATOR-X stands blocks in a row | – |
+| [`go2_track_yolo.py`](python/go2_track_yolo.py) | [tutorial 12](https://robotics.dinno.be/tutorial-rl-go2-path.html): the Unitree Go2 follows the path with the YOLO model of tutorial 8 and a PPO policy, in the simulator and on the real Go2 | `ultralytics stable-baselines3 gymnasium` (`unitree_webrtc_connect` for the real dog) |
 | [`xarm_robot.py`](python/xarm_robot.py), [`xarm_demo.py`](python/xarm_demo.py), [`xarm_bridge.py`](python/xarm_bridge.py) | one Python interface for the simulated and the real xArm, see [below](#the-real-xarm-6--7-one-python-interface-digital-twin-follow) | `xarm-python-sdk` (real arm) |
 
 The tutorial scripts take a command: `baseline`, `train`, `eval` or `watch` (see `--help`). Training
@@ -711,7 +711,7 @@ fingers in mm; closing on one of the 3 cm cubes stops at the cube and holds it (
 lie 30 cm in front of the robot after a reset; the arm reaches the floor when the robot lies down. A cube released above the top plate lands on the back and rides along (`onBack`).
 `extra.reach.tip` is the fingertip position in the arm frame (m; origin on top of the arm's base plate, x forward,
 y left, z up). An action `{ "reach": { "x", "y", "z" } }` (same frame) shows a red target ball there and adds
-`extra.reach.target` and `dist`; `{ "reach": null }` hides it (tutorial 5). Page option `camview: "arm"` puts the
+`extra.reach.target` and `dist`; `{ "reach": null }` hides it (tutorial 10). Page option `camview: "arm"` puts the
 3D view close to the arm.
 
 ### xArm 5 Lite, UFACTORY 850 and SES-PRO
@@ -820,7 +820,7 @@ they can be named and keeps the best, unmirrored fit (a least-squares homography
 where the camera is from it (for the blocks' height); kept in the browser, shift-click forgets it.
 It sees single blocks lying flat, not stacks.
 
-Standing row (tutorial 6, `python/stand_rl.py`): `{ "rowPick": dz }` takes the top block of the stack (gripper straight
+Standing row (tutorial 11, `python/stand_rl.py`): `{ "rowPick": dz }` takes the top block of the stack (gripper straight
 down), `{ "rowPlace": dz }` stands the held block upright on the next free spot of an arc 240 mm from the arm, 40° left to 5° right
 (the orange marks). dz is a height correction in mm on the page's own idea of the height; use `until: "idle"`.
 `extra.row`: `source` (blocks left on the stack), `standing`, `slots` [{x, y, block, mm, deg}] and `last` (the last

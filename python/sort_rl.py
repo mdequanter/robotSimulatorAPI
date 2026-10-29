@@ -1,4 +1,4 @@
-"""Reinforcement learning tutorial 4: a sorting job for the quadruped with the OpenMANIPULATOR-X arm.
+"""Reinforcement learning tutorial 9: a sorting job for the quadruped with the OpenMANIPULATOR-X arm.
 
 The robot starts in the door lane (lane 11) with four cubes in front of it. The job: put the cubes on
 its back, open the door, walk through, close the door behind it, walk to the table and sort the

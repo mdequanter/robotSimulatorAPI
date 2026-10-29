@@ -1,4 +1,4 @@
-"""Reinforcement learning tutorial 5: the arm learns to touch a point (SAC + Hindsight Experience Replay).
+"""Reinforcement learning tutorial 10: the arm learns to touch a point (SAC + Hindsight Experience Replay).
 
 The quadruped's OpenMANIPULATOR-X gets a red ball somewhere in front of / around it and must touch it
 with its fingertips (within 1.5 cm). No inverse kinematics: the network moves the four arm joints
@@ -11,7 +11,7 @@ Uses the Botopia Node API (start it first: node server.mjs) and stable-baselines
 
     python arm_reach_her.py train                     # SAC + HER (60 000 steps, ~20 min), saves reach_sac_her.zip
     python arm_reach_her.py train --algo sac          # the same without HER, to compare
-    python arm_reach_her.py train --algo ppo          # PPO (tutorials 1-3), to compare
+    python arm_reach_her.py train --algo ppo          # PPO (tutorials 6-8), to compare
     python arm_reach_her.py eval                      # success rate on 100 new points
     python arm_reach_her.py watch                     # touch one point after the other (server with --show)
 
