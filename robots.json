@@ -17163,7 +17163,7 @@
    "title": "HIMOTO Drift X",
    "text": "1/18 4WD drift car made self-driving with a XIAO ESP32S3 Sense: camera over Wi-Fi, commands A and T, drift tyres that slide; the sketch to download",
    "category": "Wheeled robots",
-   "image": "img/driftx.jpg",
+   "image": "img/driftx.jpg?v=2",
    "interfaces": [
     {
      "key": "serial",
