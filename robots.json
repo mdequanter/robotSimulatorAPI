@@ -17187,7 +17187,7 @@
     },
     {
      "id": "motor",
-     "name": "RC370 motor (H-bridge D1 / D2)",
+     "name": "RC370 motor (L298N IN1 / IN2)",
      "type": "dc",
      "overridable": false,
      "range": [

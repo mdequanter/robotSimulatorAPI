@@ -815,7 +815,7 @@ drives the real OpenCR over USB (Web Serial, 57600 baud) when *Wheels follow the
 ### HIMOTO Drift X
 
 HIMOTO Drift X (`driftx`, `indexDriftX.php`, [documentation](https://robotics.dinno.be/docs-himoto-drift-x.html)): a 1/18 4WD
-drift car made self-driving with a Seeed XIAO ESP32S3 Sense (camera, Wi-Fi) and an H-bridge. A simulated XIAO takes the lines of
+drift car made self-driving with a Seeed XIAO ESP32S3 Sense (camera, Wi-Fi) and an L298N H-bridge. A simulated XIAO takes the lines of
 `xiao_drift.ino` and answers as the sketch does: `{"serial": "A,120"}` (steering 60–120: 90 straight, 120 full left, 60 full right),
 `{"serial": "T,20"}` (throttle −100…100 %), `C`, `STOP` (brake), `S`, `IP`, `OC,<n>` (trim), `MAX,<n>` (throttle limit), `W,<ms>`
 (watchdog, 0 = off). The **watchdog** stops the motor 1 s after the last line: send `T` again and again, or `W,0` first. `drive`
