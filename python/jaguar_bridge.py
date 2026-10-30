@@ -136,7 +136,10 @@ class Bridge:
                         self.to_page["real"].append(line)
                 self.robot_state = "connection closed by the robot"
             except (OSError, asyncio.TimeoutError) as e:
-                self.robot_state = f"not reachable ({e.__class__.__name__}): PC on the DriJaguar Wi-Fi? robot on?"
+                why = str(e) or e.__class__.__name__
+                self.robot_state = (f"not reachable: {self.args.ip}:{self.args.port}: {why}. Is this PC on the DriJaguar Wi-Fi "
+                                    f"with IP 192.168.0.104, and is the robot on?")
+                print(f"Robot: {self.robot_state}")
             self.robot = None
             await self.status()
             await asyncio.sleep(2)
