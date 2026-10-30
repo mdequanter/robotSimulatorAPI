@@ -21,6 +21,7 @@ pip install ultralytics stable-baselines3 gymnasium
 Tutorial: https://robotics.dinno.be/tutorial-yolo-track.html
 """
 import argparse
+import base64
 import io
 import os
 import sys
@@ -216,9 +217,25 @@ def make_vec_env(n, robot, url, max_steps=300, reward="squared"):
 
 
 # ---------- 4. A lap ----------
-def lap(car, steer_fn, masks="sim", yolo=None, max_time=150, frames=None, realtime=False, laps=1):
+def overlay(img, mask, masks):
+    """For the page (action "show"): the camera image with the mask the policy steers by over it in green
+    (masks "yolo"), or that mask alone, enlarged (masks "sim": there is no camera image then). Base64 JPEG."""
+    m = Image.fromarray(mask).resize((CAM_W, CAM_W * 3 // 4), Image.BILINEAR if masks == "yolo" else Image.NEAREST)
+    if masks == "yolo":
+        cam = Image.open(io.BytesIO(img)).convert("RGB").resize(m.size)
+        green = Image.blend(cam, Image.new("RGB", m.size, (19, 224, 132)), 0.55)
+        pic = Image.composite(green, cam, m.point(lambda v: 255 if v > 127 else 0))
+    else:
+        pic = m.convert("RGB")
+    buf = io.BytesIO()
+    pic.save(buf, "JPEG", quality=80)
+    return base64.b64encode(buf.getvalue()).decode()
+
+
+def lap(car, steer_fn, masks="sim", yolo=None, max_time=150, frames=None, realtime=False, laps=1, show=False):
     """One lap from the start line (or `laps` rounds). masks "sim": the policy gets the simulator's mask;
-    "yolo": the camera image goes through YOLO first. Reports how far from the middle it drove."""
+    "yolo": the camera image goes through YOLO first. Reports how far from the middle it drove.
+    show: the page shows the camera image with that mask (in the --show window of the API)."""
     view = "mask" if masks == "sim" else "robot"
     img, obs = car.reset(start=0.0, view=view)
     offs, n_off, was_off, t, ms = [], 0, False, 0.0, []
@@ -226,7 +243,10 @@ def lap(car, steer_fn, masks="sim", yolo=None, max_time=150, frames=None, realti
         t0 = time.time()
         mask = sim_mask(img) if masks == "sim" else yolo(img)
         ms.append(time.time() - t0)
-        r = car.api.step(car.id, car.command(steer_fn(mask, obs)), dt=car.dt,
+        action = car.command(steer_fn(mask, obs))
+        if show:
+            action["show"] = {"image": overlay(img, mask, masks), "label": f"{masks.upper()} mask"}
+        r = car.api.step(car.id, action, dt=car.dt,
                          image={"view": view, "width": MW if view == "mask" else CAM_W})
         img = r["image"]
         _, off, obs = car.result(r)
@@ -335,7 +355,7 @@ def main():
     else:
         frames = [] if args.gif else None
         report(f"PPO steering, masks from {args.masks.upper()}",
-               lap(car, steer, masks=args.masks, yolo=yolo, frames=frames, realtime=not args.gif))
+               lap(car, steer, masks=args.masks, yolo=yolo, frames=frames, realtime=not args.gif, show=True))
         if args.gif:
             pics = []
             for scene, mask in frames[::2]:

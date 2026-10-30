@@ -278,7 +278,7 @@ def main():
         car = Car(api, ROBOT)
     max_time = laps * TRACK_LENGTH / (THROTTLE * V_NORMAL) * 1.5      # 1.5 × the time it needs at its speed
     r = lap(car, Steering(args.policy), masks=args.masks, yolo=yolo, realtime=args.command == "watch",
-            laps=laps, max_time=max_time)
+            laps=laps, max_time=max_time, show=args.command == "watch")
     report(f"Go2, PPO steering, masks from {args.masks.upper()}", r)
     car.close()
 
