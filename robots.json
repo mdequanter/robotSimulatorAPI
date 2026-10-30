@@ -53,6 +53,24 @@
    "label": "12. ε track with small hills (a loop)"
   }
  ],
+ "worlds": [
+  {
+   "id": "course",
+   "label": "Obstacle course"
+  },
+  {
+   "id": "botopia",
+   "label": "Kyosho Mini-Z 50x50 Race track"
+  },
+  {
+   "id": "corridor",
+   "label": "Corridor Environment"
+  },
+  {
+   "id": "park",
+   "label": "Park with the ε track"
+  }
+ ],
  "robots": [
   {
    "robot": "wheeled",
@@ -103,6 +121,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "tiltDeg": 2,
@@ -171,6 +190,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "leanDeg": 1,
@@ -228,6 +248,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "steerDeg": 0
@@ -301,6 +322,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {}
   },
@@ -362,6 +384,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {}
   },
@@ -473,6 +496,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {}
   },
@@ -523,6 +547,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "chi": 1.77
@@ -595,6 +620,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "chi": 1.69
@@ -647,6 +673,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "radius": null
@@ -739,6 +766,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {}
   },
@@ -789,6 +817,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {}
   },
@@ -1002,6 +1031,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "bodyHeight": 0.333,
@@ -1212,6 +1242,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "bodyHeight": 0.122,
@@ -1366,6 +1397,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "bodyHeight": 0.385,
@@ -1462,6 +1494,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "tiltDeg": 1,
@@ -1621,6 +1654,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "comInside": true,
@@ -1722,6 +1756,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "gait": null,
@@ -1782,6 +1817,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [],
    "telemetry": {
     "bumpers": {
@@ -1962,7 +1998,9 @@
     "blocked",
     "stall",
     "goal",
-    "webrtc"
+    "webrtc",
+    "waypoint",
+    "route_end"
    ],
    "skills": [],
    "views": [
@@ -1970,6 +2008,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Posture",
@@ -2651,7 +2690,28 @@
     },
     "motionMode": "mcf",
     "avoid": false,
-    "webrtc": []
+    "webrtc": [],
+    "real": {
+     "connected": false,
+     "target": "sim",
+     "ip": null,
+     "state": null,
+     "last": []
+    },
+    "gps": {
+     "lat": null,
+     "lon": null,
+     "heading": null,
+     "speed": 0,
+     "distance": 0,
+     "total": 0,
+     "remaining": 0,
+     "waypoint": -1,
+     "next": null,
+     "toNext": null,
+     "waypoints": 0,
+     "state": "idle"
+    }
    }
   },
   {
@@ -2919,6 +2979,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "FSM state (7101)",
@@ -3459,6 +3520,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Drive · /cmd_vel",
@@ -3901,10 +3963,10 @@
       "range_min": 0.15,
       "range_max": 12,
       "ranges": [
-       10.385,
-       10.24,
-       10.267,
-       10.281,
+       10.201,
+       10.363,
+       10.25,
+       10.315,
        "…"
       ]
      },
@@ -4134,6 +4196,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Posture",
@@ -4920,6 +4983,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "States in the app (7101)",
@@ -5635,6 +5699,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Drive · /cmd_vel",
@@ -5874,7 +5939,7 @@
        null,
        null,
        null,
-       10.398,
+       10.404,
        "…"
       ]
      },
@@ -5986,6 +6051,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Drive · /cmd_vel",
@@ -6409,6 +6475,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Gaits (keep going until the next token)",
@@ -6927,6 +6994,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Drive · /cmd_vel",
@@ -7102,10 +7170,10 @@
       "range_min": 0.05,
       "range_max": 30,
       "ranges": [
-       10.406,
-       10.414,
-       10.408,
-       10.403,
+       10.42,
+       10.407,
+       10.401,
+       10.417,
        "…"
       ]
      },
@@ -7191,6 +7259,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Drive · /cmd_vel",
@@ -7366,10 +7435,10 @@
       "range_min": 0.05,
       "range_max": 30,
       "ranges": [
-       10.394,
-       10.401,
-       10.403,
-       10.4,
+       10.409,
+       10.396,
+       10.421,
+       10.396,
        "…"
       ]
      },
@@ -7438,6 +7507,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Drive · /cmd_vel",
@@ -7899,10 +7969,10 @@
       "range_min": 0.15,
       "range_max": 12,
       "ranges": [
-       10.258,
-       10.311,
-       10.196,
-       10.366,
+       10.359,
+       10.209,
+       10.342,
+       10.301,
        "…"
       ]
      }
@@ -7987,6 +8057,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Robot()",
@@ -8179,6 +8250,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "NvidiaRacecar()",
@@ -8400,6 +8472,7 @@
     "depthcolor",
     "external"
    ],
+   "worlds": false,
    "commands": [],
    "telemetry": {
     "tcp": {
@@ -8409,42 +8482,50 @@
      "yawDeg": 0
     },
     "holding": null,
+    "below": {
+     "depth_mm": 493,
+     "gap_mm": 400,
+     "height_mm": 0,
+     "block": null,
+     "u": 309,
+     "v": 222
+    },
     "busy": false,
     "blocks": [
      {
       "id": "red1",
       "color": "red",
-      "x": -0.386,
-      "y": 0.364,
+      "x": -0.205,
+      "y": -0.29,
       "z": 0.02,
-      "yawDeg": 34.3,
+      "yawDeg": 127.6,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": 0.147,
-      "y": 0.22,
+      "x": -0.097,
+      "y": 0.317,
       "z": 0.02,
-      "yawDeg": 32.7,
+      "yawDeg": 18.5,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": 0.366,
-      "y": 0.45,
+      "x": 0.499,
+      "y": -0.131,
       "z": 0.02,
-      "yawDeg": 42.9,
+      "yawDeg": 51.6,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": 0.406,
-      "y": 0.379,
+      "x": 0.118,
+      "y": -0.297,
       "z": 0.02,
-      "yawDeg": 92.4,
+      "yawDeg": 101.1,
       "held": false
      },
      "…"
@@ -8548,6 +8629,7 @@
     "depthcolor",
     "external"
    ],
+   "worlds": false,
    "commands": [],
    "telemetry": {
     "tcp": {
@@ -8557,42 +8639,50 @@
      "yawDeg": 0
     },
     "holding": null,
+    "below": {
+     "depth_mm": 493,
+     "gap_mm": 400,
+     "height_mm": 0,
+     "block": null,
+     "u": 309,
+     "v": 222
+    },
     "busy": false,
     "blocks": [
      {
       "id": "red1",
       "color": "red",
-      "x": -0.304,
-      "y": -0.423,
+      "x": 0.524,
+      "y": 0.156,
       "z": 0.02,
-      "yawDeg": 127.2,
+      "yawDeg": 106.3,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": 0.147,
-      "y": -0.444,
+      "x": 0.13,
+      "y": -0.262,
       "z": 0.02,
-      "yawDeg": 22.3,
+      "yawDeg": 16.8,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": -0.328,
-      "y": 0.052,
+      "x": -0.352,
+      "y": 0.362,
       "z": 0.02,
-      "yawDeg": 94.2,
+      "yawDeg": 166.9,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": 0.277,
-      "y": -0.285,
+      "x": 0.503,
+      "y": -0.064,
       "z": 0.02,
-      "yawDeg": 178.5,
+      "yawDeg": 12.5,
       "held": false
      },
      "…"
@@ -8690,6 +8780,7 @@
     "mask",
     "external"
    ],
+   "worlds": false,
    "commands": [
     {
      "group": "More actions",
@@ -8765,37 +8856,37 @@
      {
       "id": "red1",
       "color": "red",
-      "x": -0.092,
-      "y": -0.352,
+      "x": 0.03,
+      "y": 0.408,
       "z": 0.02,
-      "yawDeg": 95,
+      "yawDeg": 26,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": -0.196,
-      "y": 0.409,
+      "x": -0.355,
+      "y": -0.205,
       "z": 0.02,
-      "yawDeg": 119.9,
+      "yawDeg": 26,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": 0.547,
-      "y": -0.023,
+      "x": -0.462,
+      "y": -0.281,
       "z": 0.02,
-      "yawDeg": 23.8,
+      "yawDeg": 126.9,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": 0.183,
-      "y": -0.215,
+      "x": 0.394,
+      "y": 0.097,
       "z": 0.02,
-      "yawDeg": 8.4,
+      "yawDeg": 57.5,
       "held": false
      },
      "…"
@@ -8986,6 +9077,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Move (steps: 1 = 1 cm/s, turn in °/s)",
@@ -9679,6 +9771,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Move (steps: 1 = 1 cm/s, turn in °/s)",
@@ -10342,6 +10435,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Posture",
@@ -10939,6 +11033,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Posture",
@@ -11633,6 +11728,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Posture",
@@ -12345,6 +12441,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "FSM (SetFsmId, 7101)",
@@ -13152,6 +13249,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Mode (ChangeMode)",
@@ -13853,6 +13951,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Modes",
@@ -14205,6 +14304,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Modes",
@@ -14501,6 +14601,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Drive · /cmd_vel (TwistStamped)",
@@ -14833,7 +14934,7 @@
        null,
        null,
        null,
-       10.52,
+       10.481,
        "…"
       ]
      }
@@ -14917,6 +15018,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Drive · /robot/cmd_vel",
@@ -15086,10 +15188,10 @@
       "range_min": 0.06,
       "range_max": 20,
       "ranges": [
-       13.116,
-       12.93,
-       12.565,
-       12.47,
+       13.106,
+       12.934,
+       12.595,
+       12.447,
        "…"
       ]
      },
@@ -15270,6 +15372,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Base · cmd_vel (stops 2 s after the last message)",
@@ -15618,9 +15721,9 @@
       "range_max": 30,
       "ranges": [
        null,
-       11.044,
+       11.053,
        null,
-       11.167,
+       11.172,
        "…"
       ]
      },
@@ -15633,10 +15736,10 @@
       "range_min": 0.1,
       "range_max": 30,
       "ranges": [
-       6.526,
-       6.53,
-       6.609,
-       6.615,
+       6.548,
+       6.528,
+       6.627,
+       6.61,
        "…"
       ]
      },
@@ -15898,6 +16001,7 @@
     "robot",
     "mask"
    ],
+   "worlds": true,
    "commands": [
     {
      "group": "Base · cmd_vel (stops 2 s after the last message)",
@@ -16245,10 +16349,10 @@
       "range_min": 0.1,
       "range_max": 30,
       "ranges": [
-       0.578,
-       6.524,
-       6.537,
-       7.275,
+       0.582,
+       6.528,
+       6.527,
+       7.283,
        "…"
       ]
      },
@@ -16263,8 +16367,8 @@
       "ranges": [
        9.471,
        9.454,
-       9.585,
-       9.574,
+       9.562,
+       9.584,
        "…"
       ]
      },
@@ -16449,6 +16553,7 @@
     "depthcolor",
     "external"
    ],
+   "worlds": false,
    "commands": [],
    "telemetry": {
     "tcp": {
@@ -16458,42 +16563,50 @@
      "yawDeg": 0
     },
     "holding": null,
+    "below": {
+     "depth_mm": 493,
+     "gap_mm": 400,
+     "height_mm": 0,
+     "block": null,
+     "u": 309,
+     "v": 222
+    },
     "busy": false,
     "blocks": [
      {
       "id": "red1",
       "color": "red",
-      "x": 0.213,
-      "y": -0.392,
+      "x": 0.5,
+      "y": 0.147,
       "z": 0.02,
-      "yawDeg": 126.1,
+      "yawDeg": 31,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": -0.372,
-      "y": -0.125,
+      "x": -0.207,
+      "y": -0.41,
       "z": 0.02,
-      "yawDeg": 50.7,
+      "yawDeg": 49.1,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": 0.087,
-      "y": -0.378,
+      "x": 0.323,
+      "y": -0.223,
       "z": 0.02,
-      "yawDeg": 91.5,
+      "yawDeg": 134.6,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": -0.21,
-      "y": -0.39,
+      "x": 0.381,
+      "y": -0.168,
       "z": 0.02,
-      "yawDeg": 87,
+      "yawDeg": 121.6,
       "held": false
      },
      "…"
@@ -16607,6 +16720,7 @@
     "depthcolor",
     "external"
    ],
+   "worlds": false,
    "commands": [],
    "telemetry": {
     "tcp": {
@@ -16616,42 +16730,50 @@
      "yawDeg": 0
     },
     "holding": null,
+    "below": {
+     "depth_mm": 493,
+     "gap_mm": 400,
+     "height_mm": 0,
+     "block": null,
+     "u": 309,
+     "v": 222
+    },
     "busy": false,
     "blocks": [
      {
       "id": "red1",
       "color": "red",
-      "x": -0.37,
-      "y": 0.142,
+      "x": 0.224,
+      "y": -0.172,
       "z": 0.02,
-      "yawDeg": 6,
+      "yawDeg": 149.6,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": -0.452,
-      "y": -0.313,
+      "x": 0.24,
+      "y": -0.523,
       "z": 0.02,
-      "yawDeg": 134.3,
+      "yawDeg": 50,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": 0.169,
-      "y": -0.307,
+      "x": -0.078,
+      "y": 0.538,
       "z": 0.02,
-      "yawDeg": 53.1,
+      "yawDeg": 58.7,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": -0.509,
-      "y": 0.266,
+      "x": -0.062,
+      "y": -0.378,
       "z": 0.02,
-      "yawDeg": 94.4,
+      "yawDeg": 141.3,
       "held": false
      },
      "…"
@@ -16734,6 +16856,7 @@
     "external",
     "real"
    ],
+   "worlds": false,
    "commands": [],
    "telemetry": {
     "tcp": {
@@ -16745,6 +16868,13 @@
     },
     "holding": null,
     "busy": false,
+    "teach": {
+     "poses": 0,
+     "playing": false,
+     "pose": null,
+     "of": null,
+     "last": null
+    },
     "row": {
      "source": 6,
      "standing": 0,
@@ -16769,7 +16899,7 @@
       "color": "wood",
       "x": 0.167,
       "y": 0,
-      "z": 0.083,
+      "z": 0.068,
       "yawDeg": 0,
       "held": false
      },
@@ -16778,7 +16908,7 @@
       "color": "wood",
       "x": 0.167,
       "y": 0,
-      "z": 0.037,
+      "z": 0.007,
       "yawDeg": 0,
       "held": false
      },
@@ -16796,7 +16926,7 @@
       "color": "wood",
       "x": 0.167,
       "y": 0,
-      "z": 0.007,
+      "z": 0.052,
       "yawDeg": 0,
       "held": false
      },

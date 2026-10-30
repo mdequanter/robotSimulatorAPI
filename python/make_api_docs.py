@@ -76,12 +76,14 @@ def main():
     ap.add_argument("--out", default=os.path.join(HERE, "robots.json"))
     ap.add_argument("--site", default=ROOT, help="the simulator site folder (index.php, img/)")
     a = ap.parse_args()
+    if hasattr(sys.stdout, "reconfigure"):              # a Windows console (cp1252) can't print → or ε
+        sys.stdout.reconfigure(errors="replace")
     ROOT = a.site
     if not os.path.exists(os.path.join(ROOT, "index.php")):
         sys.exit(f"No simulator site in {ROOT}: pass --site path/to/robotSimulator")
     api = BotopiaAPI(a.url)
     card = cards()
-    robots, lanes = [], None
+    robots, lanes, worlds = [], None, None
     for r in api.robots():
         rid, page = r["robot"], r["page"]
         try:
@@ -92,6 +94,7 @@ def main():
         info, obs = e["info"], e["obs"]
         api.close(e["id"])
         lanes = lanes or info.get("lanes")
+        worlds = worlds or info.get("worlds")
         base = page.split("?")[0]
         title, text, cat, img = card.get(page) or card.get(base) or (info.get("name", rid), "", "Other", "")
         own = f"img/{rid}.jpg"                           # a variant with its own picture
@@ -103,12 +106,12 @@ def main():
             "robot": rid, "page": page, "name": info.get("name", rid), "title": title, "text": text, "category": cat, "image": img,
             "interfaces": [{"key": k, "family": FAMILY[k]} for k in keys if k in FAMILY],
             "drive": info.get("drive", []), "motors": info.get("motors", []), "events": info.get("events", []),
-            "skills": info.get("skills", []), "views": info.get("views", []),
+            "skills": info.get("skills", []), "views": info.get("views", []), "worlds": "worlds" in info,
             "commands": cmds + [{"group": "More actions", "label": l, "action": x} for l, x in EXTRA.get(rid, [])],
             "telemetry": short(obs.get("extra", {})),
         })
         print(f"{rid:12s} {len(cmds):3d} commands  {', '.join(keys) or '-'}")
-    json.dump({"lanes": lanes, "robots": robots}, open(a.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    json.dump({"lanes": lanes, "worlds": worlds, "robots": robots}, open(a.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"{len(robots)} robots → {a.out}")
 
 

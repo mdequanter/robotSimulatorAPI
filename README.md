@@ -492,7 +492,11 @@ lane `track` works there as on the course, so `track_yolo.py` and `go2_track_yol
 
 ```python
 env = api.create("go2", "track", options={"world": "park"})
+api.reset(env["id"], world="corridor")        # a reset can change it too (and back: world="course")
 ```
+
+Every robot that drives or walks has them (`info["worlds"]`, `obs["world"]`); the robot arms stay at their
+table. In the website API the same reset is `{"reset": {"world": "park", "lane": "track"}}`.
 
 URL switches: `?env=1` lock-step (used by the Node API: the page stands still between steps),
 `?remote=1` remote mode (PHP API), `?lane=step6` start in a lane, `?auto=corridor` autopilot through

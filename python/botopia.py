@@ -72,11 +72,14 @@ class BotopiaAPI:
         parameters of the simulator page, e.g. {"vmax": 1.8} for the Ackermann's top speed."""
         return self.http.request("POST", "/api/envs", {"robot": robot, "lane": lane, "seed": seed, "options": options or {}})
 
-    def reset(self, env_id, lane=None, seed=None, start=None, offset=0.0, yaw=0.0, image=None):
+    def reset(self, env_id, lane=None, seed=None, start=None, offset=0.0, yaw=0.0, image=None, world=None):
         """Back to the start of a lane. On the ε track: start = metres along it, offset = metres beside
         the centre line (+ = left), yaw = degrees turned away from the track direction. image: e.g.
-        {"view": "robot", "width": 64} also returns that image, then the answer is (obs, image bytes)."""
+        {"view": "robot", "width": 64} also returns that image, then the answer is (obs, image bytes).
+        world: first to another environment ("course", "park", …: info["worlds"]), the robot starts there."""
         body = {"seed": seed}
+        if world is not None:
+            body["world"] = world
         if lane is not None:
             body["lane"] = lane
         if start is not None:

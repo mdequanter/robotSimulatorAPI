@@ -317,7 +317,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, Buffer.from(data.split(',')[1], 'base64'), data.startsWith('data:image/png') ? 'image/png' : 'image/jpeg');
     }
     if (req.method === 'POST' && action === 'reset') {
-      const { image = null, ...body } = await readJson(req);      // body: { lane, seed, start }
+      const { image = null, ...body } = await readJson(req);      // body: { lane, seed, start, offset, yaw, world }
       env.steps = 0;
       const r = await env.tab.evaluate(`(() => ({ obs: window.botopiaEnv.reset(${JSON.stringify(body)}), image: ${imageExpr(image)} }))()`);
       env.lastObs = r.obs;
