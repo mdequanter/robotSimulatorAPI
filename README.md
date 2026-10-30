@@ -495,6 +495,13 @@ The simulator only sends pictures while someone asks for them (a `frame` or `mjp
 seconds): its badge then says **camera 10 fps**. The first `frame` request answers 404 *no picture yet*;
 ask again a moment later. Keep the simulator window visible: browsers pause hidden tabs.
 
+Limits, so the web server keeps up: at most **5 cameras stream at the same time**, of all sessions and users
+together, and **each camera has at most 2 receivers** at the same time. More is refused: `503 too many camera
+streams at once`, or `429 this camera already has 2 receivers`. A receiver is one program or browser polling
+`?r=frame` (the same address and browser or program counts once) or one open `?r=mjpeg` connection; it frees its
+place 5 seconds after its last request (an MJPEG connection: as soon as it closes). `RemoteSession.frame()`
+raises a `RuntimeError` with that message.
+
 ```python
 import cv2, numpy as np
 from botopia import RemoteSession

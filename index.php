@@ -19,7 +19,9 @@
 //           GET  ?r=mjpeg&session=ID&fps=10&width=640                  → the robot camera as an MJPEG stream
 //
 // The camera: the page only sends pictures while someone asks for them (frame or mjpeg in the last
-// STREAM_SECONDS), at the fps and width asked (at most 30 fps and 640 × 480).
+// STREAM_SECONDS), at the fps and width asked (at most 30 fps and 640 × 480). At most MAX_STREAMS cameras
+// send at once, of all sessions together, each to at most MAX_VIEWERS receivers: more is refused with
+// 503 (streams) or 429 (receivers), so the web server does not drown in pictures.
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -36,6 +38,8 @@ const ACTIVE_SECONDS = 120;       // a session counts as active this long after 
 const KEEP_SECONDS = 86400;       // session files older than this are removed
 const STREAM_SECONDS = 5;         // the page sends camera pictures this long after the last request for one
 const MJPEG_SECONDS = 600;        // one MJPEG connection lasts at most this long (then connect again)
+const MAX_STREAMS = 5;            // cameras sending at the same time, all sessions together
+const MAX_VIEWERS = 2;            // receivers of one camera at the same time
 
 function reply($code, $data) {
     http_response_code($code);
@@ -110,13 +114,66 @@ function needSession($session) { if ($session === '') reply(400, ['error' => 'mi
 function streamAsk() {
     return ['fps' => max(1, min(30, (int)($_GET['fps'] ?? 10))), 'width' => max(160, min(640, (int)($_GET['width'] ?? 640)))];
 }
-function streamWant($session, $ask) {
-    @file_put_contents(DATA_DIR . '/' . $session . '.want', json_encode($ask + ['t' => microtime(true)]), LOCK_EX);
+// Who watches which camera: one file for all sessions, { session: { viewer: { t, fps, width } } }, read and
+// written under a lock so the limits hold when requests come in at the same time. A viewer counts for
+// STREAM_SECONDS after its last request: a poller of ?r=frame (by address and browser / program), or one
+// open ?r=mjpeg connection.
+const STREAMS_FILE = DATA_DIR . '/streams.dat';
+function streamsLive($all) {
+    $now = microtime(true);
+    foreach ($all as $code => $viewers) {
+        $all[$code] = array_filter($viewers, fn($v) => ($v['t'] ?? 0) > $now - STREAM_SECONDS);
+        if (!$all[$code]) unset($all[$code]);
+    }
+    return $all;
 }
+// Join (or stay with) a camera: null, or [HTTP status, error] when a limit is reached.
+function streamJoin($session, $viewer, $ask) {
+    $h = fopen(STREAMS_FILE, 'c+');
+    if (!$h) return [500, 'cannot open the stream store'];
+    flock($h, LOCK_EX);
+    $all = streamsLive(json_decode(stream_get_contents($h), true) ?: []);
+    $err = null;
+    if (!isset($all[$session]) && count($all) >= MAX_STREAMS) {
+        $err = [503, 'too many camera streams at once (' . MAX_STREAMS . ' on this server): try again in a minute'];
+    } elseif (isset($all[$session]) && !isset($all[$session][$viewer]) && count($all[$session]) >= MAX_VIEWERS) {
+        $err = [429, 'this camera already has ' . MAX_VIEWERS . ' receivers: close one, or try again later'];
+    } else {
+        $all[$session][$viewer] = $ask + ['t' => microtime(true)];
+    }
+    ftruncate($h, 0);
+    rewind($h);
+    fwrite($h, json_encode($all));
+    flock($h, LOCK_UN);
+    fclose($h);
+    return $err;
+}
+function streamLeave($session, $viewer) {
+    $h = fopen(STREAMS_FILE, 'c+');
+    if (!$h) return;
+    flock($h, LOCK_EX);
+    $all = json_decode(stream_get_contents($h), true) ?: [];
+    unset($all[$session][$viewer]);
+    $all = streamsLive($all);
+    ftruncate($h, 0);
+    rewind($h);
+    fwrite($h, json_encode($all));
+    flock($h, LOCK_UN);
+    fclose($h);
+}
+// What the page should send: the most any of its receivers asks for, or null when nobody watches.
 function streamWanted($session) {
-    $w = @json_decode((string)@file_get_contents(DATA_DIR . '/' . $session . '.want'), true);
-    return is_array($w) && ($w['t'] ?? 0) > microtime(true) - STREAM_SECONDS ? ['fps' => $w['fps'], 'width' => $w['width']] : null;
+    if (!is_file(STREAMS_FILE)) return null;
+    $h = fopen(STREAMS_FILE, 'r');
+    flock($h, LOCK_SH);
+    $all = streamsLive(json_decode(stream_get_contents($h), true) ?: []);
+    flock($h, LOCK_UN);
+    fclose($h);
+    if (empty($all[$session])) return null;
+    return ['fps' => max(array_column($all[$session], 'fps')), 'width' => max(array_column($all[$session], 'width'))];
 }
+// A poller of ?r=frame: the same address and browser / program is the same receiver.
+function frameViewer() { return 'f' . substr(md5(($_SERVER['REMOTE_ADDR'] ?? '') . '|' . ($_SERVER['HTTP_USER_AGENT'] ?? '')), 0, 12); }
 function framePath($session) { return DATA_DIR . '/' . $session . '.jpg'; }
 
 switch ($route) {
@@ -128,7 +185,7 @@ switch ($route) {
     case 'register':
         needSession($session);
         $info = body();
-        foreach (glob(DATA_DIR . '/*.{json,jpg,want}', GLOB_BRACE) as $old) {          // tidy up old sessions
+        foreach (glob(DATA_DIR . '/*.{json,jpg}', GLOB_BRACE) as $old) {          // tidy up old sessions
             if (filemtime($old) < time() - KEEP_SECONDS) @unlink($old);
         }
         reply(200, withSession($file, function ($s) use ($session, $info) {
@@ -170,11 +227,12 @@ switch ($route) {
             $jpeg = file_get_contents('php://input', false, null, 0, MAX_BODY + 1);
             if ($jpeg === false || strlen($jpeg) > MAX_BODY) reply(413, ['error' => 'picture too large']);
             if (strncmp($jpeg, "\xFF\xD8", 2) !== 0) reply(400, ['error' => 'send a JPEG']);
+            if (!streamWanted($session)) reply(409, ['error' => 'nobody receives this camera now']);   // only the streams that count
             $tmp = framePath($session) . '.' . getmypid() . '.tmp';
             if (@file_put_contents($tmp, $jpeg) === false || !@rename($tmp, framePath($session))) { @unlink($tmp); reply(500, ['error' => 'cannot store the picture']); }
             reply(200, ['ok' => true]);
         }
-        streamWant($session, streamAsk());
+        if ($err = streamJoin($session, frameViewer(), streamAsk())) reply($err[0], ['error' => $err[1]]);
         $jpeg = @file_get_contents(framePath($session));
         if (!$jpeg) reply(404, ['error' => 'no picture yet: the simulator sends its camera once someone asks; try again in a second (and keep its window visible)']);
         header('Content-Type: image/jpeg');
@@ -190,6 +248,9 @@ switch ($route) {
         needSession($session);
         if (!is_file($file)) reply(404, ['error' => 'unknown session']);
         $ask = streamAsk();
+        $viewer = 'm' . bin2hex(random_bytes(6));               // this connection
+        if ($err = streamJoin($session, $viewer, $ask)) reply($err[0], ['error' => $err[1]]);
+        register_shutdown_function(fn() => streamLeave($session, $viewer));   // also when PHP stops at a closed connection
         set_time_limit(MJPEG_SECONDS + 30);
         ignore_user_abort(false);
         header('Content-Type: multipart/x-mixed-replace; boundary=frame');
@@ -197,10 +258,11 @@ switch ($route) {
         while (ob_get_level()) ob_end_flush();
         $last = null;
         $sentAt = 0;
+        $joined = microtime(true);
         $end = microtime(true) + MJPEG_SECONDS;
         while (!connection_aborted() && microtime(true) < $end) {
             $t0 = microtime(true);
-            streamWant($session, $ask);
+            if ($t0 - $joined > 1) { streamJoin($session, $viewer, $ask); $joined = $t0; }   // still here, once a second
             $jpeg = @file_get_contents(framePath($session));
             if ($jpeg && (($sum = crc32($jpeg)) !== $last || $t0 - $sentAt > 2)) {
                 $last = $sum;

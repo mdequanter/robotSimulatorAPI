@@ -158,9 +158,16 @@ class RemoteSession:
 
     def frame(self, fps=10, width=640):
         """The robot camera's latest picture: JPEG bytes, width × 3/4 (at most 640 × 480), or None while there
-        is none yet. Asking keeps the simulator sending pictures, fps a second (it stops 5 s after the last ask)."""
+        is none yet. Asking keeps the simulator sending pictures, fps a second (it stops 5 s after the last ask).
+        Raises RuntimeError when the server refuses: too many camera streams at once, or this camera has its
+        maximum of receivers already (see README: the robot camera stream)."""
         data = self.http.request("GET", f"?r=frame&session={self.session}&fps={fps}&width={width}", raw=True)
-        return data if data[:2] == b"\xff\xd8" else None
+        if data[:2] == b"\xff\xd8":
+            return data
+        why = json.loads(data).get("error", "") if data[:1] == b"{" else data[:200].decode(errors="replace")
+        if why.startswith("no picture yet"):
+            return None
+        raise RuntimeError(f"camera of {self.session}: {why}")
 
     def stream_url(self, fps=10, width=640):
         """The robot camera as an MJPEG stream, e.g. cv2.VideoCapture(session.stream_url())."""
