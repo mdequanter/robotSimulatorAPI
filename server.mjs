@@ -45,7 +45,7 @@ const ROBOTS = {
   jetbot: 'indexJetBot.php', jetracer: 'indexJetRacer.php', xarm5: 'indexXArm6.php?model=5', xarm850: 'indexXArm6.php?model=850',
   sespro: 'indexSESPro.php', xgo: 'indexXGO.php', xgomini: 'indexXGO.php?variant=mini', a2: 'indexA2.php', as2: 'indexA2.php?variant=as2',
   agibotd1: 'indexAgiBotD1.php', h2: 'indexH2.php', boosterk1: 'indexBoosterK1.php', tron1: 'indexTron1.php', tron1w: 'indexTron1.php?variant=wheel',
-  panther: 'indexPanther.php', summitxl: 'indexSummitXL.php', rbkairos: 'indexRBKairos.php', rbvogui: 'indexRBKairos.php?variant=vogui',
+  panther: 'indexPanther.php', jaguar: 'indexJaguar.php', summitxl: 'indexSummitXL.php', rbkairos: 'indexRBKairos.php', rbvogui: 'indexRBKairos.php?variant=vogui',
   xarm6: 'indexXArm6.php', xarm7: 'indexXArm6.php?model=7', omx: 'indexOpenManipulator.php',
 };
 

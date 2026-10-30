@@ -19,7 +19,7 @@ ROOT = os.path.dirname(HERE)                                                    
 
 # Interface families, by the key of their messages in an action.
 FAMILY = {"webrtc": "Unitree WebRTC", "ros": "ROS 2", "serial": "Serial protocol", "sdk": "Maker SDK",
-          "python": "Python library", "xgo": "xgolib (Python)", "booster": "Booster SDK", "ws": "WebSocket API",
+          "python": "Python library", "xgo": "xgolib (Python)", "booster": "Booster SDK", "ws": "WebSocket API", "tcp": "TCP text protocol",
           "tello": "Tello SDK"}
 
 # Actions that are not console buttons (page-specific action fields), per robot.
@@ -75,6 +75,7 @@ def main():
     ap.add_argument("--url", default="http://localhost:8795")
     ap.add_argument("--out", default=os.path.join(HERE, "robots.json"))
     ap.add_argument("--site", default=ROOT, help="the simulator site folder (index.php, img/)")
+    ap.add_argument("--robots", nargs="+", help="only these robots: their entries in --out are replaced or added, the rest stays")
     a = ap.parse_args()
     if hasattr(sys.stdout, "reconfigure"):              # a Windows console (cp1252) can't print → or ε
         sys.stdout.reconfigure(errors="replace")
@@ -86,6 +87,8 @@ def main():
     robots, lanes, worlds = [], None, None
     for r in api.robots():
         rid, page = r["robot"], r["page"]
+        if a.robots and rid not in a.robots:
+            continue
         try:
             e = api.create(rid)
         except Exception as ex:                          # a page that does not load: report and go on
@@ -111,6 +114,12 @@ def main():
             "telemetry": short(obs.get("extra", {})),
         })
         print(f"{rid:12s} {len(cmds):3d} commands  {', '.join(keys) or '-'}")
+    if a.robots and os.path.exists(a.out):              # merge: the other robots stay as they were, in their order
+        old = json.load(open(a.out, encoding="utf-8"))
+        new = {r["robot"]: r for r in robots}
+        merged = [new.pop(r["robot"], r) for r in old.get("robots", [])]
+        robots = merged + list(new.values())
+        lanes, worlds = old.get("lanes") or lanes, old.get("worlds") or worlds
     json.dump({"lanes": lanes, "worlds": worlds, "robots": robots}, open(a.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"{len(robots)} robots → {a.out}")
 

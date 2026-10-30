@@ -125,6 +125,8 @@ Start the server first (`node server.mjs --key rsk_xxxxxxxx`, your API key from 
 | [`go2_track_yolo.py`](python/go2_track_yolo.py) | [tutorial 12](https://robotics.dinno.be/tutorial-rl-go2-path.html): the Unitree Go2 follows the path with the YOLO model of tutorial 8 and a PPO policy, in the simulator and on the real Go2 | `ultralytics stable-baselines3 gymnasium` (`unitree_webrtc_connect` for the real dog) |
 | [`xarm_robot.py`](python/xarm_robot.py), [`xarm_demo.py`](python/xarm_demo.py), [`xarm_bridge.py`](python/xarm_bridge.py) | one Python interface for the simulated and the real xArm, see [below](#the-real-xarm-6--7-one-python-interface-digital-twin-follow) | `xarm-python-sdk` (real arm) |
 | [`tello_bridge.py`](python/tello_bridge.py) | the Tello EDU simulator page flies a real DJI Tello EDU and shows its video, see [below](#dji-tello-edu) | `websockets av pillow` |
+| [`jaguar_bridge.py`](python/jaguar_bridge.py) | the DrRobot Jaguar 4x4 Wheel page shows and drives the real Jaguar, and PC programs (`robot.py --ip 127.0.0.1`) drive the simulated one, see [below](#drrobot-jaguar-4x4-wheel) | `websockets` |
+| [`jaguar_cli.py`](python/jaguar_cli.py) | remote control of the Jaguar from a terminal: `status`, `release`, `drive 300 300 2`, `imu`, `gps`, `send "MM0 ?V"`; the real robot or the simulator | – |
 | [`remote_camera.py`](python/remote_camera.py) | [tutorial 13](https://robotics.dinno.be/tutorial-camera-stream.html): the robot camera of a simulator in your browser (website API, https) on your own computer: drive with the keys, or `--follow` the earth path of the park on its own, see [below](#the-robot-camera-stream) | `numpy opencv-python` |
 
 The tutorial scripts take a command: `baseline`, `train`, `eval` or `watch` (see `--help`). Training
@@ -312,6 +314,7 @@ name.
 | `tron1` | fwd, turn, strafe (the handheld remote) | – | 6 joints (`abad_L_Joint`, `hip_L_Joint`, `knee_L_Joint`, … `_R_`); sole feet (`options={"variant": "sole"}`): + `ankle_L_Joint`, `ankle_R_Joint` | ws, fell | variant, robot_info {accid, sw_version, imu, camera, motor, battery, status}, imu (after request_enable_imu), marktime, baseHeightOffset, blocked, notify, ws (last answers) |
 | `tron1w` | fwd, turn (the handheld remote) | – | 6 leg joints + `wheel_L_Joint`, `wheel_R_Joint` | ws, fell | as `tron1`, plus stair, odom (after request_enable_odom) |
 | `panther` | fwd, turn (mecanum `?variant=mecanum`: + strafe) | FL, FR, RL, RR | – | ros | variant, topics {`/odometry/wheels`, `/odometry/filtered`, `/battery/battery_status`, `/hardware/e_stop`, `/joint_states`, `/scan` (accessory)}, estop, lights, lidar, ros |
+| `jaguar` | fwd, turn (the gamepad: `PING` + `MMW !M` lines) | FL, FR, RL, RR (channel sign: the right ones − = forward) | – | tcp, watchdog | estop, watchdog_ok, power [[FL, FR], [RL, RR]], encoders {FL, FR, RL, RR, m_per_count}, imu {raw {gyro, acc, mag}, gyro_dps, acc_g, compass_deg, yaw}, gps {fix, lat, lon, speed_kn, course, sats, hdop}, battery_v, temps, amps, surface_mu, connections, real {connected, robot, mode, lines, battery_v, gps}, tcp (last answers) |
 | `summitxl` | fwd, turn (mecanum `?variant=mecanum`: + strafe) | FL, FR, RL, RR | – | ros | variant, topics {`/robot/robotnik_base_control/odom`, `/robot/front_laser/scan` (271 ranges, 270°), `/robot/joint_states`, `/robot/battery_estimator/data`, `/robot/robotnik_base_hw/emergency_stop`}, motorsEnabled, ros |
 | `rbkairos` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (wheels), `shoulder_pan` … `wrist_3`° (arm) | – | ros | model, arm_type, topics {`/robot/robotnik_base_control/odom`, `/robot/front_laser/scan`, `/robot/rear_laser/scan` (241 ranges), `/robot/joint_states`}, arm {q, tcp, grip, holding, busy, message}, blocks [{id, color, x, y, z, held}], goal, ros (last answers) |
 | `rbvogui` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (drive), `shoulder_pan` … `wrist_3`° (arm) | SFL, SFR, SRL, SRR (steering) | ros | as `rbkairos` |
@@ -381,6 +384,8 @@ Each step returns the events that happened during that step:
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
 | `tello` | `tello`: the answer of the drone to a Tello SDK command (`command`, `code`, `reply`) | no |
+| `tcp` | `jaguar`: what the motor boards answer to a line (`line`, `code`, `reply`) | no |
+| `watchdog` | `jaguar`: no line for 0.3 s while the motors had a command: the controller set them to 0 (`reason`) | no |
 | `sdk` | `a2`, `as2`, `agibotd1`, `h2`: the answer of the maker's SDK call (code, data) | no |
 | `booster` | `boosterk1`: the status of a B1LocoClient call (0, 400, 409, 501, 502) | no |
 | `ws` | `tron1`, `tron1w`: an answer or push of the TRON 1 WebSocket (`title` response_… / notify_…, `data.result`) | no |
@@ -737,6 +742,40 @@ namespace `/robot`: `/robot/cmd_vel` (Twist; teleop: `--ros-args -r cmd_vel:=/ro
 `/robot/robotnik_base_control/cmd_vel` (TwistStamped); out odom, IMU, the 270° front laser, joint states, e-stop, battery
 and the PTZ camera image. Both are too big for the 60 cm corridor.
 
+### DrRobot Jaguar 4x4 Wheel
+
+DrRobot Jaguar 4x4 Wheel (`jaguar`, `indexJaguar.php`, [documentation](https://robotics.dinno.be/docs-drrobot-jaguar-4x4.html)):
+a 20 kg outdoor robot with four 80 W wheel motors, without a computer on board: a PC on its Wi-Fi drives it with text lines over
+TCP (192.168.0.60:10001). It starts in the park. The simulated controller speaks the real protocol, line for line:
+
+| Line | What |
+|---|---|
+| `MMW !MG` / `MMW !EX` | release / set the E-Stop (it starts in E-Stop, `FF=16`) |
+| `MMW !M 300 -300` | open-loop power −1000 … 1000, left then right channel; forward is negative on the right one |
+| `PING` | at least every 0.2 s (the simulator: 0.3 s), else the motors stop (event `watchdog`) |
+| `MM0 ?V`, `?C`, `?A`, `?T`, `?FF` · `MM0 ~KP` · `MM0 ^KP 1 255` | ask a value, read a setting, set one: the echo, then the answer or `+` |
+
+It streams, unasked: `#seq,YAW,y,GYRO,gx,gy,gz,ACC,ax,ay,az,COMP,mx,my,mz,ADC,0` (IMU, 50 Hz, raw: ÷ 14.375 = °/s, ÷ 256 = g),
+`MM0 C=fl:fr` / `MM1 C=rl:rr` (encoders, 5 Hz, 300 counts a wheel turn of Ø 270 mm), `MMx V= / FF= / T= / A= / P= / S=` and
+`$GPRMC` / `$GPGGA` (GPS, 1–5 Hz). In an action a line is `{"tcp": "MMW !MG"}`; `{"tcp": {"line": "MMW !M 300 -300", "hold": 2}}`
+sends PINGs for 2 s after it. `drive` works like the keys: PING and `MMW !M` ten times a second (the first one releases the E-Stop).
+The page's terminal has `nc 192.168.0.60 10001`, the `jaguar` commands and Python with `socket`.
+
+**PC programs and the real Jaguar:** `python/jaguar_bridge.py` connects the page (WebSocket `ws://localhost:8772`) to the real
+robot (TCP 192.168.0.60:10001), and opens 127.0.0.1:10001 on your PC for programs that should drive the simulated one. On the
+page (card *Real Jaguar*) you then see the real robot's IMU, encoders and GPS, let it follow the simulator, or drive it with the
+3D Jaguar following its encoders and gyro. `python/jaguar_cli.py` has the terminal's `jaguar` commands for your PC.
+
+```bash
+pip install websockets
+python python/jaguar_bridge.py                 # PC on the DriJaguar Wi-Fi (192.168.0.104): the real robot at 192.168.0.60
+python python/jaguar_bridge.py --no-robot      # only PC programs <-> the simulator
+python python/jaguar_bridge.py --fake          # a pretend robot, to try the page's connector
+python python/jaguar_cli.py --ip 127.0.0.1 status          # the simulated Jaguar (through the bridge)
+python python/jaguar_cli.py drive 300 300 2                # the real one
+python robot.py --ip 127.0.0.1                             # a program written for the real robot, on the simulator
+```
+
 ### Robotnik RB-KAIROS+ and RB-VOGUI+
 
 Robotnik RB-KAIROS+ (`rbkairos`, `indexRBKairos.php`) and RB-VOGUI+ (`rbvogui`, `?variant=vogui`; `?arm=ur10e` for a UR10e):
@@ -969,7 +1008,10 @@ simulator site on disk:
 ```bash
 node server.mjs --port 8795 --browsers 1 --site ../robotSimulator      # in another terminal
 python python/make_api_docs.py --url http://localhost:8795 --site ../robotSimulator
+python python/make_api_docs.py --url http://localhost:8795 --site ../robotSimulator --robots jaguar   # only one robot, merged in
 ```
+
+A new robot page also needs its id in `ROBOTS` of `server.mjs` (e.g. `jaguar: 'indexJaguar.php'`).
 
 **On the web server** this repository is the `api/` folder of the site, so `index.php` is reached at
 `https://robotics.dinno.be/api/index.php`:

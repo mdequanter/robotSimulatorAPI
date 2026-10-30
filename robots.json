@@ -16933,6 +16933,228 @@
      "…"
     ]
    }
+  },
+  {
+   "robot": "jaguar",
+   "page": "indexJaguar.php",
+   "name": "DrRobot Jaguar 4x4 Wheel Simulator",
+   "title": "DrRobot Jaguar 4x4 Wheel",
+   "text": "20 kg outdoor robot driven with TCP text commands; its IMU, encoders and GPS stream; a connector shows and drives the real one",
+   "category": "Wheeled robots",
+   "image": "img/jaguar.jpg",
+   "interfaces": [
+    {
+     "key": "tcp",
+     "family": "TCP text protocol"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "FL",
+     "name": "Front left · MM0 ch 1",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "FR",
+     "name": "Front right · MM0 ch 2",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RL",
+     "name": "Rear left · MM1 ch 1",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RR",
+     "name": "Rear right · MM1 ch 2",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "tcp",
+    "watchdog"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "E-Stop",
+     "label": "Release · MMW !MG",
+     "line": "sock.sendall(b\"MMW !MG\\r\\n\")",
+     "action": {
+      "tcp": "MMW !MG"
+     }
+    },
+    {
+     "group": "E-Stop",
+     "label": "E-Stop · MMW !EX",
+     "line": "sock.sendall(b\"MMW !EX\\r\\n\")",
+     "action": {
+      "tcp": "MMW !EX"
+     }
+    },
+    {
+     "group": "Drive (left, −right) · 2 s",
+     "label": "Forward 300",
+     "line": "sock.sendall(b\"MMW !M 300 -300\\r\\n\")",
+     "action": {
+      "tcp": {
+       "line": "MMW !M 300 -300",
+       "hold": 2
+      }
+     }
+    },
+    {
+     "group": "Drive (left, −right) · 2 s",
+     "label": "Back 300",
+     "line": "sock.sendall(b\"MMW !M -300 300\\r\\n\")",
+     "action": {
+      "tcp": {
+       "line": "MMW !M -300 300",
+       "hold": 2
+      }
+     }
+    },
+    {
+     "group": "Drive (left, −right) · 2 s",
+     "label": "Spin left 400",
+     "line": "sock.sendall(b\"MMW !M -400 -400\\r\\n\")",
+     "action": {
+      "tcp": {
+       "line": "MMW !M -400 -400",
+       "hold": 1.5
+      }
+     }
+    },
+    {
+     "group": "Drive (left, −right) · 2 s",
+     "label": "Spin right 400",
+     "line": "sock.sendall(b\"MMW !M 400 400\\r\\n\")",
+     "action": {
+      "tcp": {
+       "line": "MMW !M 400 400",
+       "hold": 1.5
+      }
+     }
+    },
+    {
+     "group": "Drive (left, −right) · 2 s",
+     "label": "Stop",
+     "line": "sock.sendall(b\"MMW !M 0 0\\r\\n\")",
+     "action": {
+      "tcp": "MMW !M 0 0"
+     }
+    },
+    {
+     "group": "Ask the boards",
+     "label": "MM0 ?V",
+     "line": "sock.sendall(b\"MM0 ?V\\r\\n\")",
+     "action": {
+      "tcp": "MM0 ?V"
+     }
+    },
+    {
+     "group": "Ask the boards",
+     "label": "MM0 ?C",
+     "line": "sock.sendall(b\"MM0 ?C\\r\\n\")",
+     "action": {
+      "tcp": "MM0 ?C"
+     }
+    },
+    {
+     "group": "Ask the boards",
+     "label": "MM1 ?FF",
+     "line": "sock.sendall(b\"MM1 ?FF\\r\\n\")",
+     "action": {
+      "tcp": "MM1 ?FF"
+     }
+    },
+    {
+     "group": "Ask the boards",
+     "label": "MM0 ~MMOD",
+     "line": "sock.sendall(b\"MM0 ~MMOD\\r\\n\")",
+     "action": {
+      "tcp": "MM0 ~MMOD"
+     }
+    },
+    {
+     "group": "Ask the boards",
+     "label": "MM0 ?T",
+     "line": "sock.sendall(b\"MM0 ?T\\r\\n\")",
+     "action": {
+      "tcp": "MM0 ?T"
+     }
+    }
+   ],
+   "telemetry": {
+    "estop": true,
+    "watchdog_ok": false,
+    "power": [
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      0
+     ]
+    ],
+    "encoders": {
+     "FL": 0,
+     "FR": 0,
+     "RL": 0,
+     "RR": 0,
+     "m_per_count": 0.003
+    },
+    "imu": null,
+    "gps": null,
+    "battery_v": null,
+    "temps": {},
+    "amps": {},
+    "surface_mu": 0.6,
+    "connections": 0,
+    "real": {
+     "connected": false,
+     "robot": "",
+     "mode": "sim",
+     "lines": 0,
+     "battery_v": null,
+     "gps": null
+    }
+   }
   }
  ]
 }
