@@ -17155,6 +17155,232 @@
      "gps": null
     }
    }
+  },
+  {
+   "robot": "driftx",
+   "page": "indexDriftX.php",
+   "name": "HIMOTO Drift X Simulator",
+   "title": "HIMOTO Drift X",
+   "text": "1/18 4WD drift car made self-driving with a XIAO ESP32S3 Sense: camera over Wi-Fi, commands A and T, drift tyres that slide; the sketch to download",
+   "category": "Wheeled robots",
+   "image": "img/driftx.jpg",
+   "interfaces": [
+    {
+     "key": "serial",
+     "family": "Serial protocol"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "steer",
+     "name": "Steering servo (D0)",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -40,
+      40
+     ]
+    },
+    {
+     "id": "motor",
+     "name": "RC370 motor (H-bridge D1 / D2)",
+     "type": "dc",
+     "overridable": false,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Steering (A, 60…120: 90 straight, 120 left, 60 right)",
+     "label": "A,120",
+     "line": "ser.write(b\"A,120\\n\")",
+     "action": {
+      "serial": "A,120"
+     }
+    },
+    {
+     "group": "Steering (A, 60…120: 90 straight, 120 left, 60 right)",
+     "label": "A,105",
+     "line": "ser.write(b\"A,105\\n\")",
+     "action": {
+      "serial": "A,105"
+     }
+    },
+    {
+     "group": "Steering (A, 60…120: 90 straight, 120 left, 60 right)",
+     "label": "A,90",
+     "line": "ser.write(b\"A,90\\n\")",
+     "action": {
+      "serial": "A,90"
+     }
+    },
+    {
+     "group": "Steering (A, 60…120: 90 straight, 120 left, 60 right)",
+     "label": "A,75",
+     "line": "ser.write(b\"A,75\\n\")",
+     "action": {
+      "serial": "A,75"
+     }
+    },
+    {
+     "group": "Steering (A, 60…120: 90 straight, 120 left, 60 right)",
+     "label": "A,60",
+     "line": "ser.write(b\"A,60\\n\")",
+     "action": {
+      "serial": "A,60"
+     }
+    },
+    {
+     "group": "Steering (A, 60…120: 90 straight, 120 left, 60 right)",
+     "label": "C",
+     "line": "ser.write(b\"C\\n\")",
+     "action": {
+      "serial": "C"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "T,20",
+     "line": "ser.write(b\"T,20\\n\")",
+     "action": {
+      "serial": "T,20"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "T,40",
+     "line": "ser.write(b\"T,40\\n\")",
+     "action": {
+      "serial": "T,40"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "T,0",
+     "line": "ser.write(b\"T,0\\n\")",
+     "action": {
+      "serial": "T,0"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "T,-20",
+     "line": "ser.write(b\"T,-20\\n\")",
+     "action": {
+      "serial": "T,-20"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "STOP",
+     "line": "ser.write(b\"STOP\\n\")",
+     "action": {
+      "serial": "STOP"
+     }
+    },
+    {
+     "group": "Status and settings",
+     "label": "S",
+     "line": "ser.write(b\"S\\n\")",
+     "action": {
+      "serial": "S"
+     }
+    },
+    {
+     "group": "Status and settings",
+     "label": "IP",
+     "line": "ser.write(b\"IP\\n\")",
+     "action": {
+      "serial": "IP"
+     }
+    },
+    {
+     "group": "Status and settings",
+     "label": "OC,-3",
+     "line": "ser.write(b\"OC,-3\\n\")",
+     "action": {
+      "serial": "OC,-3"
+     }
+    },
+    {
+     "group": "Status and settings",
+     "label": "OC,0",
+     "line": "ser.write(b\"OC,0\\n\")",
+     "action": {
+      "serial": "OC,0"
+     }
+    },
+    {
+     "group": "Status and settings",
+     "label": "MAX,50",
+     "line": "ser.write(b\"MAX,50\\n\")",
+     "action": {
+      "serial": "MAX,50"
+     }
+    },
+    {
+     "group": "Status and settings",
+     "label": "W,1000",
+     "line": "ser.write(b\"W,1000\\n\")",
+     "action": {
+      "serial": "W,1000"
+     }
+    },
+    {
+     "group": "Status and settings",
+     "label": "W,0",
+     "line": "ser.write(b\"W,0\\n\")",
+     "action": {
+      "serial": "W,0"
+     }
+    }
+   ],
+   "telemetry": {
+    "xiao": {
+     "steer": 90,
+     "throttle": 0,
+     "trim": 0,
+     "max": 100,
+     "watchdog_ms": 1000,
+     "braking": false,
+     "pulse_us": 1500,
+     "duty": 0
+    },
+    "speed_kmh": 0,
+    "slip_deg": 0,
+    "yaw_rate": 0,
+    "wheel_deg": 0,
+    "tyres": "drift",
+    "on_stand": false,
+    "max_throttle": 30,
+    "real": {
+     "connected": false,
+     "follow": false,
+     "steer": null,
+     "throttle": null
+    },
+    "serial": []
+   }
   }
  ]
 }

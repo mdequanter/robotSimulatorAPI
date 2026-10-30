@@ -304,6 +304,7 @@ name.
 | `ugvrover` | fwd, turn (teleop keys) | L, R (one channel per side) | – | ros, serial | topics {`/odom`, `/odom/odom_raw`, `/voltage`, `/scan` (360 ranges, null = no echo)}, feedback {T:1001 …}, gimbal {pan, tilt}, leds, mode, ros, serial |
 | `jetbot` | fwd, turn (gamepad keys) | left, right | – | python | motors {left, right: {value, alpha, beta}}, script, python |
 | `pirateshooter` | fwd, turn (the game controller: A and T lines) | `esc` (dc), `steer` (servo), read only | – | serial | opencr {angle, throttle, servo_deg, servo_us, esc_us, offsets {center, left, right}, test}, speed_kmh, wheel_deg, on_stand, max_throttle, real {connected, follow, angle, throttle}, serial (last answers) |
+| `driftx` | fwd, turn (a joystick: A and T lines, the watchdog fed) | `motor` (dc), `steer` (servo), read only | – | serial | xiao {steer, throttle, trim, max, watchdog_ms, braking, pulse_us, duty}, speed_kmh, slip_deg, yaw_rate, wheel_deg, tyres, on_stand, max_throttle, real {connected, follow, steer, throttle}, serial (last answers) |
 | `jetracer` | fwd, turn (gamepad keys) | throttle (dc), steering (servo) | – | python | car {steering, throttle, steering_gain, steering_offset, throttle_gain}, script, python |
 | `tello` | fwd, turn, strafe, up (the app's sticks) | `m1` … `m4` (read only) | – | tello | phase (landed / takeoff / flying / landing / flip / falling), sdk, height_cm, battery, flight_s, flight_left_s, max_height_m, stream, downvision, mission_pads, pad, busy, state (the SDK state packet), tello (last answers) |
 | `xgo` / `xgomini` | fwd, turn, strafe (the app's joystick) | – | 15 servos (`m11` … `m43` legs, `m51` gripper, `m52` `m53` arm) | xgo | model, action, actionName, move {x, y, turn}, gait, pace, markTime, height_mm, attitude {r, p, y}, imu, lying, arm {x, z, claw}, cube {x, y, z, held}, motors, blocked, xgo (last answers) |
@@ -380,7 +381,7 @@ Each step returns the events that happened during that step:
 | `cliff` | `create3`: a cliff sensor sees a drop (`sensors`: which ones) | no |
 | `webrtc` | `go2`, `go2w`, `g1`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
 | `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
-| `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`) | no |
+| `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
 | `tello` | `tello`: the answer of the drone to a Tello SDK command (`command`, `code`, `reply`) | no |
@@ -810,6 +811,19 @@ and an OpenCR board. A simulated OpenCR takes the serial lines of `rccar.ino` an
 `C`, `STOP`, `S`, `O`, `OC/OL/OR,<n>` (trim), `TEST`. `drive` works like the keys: `turn` gives `A,90+turn·30`, `fwd` gives
 `T,fwd·max throttle` (`?maxt=20`, Setup). `?stand=1` puts the car on a stand (its wheels turn, it stays put). The page also
 drives the real OpenCR over USB (Web Serial, 57600 baud) when *Wheels follow the simulator* is ticked, with the car on a stand.
+
+### HIMOTO Drift X
+
+HIMOTO Drift X (`driftx`, `indexDriftX.php`, [documentation](https://robotics.dinno.be/docs-himoto-drift-x.html)): a 1/18 4WD
+drift car made self-driving with a Seeed XIAO ESP32S3 Sense (camera, Wi-Fi) and an H-bridge. A simulated XIAO takes the lines of
+`xiao_drift.ino` and answers as the sketch does: `{"serial": "A,120"}` (steering 60–120: 90 straight, 120 full left, 60 full right),
+`{"serial": "T,20"}` (throttle −100…100 %), `C`, `STOP` (brake), `S`, `IP`, `OC,<n>` (trim), `MAX,<n>` (throttle limit), `W,<ms>`
+(watchdog, 0 = off). The **watchdog** stops the motor 1 s after the last line: send `T` again and again, or `W,0` first. `drive`
+works like the keys: `turn` gives `A,90+turn·30`, `fwd` gives `T,fwd·max throttle` (`?maxt=30`). The hard drift tyres slide
+(`?tyres=rubber` grips): `slip_deg` in the telemetry is how sideways the car goes. `?stand=1` puts it on a stand, `?nobody=1` takes the
+body off. The page drives the real XIAO over USB (Web Serial, 115200) when *Wheels follow the simulator* is ticked. The sketch and
+`drift_wifi.py` (the car over Wi-Fi: its camera at `http://192.168.4.1:81/stream`, commands at `/cmd?l=A,110`) are on the
+documentation page.
 
 ### DJI Tello EDU
 
