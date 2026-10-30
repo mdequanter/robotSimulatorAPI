@@ -8,11 +8,18 @@
 // Same JSON formats as the Node API; see README.md.
 //
 //   Page:   POST ?r=register&session=ID        body: info              → register / re-register
-//           GET  ?r=pull&session=ID&since=N                             → commands with seq > N
+//           GET  ?r=pull&session=ID&since=N                             → commands with seq > N (+ stream: { fps, width }
+//                                                                          while someone watches the camera)
 //           POST ?r=telemetry&session=ID       body: { obs, events }   → latest observation
+//           POST ?r=frame&session=ID           body: a JPEG            → the robot camera's latest picture
 //   Client: GET  ?r=sessions                                           → active sessions
 //           GET  ?r=state&session=ID&since=N                            → info, obs, events after N
 //           POST ?r=command&session=ID         body: { action } or { reset: { lane, seed } }
+//           GET  ?r=frame&session=ID&fps=10&width=640                  → the latest picture of the robot camera (JPEG)
+//           GET  ?r=mjpeg&session=ID&fps=10&width=640                  → the robot camera as an MJPEG stream
+//
+// The camera: the page only sends pictures while someone asks for them (frame or mjpeg in the last
+// STREAM_SECONDS), at the fps and width asked (at most 30 fps and 640 × 480).
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -27,6 +34,8 @@ const MAX_EVENTS = 1000;          // kept per session
 const MAX_COMMANDS = 200;
 const ACTIVE_SECONDS = 120;       // a session counts as active this long after the page's last message
 const KEEP_SECONDS = 86400;       // session files older than this are removed
+const STREAM_SECONDS = 5;         // the page sends camera pictures this long after the last request for one
+const MJPEG_SECONDS = 600;        // one MJPEG connection lasts at most this long (then connect again)
 
 function reply($code, $data) {
     http_response_code($code);
@@ -96,16 +105,30 @@ function readSession($file) {
 }
 function needSession($session) { if ($session === '') reply(400, ['error' => 'missing session']); }
 
+// ---------- Camera ----------
+// What the viewers ask for: fps 1 … 30 (default 10), width 160 … 640 (default 640, 4:3 so at most 640 × 480).
+function streamAsk() {
+    return ['fps' => max(1, min(30, (int)($_GET['fps'] ?? 10))), 'width' => max(160, min(640, (int)($_GET['width'] ?? 640)))];
+}
+function streamWant($session, $ask) {
+    @file_put_contents(DATA_DIR . '/' . $session . '.want', json_encode($ask + ['t' => microtime(true)]), LOCK_EX);
+}
+function streamWanted($session) {
+    $w = @json_decode((string)@file_get_contents(DATA_DIR . '/' . $session . '.want'), true);
+    return is_array($w) && ($w['t'] ?? 0) > microtime(true) - STREAM_SECONDS ? ['fps' => $w['fps'], 'width' => $w['width']] : null;
+}
+function framePath($session) { return DATA_DIR . '/' . $session . '.jpg'; }
+
 switch ($route) {
     case '':
         reply(200, ['name' => 'Botopia simulator API (PHP, remote control)', 'version' => 1, 'docs' => 'api/README.md',
-            'routes' => ['sessions', 'state', 'command', 'register', 'pull', 'telemetry']]);
+            'routes' => ['sessions', 'state', 'command', 'frame', 'mjpeg', 'register', 'pull', 'telemetry']]);
 
     // ---------- Page side ----------
     case 'register':
         needSession($session);
         $info = body();
-        foreach (glob(DATA_DIR . '/*.json') as $old) {          // tidy up old sessions
+        foreach (glob(DATA_DIR . '/*.{json,jpg,want}', GLOB_BRACE) as $old) {          // tidy up old sessions
             if (filemtime($old) < time() - KEEP_SECONDS) @unlink($old);
         }
         reply(200, withSession($file, function ($s) use ($session, $info) {
@@ -122,7 +145,8 @@ switch ($route) {
         $s = readSession($file);
         if (!$s) reply(404, ['error' => 'unknown session']);
         $cmds = array_values(array_filter($s['commands'], fn($c) => $c['seq'] > $since));
-        reply(200, ['commands' => $cmds]);
+        $stream = streamWanted($session);
+        reply(200, $stream ? ['commands' => $cmds, 'stream' => $stream] : ['commands' => $cmds]);
 
     case 'telemetry':
         needSession($session);
@@ -137,6 +161,60 @@ switch ($route) {
             if ($over > 0) { $s['events'] = array_slice($s['events'], $over); $s['eventBase'] += $over; }
             return [$s, ['ok' => true]];
         }));
+
+    // The robot camera: the page POSTs a JPEG, a client GETs the latest one (and so asks for more).
+    case 'frame':
+        needSession($session);
+        if (!is_file($file)) reply(404, ['error' => 'unknown session']);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $jpeg = file_get_contents('php://input', false, null, 0, MAX_BODY + 1);
+            if ($jpeg === false || strlen($jpeg) > MAX_BODY) reply(413, ['error' => 'picture too large']);
+            if (strncmp($jpeg, "\xFF\xD8", 2) !== 0) reply(400, ['error' => 'send a JPEG']);
+            $tmp = framePath($session) . '.' . getmypid() . '.tmp';
+            if (@file_put_contents($tmp, $jpeg) === false || !@rename($tmp, framePath($session))) { @unlink($tmp); reply(500, ['error' => 'cannot store the picture']); }
+            reply(200, ['ok' => true]);
+        }
+        streamWant($session, streamAsk());
+        $jpeg = @file_get_contents(framePath($session));
+        if (!$jpeg) reply(404, ['error' => 'no picture yet: the simulator sends its camera once someone asks; try again in a second (and keep its window visible)']);
+        header('Content-Type: image/jpeg');
+        header('X-Frame-Age: ' . max(0, time() - filemtime(framePath($session))));      // whole seconds
+        echo $jpeg;
+        exit;
+
+    // The same pictures as one MJPEG stream (multipart/x-mixed-replace): a browser shows it as an image,
+    // OpenCV opens it with cv2.VideoCapture(url). Each new picture is sent once, at most fps a second; the
+    // same one again after 2 s without a new one, so a viewer that has gone is noticed (PHP only sees that
+    // when it writes) and the connection does not hold a server process for nothing.
+    case 'mjpeg':
+        needSession($session);
+        if (!is_file($file)) reply(404, ['error' => 'unknown session']);
+        $ask = streamAsk();
+        set_time_limit(MJPEG_SECONDS + 30);
+        ignore_user_abort(false);
+        header('Content-Type: multipart/x-mixed-replace; boundary=frame');
+        header('X-Accel-Buffering: no');                       // nginx: pass every picture on at once
+        while (ob_get_level()) ob_end_flush();
+        $last = null;
+        $sentAt = 0;
+        $end = microtime(true) + MJPEG_SECONDS;
+        while (!connection_aborted() && microtime(true) < $end) {
+            $t0 = microtime(true);
+            streamWant($session, $ask);
+            $jpeg = @file_get_contents(framePath($session));
+            if ($jpeg && (($sum = crc32($jpeg)) !== $last || $t0 - $sentAt > 2)) {
+                $last = $sum;
+                $sentAt = $t0;
+                echo "--frame\r\nContent-Type: image/jpeg\r\nContent-Length: " . strlen($jpeg) . "\r\n\r\n", $jpeg, "\r\n";
+                flush();
+            } elseif (!$jpeg && $t0 - $sentAt > 2) {            // no picture yet: an empty line keeps the check going
+                $sentAt = $t0;
+                echo "\r\n";
+                flush();
+            }
+            usleep(max(0, (int)((1 / $ask['fps'] - (microtime(true) - $t0)) * 1e6)));
+        }
+        exit;
 
     // ---------- Client side ----------
     case 'sessions':
@@ -178,5 +256,5 @@ switch ($route) {
         }));
 
     default:
-        reply(404, ['error' => 'unknown route', 'routes' => ['sessions', 'state', 'command', 'register', 'pull', 'telemetry']]);
+        reply(404, ['error' => 'unknown route', 'routes' => ['sessions', 'state', 'command', 'frame', 'mjpeg', 'register', 'pull', 'telemetry']]);
 }

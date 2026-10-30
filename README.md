@@ -125,6 +125,7 @@ Start the server first (`node server.mjs --key rsk_xxxxxxxx`, your API key from 
 | [`go2_track_yolo.py`](python/go2_track_yolo.py) | [tutorial 12](https://robotics.dinno.be/tutorial-rl-go2-path.html): the Unitree Go2 follows the path with the YOLO model of tutorial 8 and a PPO policy, in the simulator and on the real Go2 | `ultralytics stable-baselines3 gymnasium` (`unitree_webrtc_connect` for the real dog) |
 | [`xarm_robot.py`](python/xarm_robot.py), [`xarm_demo.py`](python/xarm_demo.py), [`xarm_bridge.py`](python/xarm_bridge.py) | one Python interface for the simulated and the real xArm, see [below](#the-real-xarm-6--7-one-python-interface-digital-twin-follow) | `xarm-python-sdk` (real arm) |
 | [`tello_bridge.py`](python/tello_bridge.py) | the Tello EDU simulator page flies a real DJI Tello EDU and shows its video, see [below](#dji-tello-edu) | `websockets av pillow` |
+| [`remote_camera.py`](python/remote_camera.py) | the robot camera of a simulator in your browser (website API, https) on your own computer: drive with the keys, or `--follow` the earth path of the park on its own, see [below](#the-robot-camera-stream) | `numpy opencv-python` |
 
 The tutorial scripts take a command: `baseline`, `train`, `eval` or `watch` (see `--help`). Training
 on a GPU: `--device cuda`, see [Getting started](https://robotics.dinno.be/tutorial-getting-started.html#gpu).
@@ -144,6 +145,7 @@ changing two lines.
 | Reproducible | yes, with a `seed` | no |
 | Speed | ~700 steps/s for one environment, ~1000 for several (Python client, measured on a laptop) | ~5 updates/s |
 | Several robots at once | yes, one call can step all of them | one session per open browser tab |
+| Robot camera | a picture with every step (`image=`), or `frame?view=robot` | a stream over https, up to 30 fps and 640 × 480 ([stream.html](https://robotics.dinno.be/stream.html), [below](#the-robot-camera-stream)) |
 | Python | `BotopiaAPI("http://localhost:8780")` | `RemoteSession(url, code)` |
 
 ---
@@ -234,7 +236,8 @@ Add `sys.path.append("python")` and import from `botopia`.
   step. Use this for speed.
 * `BotopiaGymEnv(...)`: Gymnasium wrapper (`Box` spaces, passes `gymnasium.utils.env_checker`);
   `render_mode="rgb_array"` returns the camera image (needs Pillow).
-* `RemoteSession(url, code)`: the PHP API, see [below](#php-api-remote-control).
+* `RemoteSession(url, code)`: the PHP API, see [below](#php-api-remote-control); `frame()` and `stream_url()` give
+  its robot camera ([the robot camera stream](#the-robot-camera-stream)).
 
 ### Observation vector
 
@@ -457,8 +460,11 @@ starts without it). Through the API, `frame?view=robot` returns that image; in P
 | GET | `?r=sessions` | | active sessions `[{ session, robot, name, lastSeenSeconds }]` |
 | GET | `?r=state&session=ABC123&since=0` | | `{ info, obs, events, next, active }`; pass `next` as `since` next time to get only new events |
 | POST | `?r=command&session=ABC123` | `{ "action": { … } }` and/or `{ "reset": { "lane": "stairs" } }` | `{ seq }` |
+| GET | `?r=frame&session=ABC123&fps=10&width=640` | | the robot camera's latest picture (JPEG); 404 until the first one is there |
+| GET | `?r=mjpeg&session=ABC123&fps=10&width=640` | | the robot camera as an MJPEG stream (`multipart/x-mixed-replace`) |
 
-The page itself uses `register`, `pull` (every 100 ms) and `telemetry` (every 200 ms).
+The page itself uses `register`, `pull` (every 100 ms), `telemetry` (every 200 ms) and, while someone watches
+its camera, `POST ?r=frame` (a JPEG).
 
 ```python
 from botopia import RemoteSession
@@ -469,8 +475,39 @@ print(s.state()["obs"]["pose"])
 
 Sessions are stored as small JSON files in `data/` next to `index.php` (made on first use, closed to the web
 with `.htaccess`; on nginx deny `/api/data/` yourself). The session code is the only
-key: anyone who knows it can drive that browser tab's simulated robot, nothing else.
+key: anyone who knows it can drive that browser tab's simulated robot and see its camera, nothing else.
 Sessions older than a day are removed.
+
+### The robot camera stream
+
+What the robot's camera sees, over https, to process on your own computer while you drive the robot
+through the same session:
+
+* **In the browser:** `https://robotics.dinno.be/stream.html?session=ABC123&fps=10&width=640`, with the
+  addresses and a Python example for your own code.
+* **One picture:** `GET ?r=frame&session=ABC123&fps=10&width=640` (JPEG; the header `X-Frame-Age` says how
+  old it is, in whole seconds).
+* **A stream:** `GET ?r=mjpeg&session=ABC123&fps=10&width=640`: `cv2.VideoCapture(url)` opens it, as do VLC
+  and an `<img>` in a browser. A connection lasts at most 10 minutes; connect again after that.
+
+`fps` is 1 … 30 (default 10), `width` 160 … 640 (default 640; the pictures are 4:3, so at most 640 × 480).
+The simulator only sends pictures while someone asks for them (a `frame` or `mjpeg` request in the last 5
+seconds): its badge then says **camera 10 fps**. The first `frame` request answers 404 *no picture yet*;
+ask again a moment later. Keep the simulator window visible: browsers pause hidden tabs.
+
+```python
+import cv2, numpy as np
+from botopia import RemoteSession
+s = RemoteSession("https://robotics.dinno.be/api/index.php", "ABC123")
+jpeg = s.frame(fps=10, width=640)                  # bytes, or None while there is no picture yet
+img = cv2.imdecode(np.frombuffer(jpeg, np.uint8), cv2.IMREAD_COLOR)
+s.command({"drive": {"fwd": 0.4, "turn": 0.2}})    # what your processing decided
+cam = cv2.VideoCapture(s.stream_url(fps=10))       # or as a stream
+```
+
+[`python/remote_camera.py`](python/remote_camera.py) does all of it: a window with the camera, drive with
+W A S D, or `--follow` to steer along the earth path of the park from a colour mask
+(`python python/remote_camera.py --session ABC123 --follow`).
 
 ---
 

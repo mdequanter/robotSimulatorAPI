@@ -134,6 +134,7 @@ class RemoteSession:
 
     def __init__(self, url, session):
         self.http = _Http(url)
+        self.url = url
         self.session = session
         self.next_event = 0
 
@@ -154,6 +155,16 @@ class RemoteSession:
         if reset is not None:
             body["reset"] = reset
         return self.http.request("POST", f"?r=command&session={self.session}", body)
+
+    def frame(self, fps=10, width=640):
+        """The robot camera's latest picture: JPEG bytes, width × 3/4 (at most 640 × 480), or None while there
+        is none yet. Asking keeps the simulator sending pictures, fps a second (it stops 5 s after the last ask)."""
+        data = self.http.request("GET", f"?r=frame&session={self.session}&fps={fps}&width={width}", raw=True)
+        return data if data[:2] == b"\xff\xd8" else None
+
+    def stream_url(self, fps=10, width=640):
+        """The robot camera as an MJPEG stream, e.g. cv2.VideoCapture(session.stream_url())."""
+        return f"{self.url}?r=mjpeg&session={self.session}&fps={fps}&width={width}"
 
 
 # ---------- Observation vector ----------
