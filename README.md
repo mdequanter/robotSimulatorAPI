@@ -820,7 +820,7 @@ drift car made self-driving with a Seeed XIAO ESP32S3 Sense (camera, Wi-Fi) and 
 `{"serial": "T,20"}` (throttle −100…100 %), `C`, `STOP` (brake), `S`, `IP`, `OC,<n>` (trim), `MAX,<n>` (throttle limit), `W,<ms>`
 (watchdog, 0 = off). The **watchdog** stops the motor 1 s after the last line: send `T` again and again, or `W,0` first. `drive`
 works like the keys: `turn` gives `A,90+turn·30`, `fwd` gives `T,fwd·max throttle` (`?maxt=30`). The hard drift tyres slide
-(`?tyres=rubber` grips): `slip_deg` in the telemetry is how sideways the car goes. `?stand=1` puts it on a stand, `?nobody=1` takes the
+(`?tyres=rubber` grips): `slip_deg` in the telemetry is how sideways the car goes. It starts on the Kyosho Mini-Z race track (`botopia`); `options={"world": "course"}` (or `?world=course`) puts it on the obstacle course. `?stand=1` puts it on a stand, `?nobody=1` takes the
 body off. The page drives the real XIAO over USB (Web Serial, 115200) when *Wheels follow the simulator* is ticked. The sketch and
 `drift_wifi.py` (the car over Wi-Fi: its camera at `http://192.168.4.1:81/stream`, commands at `/cmd?l=A,110`) are on the
 documentation page.
