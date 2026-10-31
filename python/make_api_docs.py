@@ -20,7 +20,7 @@ ROOT = os.path.dirname(HERE)                                                    
 # Interface families, by the key of their messages in an action.
 FAMILY = {"webrtc": "Unitree WebRTC", "ros": "ROS 2", "serial": "Serial protocol", "sdk": "Maker SDK",
           "python": "Python library", "xgo": "xgolib (Python)", "booster": "Booster SDK", "ws": "WebSocket API", "tcp": "TCP text protocol",
-          "tello": "Tello SDK", "urscript": "URScript"}
+          "tello": "Tello SDK", "urscript": "URScript", "rest": "REST API (HTTP)"}
 
 # Actions that are not console buttons (page-specific action fields), per robot.
 EXTRA = {

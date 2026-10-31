@@ -325,6 +325,7 @@ name.
 | `scoutmini` | fwd, turn (mecanum `options={"variant": "mecanum"}`: + strafe) | FL, FR, RL, RR | – | ros | variant, topics {`/odom`, `/scout_status`, `/scan` (360 ranges)}, ros |
 | `hunterse` | fwd, turn (turn steers) | RL, RR (rear wheels), `steer`° (central angle) | – | ros | steerDeg, topics {`/odom`, `/hunter_status` (with `steering_angle`), `/scan`}, ros |
 | `bunker` | fwd, turn (teleop keys) | FL, FR, RL, RR (the sprockets of the two tracks) | – | ros | variant (mini / pro), topics {`/odom`, `/bunker_status`, `/scan`}, ros |
+| `mir250` | fwd, turn (manual control while held) | L, R (drive wheels) | – | rest | status (as GET /status: state_id, state_text, mission_text, position {x, y, orientation°}, battery, errors), queue [{id, mission_id, state}], rest (last answers) |
 | `rangermini` | fwd, turn, strafe (the mode follows: fwd + turn dual Ackermann, turn alone spin, strafe side slip, fwd + strafe parallel) | FL, FR, RL, RR (drive), SFL, SFR, SRL, SRR (steering) | – | ros | motionMode (0 dual Ackermann, 1 parallel, 2 spin, 3 side slip), motionModeName, steeringDeg [FL, FR, RL, RR], topics {`/odom`, `/motion_state`, `/system_state`, `/battery_state`, `/scan` (360 ranges)}, ros |
 | `rbkairos` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (wheels), `shoulder_pan` … `wrist_3`° (arm) | – | ros | model, arm_type, topics {`/robot/robotnik_base_control/odom`, `/robot/front_laser/scan`, `/robot/rear_laser/scan` (241 ranges), `/robot/joint_states`}, arm {q, tcp, grip, holding, busy, message}, blocks [{id, color, x, y, z, held}], goal, ros (last answers) |
 | `rbvogui` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (drive), `shoulder_pan` … `wrist_3`° (arm) | SFL, SFR, SRL, SRR (steering) | ros | as `rbkairos` |
@@ -393,6 +394,7 @@ Each step returns the events that happened during that step:
 | `webrtc` | `go2`, `go2w`, `g1`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
 | `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
+| `rest` | `mir250`: the answer to a REST request (`method`, `path`, `code` = HTTP status, `data`); a mission that ends blocked (`method`: EVENT, `data` {state_text, errors}) | no |
 | `urscript` | `ur5e`: a URScript program ran (`program`, `reply` from textmsg / get_actual_…, `note`); a move that failed while it ran (`program`: null, `note`) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error); `fr3`: a franky script ran (`code`, `reply` from print, `note`) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
@@ -791,6 +793,22 @@ angle below the wheelbase; `angular.z` alone only turns the wheels.
 Bunker (`bunker`, `indexBunker.php`, [documentation](https://robotics.dinno.be/docs-agilex-bunker.html)): the tracked
 Bunker Mini 2.0, or the Bunker Pro with `options={"model": "pro"}`: it turns on the spot with track slip (its wheel
 odometry drifts in turns) and climbs higher edges than wheels.
+
+### MiR250
+
+MiR250 (`mir250`, `indexMiR250.php`, [documentation](https://robotics.dinno.be/docs-mir250.html)): an industrial AMR,
+starting in the warehouse world on its dock. `rest` takes a request of the MiR REST API (`/api/v2.0.0`): `{"rest": {"method":
+"GET", "path": "/status"}}`, `PUT /status {"state_id": 3 | 4}` (Ready: go on and clear an error / Pause), `GET /missions`,
+`GET /missions/{guid}`, `GET|POST /positions` (a new position also gets a mission "Move to …"), `GET /positions/{guid}`,
+`POST /mission_queue {"mission_id": …}`, `GET|DELETE /mission_queue`, `GET /mission_queue/{id}`. The answer comes back as a
+`rest` event with the HTTP status in `code`. The map frame is where it starts: x forward, y left, orientation in degrees;
+positions Dock (0, 0), Station A (3.5, 0), Station B (3.5, 2, 90°), Station C (1, −2, −90°). Missions run one after the
+other while it is Ready; a path blocked for 5 s aborts the mission (state 12, Error). The drive axes drive it by hand.
+
+```python
+missions = api.step(env_id, {"rest": {"method": "GET", "path": "/missions"}})["events"][0]["data"]
+api.step(env_id, {"rest": {"method": "POST", "path": "/mission_queue", "body": {"mission_id": missions[1]["guid"]}}})
+```
 
 ### AgileX LIMO
 

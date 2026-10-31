@@ -20216,6 +20216,243 @@
      "…"
     ]
    }
+  },
+  {
+   "robot": "mir250",
+   "page": "indexMiR250.php",
+   "name": "MiR250 Simulator",
+   "title": "MiR250",
+   "text": "Industrial AMR for 250 kg: positions, missions and the mission queue through the MiR REST API, in a warehouse",
+   "category": "Wheeled robots",
+   "image": "img/mir250.jpg",
+   "interfaces": [
+    {
+     "key": "rest",
+     "family": "REST API (HTTP)"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "L",
+     "name": "Left drive wheel",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "R",
+     "name": "Right drive wheel",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "rest"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Status",
+     "label": "GET /status",
+     "line": "curl -X GET http://192.168.12.20/api/v2.0.0/status -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "GET",
+       "path": "/status"
+      }
+     }
+    },
+    {
+     "group": "Status",
+     "label": "Ready (go on)",
+     "line": "curl -X PUT http://192.168.12.20/api/v2.0.0/status -H \"Content-Type: application/json\" -d '{\"state_id\":3}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "PUT",
+       "path": "/status",
+       "body": {
+        "state_id": 3
+       }
+      }
+     }
+    },
+    {
+     "group": "Status",
+     "label": "Pause",
+     "line": "curl -X PUT http://192.168.12.20/api/v2.0.0/status -H \"Content-Type: application/json\" -d '{\"state_id\":4}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "PUT",
+       "path": "/status",
+       "body": {
+        "state_id": 4
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "GET /missions",
+     "line": "curl -X GET http://192.168.12.20/api/v2.0.0/missions -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "GET",
+       "path": "/missions"
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "Move to Dock",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/mission_queue -H \"Content-Type: application/json\" -d '{\"mission_id\":\"5a17c3e9-6b2f-11ee-9d4c-94c691a3f3e9\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/mission_queue",
+       "body": {
+        "mission_id": "5a17c3e9-6b2f-11ee-9d4c-94c691a3f3e9"
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "Move to Station A",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/mission_queue -H \"Content-Type: application/json\" -d '{\"mission_id\":\"5a17c3ea-6b2f-11ee-9d4c-94c691a3f3ea\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/mission_queue",
+       "body": {
+        "mission_id": "5a17c3ea-6b2f-11ee-9d4c-94c691a3f3ea"
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "Move to Station B",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/mission_queue -H \"Content-Type: application/json\" -d '{\"mission_id\":\"5a17c3eb-6b2f-11ee-9d4c-94c691a3f3eb\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/mission_queue",
+       "body": {
+        "mission_id": "5a17c3eb-6b2f-11ee-9d4c-94c691a3f3eb"
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "Move to Station C",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/mission_queue -H \"Content-Type: application/json\" -d '{\"mission_id\":\"5a17c3ec-6b2f-11ee-9d4c-94c691a3f3ec\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/mission_queue",
+       "body": {
+        "mission_id": "5a17c3ec-6b2f-11ee-9d4c-94c691a3f3ec"
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "GET /mission_queue",
+     "line": "curl -X GET http://192.168.12.20/api/v2.0.0/mission_queue -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "GET",
+       "path": "/mission_queue"
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "Clear the queue",
+     "line": "curl -X DELETE http://192.168.12.20/api/v2.0.0/mission_queue -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "DELETE",
+       "path": "/mission_queue"
+      }
+     }
+    },
+    {
+     "group": "Positions",
+     "label": "GET /positions",
+     "line": "curl -X GET http://192.168.12.20/api/v2.0.0/positions -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "GET",
+       "path": "/positions"
+      }
+     }
+    },
+    {
+     "group": "Positions",
+     "label": "New position \"Station D\"",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/positions -H \"Content-Type: application/json\" -d '{\"name\":\"Station D\",\"pos_x\":2,\"pos_y\":1,\"orientation\":180,\"type_id\":0,\"map_id\":\"5a17c000-6b2f-11ee-9d4c-94c691a3f000\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/positions",
+       "body": {
+        "name": "Station D",
+        "pos_x": 2,
+        "pos_y": 1,
+        "orientation": 180,
+        "type_id": 0,
+        "map_id": "5a17c000-6b2f-11ee-9d4c-94c691a3f000"
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "status": {
+     "robot_name": "MiR250",
+     "robot_model": "MiR250",
+     "state_id": 3,
+     "state_text": "Ready",
+     "mode_id": 7,
+     "mode_text": "Mission",
+     "mission_text": "Waiting for new missions",
+     "mission_queue_id": null,
+     "distance_to_next_target": 0,
+     "battery_percentage": 92,
+     "battery_time_remaining": 33120,
+     "position": {
+      "x": 0,
+      "y": 0,
+      "orientation": 0
+     }
+    },
+    "queue": [],
+    "rest": []
+   }
   }
  ]
 }
