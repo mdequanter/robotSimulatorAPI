@@ -19187,6 +19187,222 @@
     "estop": false,
     "ros": []
    }
+  },
+  {
+   "robot": "scoutmini",
+   "page": "indexScoutMini.php",
+   "name": "AgileX Scout Mini Simulator",
+   "title": "AgileX Scout Mini",
+   "text": "Small and fast: four hub motors, skid steering up to 2.7 m/s or mecanum wheels, LiDAR, scout_ros2 over CAN",
+   "category": "Wheeled robots",
+   "image": "img/scoutmini.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "FL",
+     "name": "Wheel FL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "FR",
+     "name": "Wheel FR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RL",
+     "name": "Wheel RL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RR",
+     "name": "Wheel RR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Forward 0.6 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.6, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.6,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Curve left",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.6, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.3}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.6,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0.3
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Turn on the spot",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.8}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0.8
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Stop",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "variant": "tyres",
+    "topics": {
+     "/odom": {
+      "header": "{…}",
+      "child_frame_id": "base_link",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/scout_status": {
+      "header": "{…}",
+      "linear_velocity": 0,
+      "angular_velocity": 0,
+      "vehicle_state": 0,
+      "control_mode": 1,
+      "error_code": 0,
+      "battery_voltage": 25.76,
+      "actuator_states": [
+       "{…}",
+       "{…}",
+       "{…}",
+       "{…}"
+      ]
+     },
+     "/scan": {
+      "header": "{…}",
+      "angle_min": -3.142,
+      "angle_max": 3.142,
+      "angle_increment": 0.017,
+      "scan_time": 0.1,
+      "range_min": 0.1,
+      "range_max": 12,
+      "ranges": [
+       null,
+       null,
+       null,
+       10.56,
+       "…"
+      ]
+     }
+    },
+    "ros": []
+   }
   }
  ]
 }
