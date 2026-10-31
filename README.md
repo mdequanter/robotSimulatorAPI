@@ -373,6 +373,7 @@ name.
 | `progress` | metres driven along the lane from its start (the corridor along its bend) and whether the robot is past the obstacle |
 | `stuck` | why the robot can't go on right now (empty if it can) |
 | `extra` | robot-specific values (table above) |
+| `objects` | in a world with loose objects (house, hospital, warehouse): each one's `id`, `kind`, position (`x`, `y` = its bottom, `z`) and whether a gripper `held` it |
 | `done` | true after `fell`, `bottle_fell` or `goal`: end the episode |
 
 ### Events (incidents)
@@ -564,6 +565,16 @@ api.reset(env["id"], world="corridor")        # a reset can change it too (and b
 
 Every robot that drives or walks has them (`info["worlds"]`, `obs["world"]`); the robot arms stay at their
 table. In the website API the same reset is `{"reset": {"world": "park", "lane": "track"}}`.
+
+**Loose objects.** `house`, `hospital` and `warehouse` have small objects lying about, on the floor, a table, a chair or
+a cabinet: glasses, medicine bottles, water bottles, pill boxes and mugs in the hospital; drills, wrenches,
+screwdrivers, tape measures and small parcels in the warehouse; toys (blocks, bricks, balls, cars, teddy bears),
+socks and mugs in the house. A robot that drives into one pushes it along (a robot drives under a table: what lies on
+the table top stays), an object pushed off an edge falls, and a robot with a gripper picks it up: the RB-KAIROS+ /
+RB-VOGUI+ (`{"arm": {"skill": "pick"}}` takes the nearest object within reach, `place` puts it down in front of the
+robot; the RB-VOGUI's lower arm reaches the floor), the quadruped's arm (close the gripper round it) and the XGO
+(action 130 picks up an object of up to 3 cm, such as a toy brick). They come back where they started with every
+reset. `obs["objects"]` lists them: `[{"id", "kind", "x", "y", "z", "held"}]` (world frame, m; `y` is the bottom).
 
 URL switches: `?env=1` lock-step (used by the Node API: the page stands still between steps),
 `?remote=1` remote mode (PHP API), `?lane=step6` start in a lane, `?auto=corridor` autopilot through
@@ -887,7 +898,9 @@ mobile manipulators with a UR5e arm and a Robotiq 2F-85 gripper, and a table wit
 under `/robot`: `robotnik_base_control/cmd_vel` (TwistStamped) or `cmd_vel_unstamped` (Twist), stopping 2 s after the last
 message; the actions `joint_trajectory_controller/follow_joint_trajectory` and `robotiq_gripper_controller/gripper_cmd`;
 out odom, two lasers, IMU, joint states, the RGB-D camera. For Cartesian moves use `{"arm": {"tcp": {"x", "y", "z",
-"yaw"}}}` or `{"arm": {"skill": "pick"}}`.
+"yaw"}}}` or `{"arm": {"skill": "pick"}}`. In the house, hospital and warehouse the pick skill also takes the nearest loose
+object within reach (a glass on a table, a drill on the conveyor) and `place` puts it down in front of the robot;
+`extra.arm.object` is the object in the gripper (`id`, `kind`).
 
 ### Petoi Bittle X
 
@@ -965,7 +978,8 @@ python tello_bridge.py --fake                # try the page without a drone
 XGO-Lite3 / XGO-Mini2 (`xgo`, `xgomini`, `indexXGO.php[?variant=mini]`): desktop robot dogs with an arm and gripper,
 programmed with the xgolib Python calls: `{"xgo": "dog.move_x(15)"}`, `{"xgo": "dog.action(13)"}`, `{"xgo": ["dog.arm(130, 0)",
 "dog.claw(255)"]}`. Actions 1–24, the grabs 128–130 and reset 255; a red cube in front of the dog can be picked up (action
-130). The page has a Python bar (`?python=1`).
+130). In the house, action 130 picks up a loose object of up to 3 cm lying just in front of it instead (a toy brick;
+`extra.object`), `dog.claw(0)` drops it. The page has a Python bar (`?python=1`).
 
 ### Quadruped arm
 
