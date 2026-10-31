@@ -331,6 +331,7 @@ name.
 | `xarm5` | – (it stays on its table) | `joint1`–`joint5`°, `gripper` (opening in mm, 0–85) | – | – | as `xarm6` |
 | `xarm850` | – | `joint1`–`joint6`°, `gripper` | – | – | as `xarm6` |
 | `ur5e` | – (it stays on its table) | `joint1`–`joint6`°, `gripper` (opening in mm, 0–85) | – | urscript | as `xarm6`, plus urscript (last programs: `program`, `reply`, `note`) |
+| `fr3` | – (it stays on its table) | `joint1`–`joint7`°, `gripper` (opening in mm, 0–80) | – | python | as `xarm6`, plus python (last scripts: `code`, `reply`, `note`) |
 | `sespro` | – | `joint1`–`joint5`°, `gripper` (mm, 0–85) | – | serial | as `xarm6`, plus lss {limp [servo ids], status [LSS Q code per servo 1–6], led [0–7]}, serial (last answers) |
 | `xarm6` | – (it stays on its table) | `joint1`–`joint6`°, `gripper` (opening in mm, 0–85) | – | – | tcp {x, y, z, yawDeg} (point between the finger pads, base frame), holding, busy, blocks [{id, color, x, y, z, yawDeg, held}] |
 | `xarm7` | – | `joint1`–`joint7`°, `gripper` | – | – | as `xarm6` |
@@ -393,7 +394,7 @@ Each step returns the events that happened during that step:
 | `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
 | `urscript` | `ur5e`: a URScript program ran (`program`, `reply` from textmsg / get_actual_…, `note`); a move that failed while it ran (`program`: null, `note`) | no |
-| `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error) | no |
+| `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error); `fr3`: a franky script ran (`code`, `reply` from print, `note`) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
 | `tello` | `tello`: the answer of the drone to a Tello SDK command (`command`, `code`, `reply`) | no |
 | `tcp` | `jaguar`: what the motor boards answer to a line (`line`, `code`, `reply`) | no |
@@ -974,6 +975,22 @@ string, lines or `;`), as sent to port 30002: a new program stops the running on
 ```python
 api.step(env_id, {"urscript": "movel(p[0.35, 0.1, 0.25, 3.1416, 0, 0], a=1.2, v=0.25)
 rq_close()"})
+```
+
+### Franka Research 3
+
+Franka Research 3 (`fr3`, `indexXArm6.php?model=fr3` or `indexFR3.php`,
+[documentation](https://robotics.dinno.be/docs-franka-research-3.html)): the arm page with Franka's kinematics (seven
+joints; joint 4 always bent, joint 6 between 31° and 259°), the Franka Hand (0–80 mm) and the wrist D435. `python` takes
+lines of a **franky** script; moves run one after the other, as `robot.move()` waits: `robot.move(JointMotion([7 × rad]))`
+(refused outside the limits, as libfranka does), `robot.move(CartesianMotion(Affine([x, y, z], [qx, qy, qz, qw])))` (a
+straight line; `[1, 0, 0, 0]` points the hand down; without a quaternion it keeps its orientation; `ReferenceType.Relative`
+adds to the present pose in the base frame), `robot.relative_dynamics_factor = 0.1`, `gripper.move(0.04, 0.1)`,
+`gripper.grasp(…)`, `gripper.open(…)`, `time.sleep(…)`, `print(robot.current_joint_state.position)`,
+`print(robot.current_cartesian_state.pose.end_effector_pose)`, `gripper.width`. Imports and `Robot(...)` are accepted.
+
+```python
+api.step(env_id, {"python": "robot.relative_dynamics_factor = 0.2\nrobot.move(CartesianMotion(Affine([0.4, 0.1, 0.25], [1, 0, 0, 0])))"})
 ```
 
 ### xArm 5 Lite, UFACTORY 850 and SES-PRO

@@ -37,6 +37,12 @@ EXTRA["ur5e"] = [("Home, facing the table", {"urscript": "movej([3.1416, -1.5708
                  ("Gripper half closed", {"urscript": "rq_move_and_wait(128)"}),
                  ("Program: wait, then turn the base", {"urscript": "sleep(1.0)\nmovej([d2r(150), -1.5708, 1.5708, -1.5708, -1.5708, 0])"}),
                  ("Read the tool pose", {"urscript": "textmsg(get_actual_tcp_pose())"})]
+EXTRA["fr3"] = [("Ready pose", {"python": "robot.move(JointMotion([0, -0.785, 0, -2.356, 0, 1.571, 0.785]))"}),
+                ("Straight line, hand down", {"python": "robot.move(CartesianMotion(Affine([0.4, 0.0, 0.2], [1, 0, 0, 0])))"}),
+                ("10 cm to the left (relative)", {"python": "robot.move(CartesianMotion(Affine([0.0, 0.1, 0.0]), ReferenceType.Relative))"}),
+                ("Slower", {"python": "robot.relative_dynamics_factor = 0.1"}),
+                ("Grasp 2 cm", {"python": "gripper.grasp(0.02, 0.1, 20)"}),
+                ("Read the joints", {"python": "print(robot.current_joint_state.position)"})]
 
 
 def cards():

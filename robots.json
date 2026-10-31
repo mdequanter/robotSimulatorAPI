@@ -19999,6 +19999,223 @@
      "…"
     ]
    }
+  },
+  {
+   "robot": "fr3",
+   "page": "indexFR3.php",
+   "name": "Franka Research 3",
+   "title": "Franka Research 3",
+   "text": "The research arm: seven torque-sensing joints, 85.5 cm reach, driven from Python with franky (JointMotion, CartesianMotion)",
+   "category": "Robot arms",
+   "image": "img/fr3.jpg",
+   "interfaces": [
+    {
+     "key": "python",
+     "family": "Python library"
+    }
+   ],
+   "drive": [],
+   "motors": [
+    {
+     "id": "joint1",
+     "name": "Joint 1 (base)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -157.2,
+      157.2
+     ]
+    },
+    {
+     "id": "joint2",
+     "name": "Joint 2 (shoulder)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -102.2,
+      102.2
+     ]
+    },
+    {
+     "id": "joint3",
+     "name": "Joint 3 (upper arm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -166.2,
+      166.2
+     ]
+    },
+    {
+     "id": "joint4",
+     "name": "Joint 4 (elbow)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -174.3,
+      -8.7
+     ]
+    },
+    {
+     "id": "joint5",
+     "name": "Joint 5 (forearm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -160.8,
+      160.8
+     ]
+    },
+    {
+     "id": "joint6",
+     "name": "Joint 6 (wrist)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      31.2,
+      258.8
+     ]
+    },
+    {
+     "id": "joint7",
+     "name": "Joint 7 (flange)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -172.8,
+      172.8
+     ]
+    },
+    {
+     "id": "gripper",
+     "name": "Gripper opening (mm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      0,
+      80
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "python"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask",
+    "depth",
+    "depthcolor",
+    "external"
+   ],
+   "worlds": false,
+   "commands": [
+    {
+     "group": "More actions",
+     "label": "Ready pose",
+     "action": {
+      "python": "robot.move(JointMotion([0, -0.785, 0, -2.356, 0, 1.571, 0.785]))"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Straight line, hand down",
+     "action": {
+      "python": "robot.move(CartesianMotion(Affine([0.4, 0.0, 0.2], [1, 0, 0, 0])))"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "10 cm to the left (relative)",
+     "action": {
+      "python": "robot.move(CartesianMotion(Affine([0.0, 0.1, 0.0]), ReferenceType.Relative))"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Slower",
+     "action": {
+      "python": "robot.relative_dynamics_factor = 0.1"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Grasp 2 cm",
+     "action": {
+      "python": "gripper.grasp(0.02, 0.1, 20)"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Read the joints",
+     "action": {
+      "python": "print(robot.current_joint_state.position)"
+     }
+    }
+   ],
+   "telemetry": {
+    "tcp": {
+     "x": 0.3,
+     "y": 0,
+     "z": 0.42,
+     "yawDeg": 0
+    },
+    "holding": null,
+    "below": {
+     "depth_mm": 403,
+     "gap_mm": 370,
+     "height_mm": 40,
+     "block": "red2",
+     "u": 306,
+     "v": 240
+    },
+    "busy": false,
+    "python": [],
+    "blocks": [
+     {
+      "id": "red1",
+      "color": "red",
+      "x": -0.471,
+      "y": -0.184,
+      "z": 0.02,
+      "yawDeg": 118.7,
+      "held": false
+     },
+     {
+      "id": "red2",
+      "color": "red",
+      "x": 0.301,
+      "y": 0.01,
+      "z": 0.02,
+      "yawDeg": 2.7,
+      "held": false
+     },
+     {
+      "id": "green1",
+      "color": "green",
+      "x": 0.362,
+      "y": 0.17,
+      "z": 0.02,
+      "yawDeg": 46.2,
+      "held": false
+     },
+     {
+      "id": "green2",
+      "color": "green",
+      "x": 0.185,
+      "y": -0.185,
+      "z": 0.02,
+      "yawDeg": 65.7,
+      "held": false
+     },
+     "…"
+    ]
+   }
   }
  ]
 }
