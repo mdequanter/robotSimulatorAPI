@@ -330,6 +330,7 @@ name.
 | `rbvogui` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (drive), `shoulder_pan` … `wrist_3`° (arm) | SFL, SFR, SRL, SRR (steering) | ros | as `rbkairos` |
 | `xarm5` | – (it stays on its table) | `joint1`–`joint5`°, `gripper` (opening in mm, 0–85) | – | – | as `xarm6` |
 | `xarm850` | – | `joint1`–`joint6`°, `gripper` | – | – | as `xarm6` |
+| `ur5e` | – (it stays on its table) | `joint1`–`joint6`°, `gripper` (opening in mm, 0–85) | – | urscript | as `xarm6`, plus urscript (last programs: `program`, `reply`, `note`) |
 | `sespro` | – | `joint1`–`joint5`°, `gripper` (mm, 0–85) | – | serial | as `xarm6`, plus lss {limp [servo ids], status [LSS Q code per servo 1–6], led [0–7]}, serial (last answers) |
 | `xarm6` | – (it stays on its table) | `joint1`–`joint6`°, `gripper` (opening in mm, 0–85) | – | – | tcp {x, y, z, yawDeg} (point between the finger pads, base frame), holding, busy, blocks [{id, color, x, y, z, yawDeg, held}] |
 | `xarm7` | – | `joint1`–`joint7`°, `gripper` | – | – | as `xarm6` |
@@ -391,6 +392,7 @@ Each step returns the events that happened during that step:
 | `webrtc` | `go2`, `go2w`, `g1`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
 | `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
+| `urscript` | `ur5e`: a URScript program ran (`program`, `reply` from textmsg / get_actual_…, `note`); a move that failed while it ran (`program`: null, `note`) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
 | `tello` | `tello`: the answer of the drone to a Tello SDK command (`command`, `code`, `reply`) | no |
@@ -957,6 +959,22 @@ lie 30 cm in front of the robot after a reset; the arm reaches the floor when th
 y left, z up). An action `{ "reach": { "x", "y", "z" } }` (same frame) shows a red target ball there and adds
 `extra.reach.target` and `dist`; `{ "reach": null }` hides it (tutorial 10). Page option `camview: "arm"` puts the
 3D view close to the arm.
+
+### Universal Robots UR5e
+
+Universal Robots UR5e (`ur5e`, `indexXArm6.php?model=ur5e` or `indexUR5e.php`,
+[documentation](https://robotics.dinno.be/docs-universal-robots-ur5e.html)): the arm page (table, blocks, wrist D435,
+external camera, pick and place) with UR's own DH parameters and a Robotiq 2F-85. `urscript` takes a URScript program (a
+string, lines or `;`), as sent to port 30002: a new program stops the running one. Simulated: `movej(q | p[…], a, v, t)`,
+`movel(p[…] | q, a, v)` (a straight line from where the tool is when it starts), `movep`, `sleep(t)`, `stopj`, `stopl`,
+`rq_open()`, `rq_close()`, `rq_move_and_wait(0…255)`, `textmsg(…)`, `get_actual_joint_positions()`, `get_actual_tcp_pose()`,
+`d2r`, `r2d`, `pi`. Poses: metres and a rotation vector in the table's base frame (x forward, y left, z up);
+`p[0.3, 0, 0.2, 3.1416, 0, 0]` points the gripper down. With all joints 0 the arm lies along −x, as on the robot.
+
+```python
+api.step(env_id, {"urscript": "movel(p[0.35, 0.1, 0.25, 3.1416, 0, 0], a=1.2, v=0.25)
+rq_close()"})
+```
 
 ### xArm 5 Lite, UFACTORY 850 and SES-PRO
 

@@ -20,7 +20,7 @@ ROOT = os.path.dirname(HERE)                                                    
 # Interface families, by the key of their messages in an action.
 FAMILY = {"webrtc": "Unitree WebRTC", "ros": "ROS 2", "serial": "Serial protocol", "sdk": "Maker SDK",
           "python": "Python library", "xgo": "xgolib (Python)", "booster": "Booster SDK", "ws": "WebSocket API", "tcp": "TCP text protocol",
-          "tello": "Tello SDK"}
+          "tello": "Tello SDK", "urscript": "URScript"}
 
 # Actions that are not console buttons (page-specific action fields), per robot.
 EXTRA = {
@@ -32,6 +32,12 @@ EXTRA = {
                ("Gripper open", {"serial": "#6D900"}), ("Servo 3 LED blue", {"serial": "#3LED3"})],
 }
 EXTRA["rbvogui"] = EXTRA["rbkairos"]
+EXTRA["ur5e"] = [("Home, facing the table", {"urscript": "movej([3.1416, -1.5708, 1.5708, -1.5708, -1.5708, 0], a=1.4, v=1.05)"}),
+                 ("Straight line down", {"urscript": "movel(p[0.35, 0, 0.2, 3.1416, 0, 0], a=1.2, v=0.25)"}),
+                 ("Gripper half closed", {"urscript": "rq_move_and_wait(128)"}),
+                 ("Program: wait, then turn the base", {"urscript": "sleep(1.0)
+movej([d2r(150), -1.5708, 1.5708, -1.5708, -1.5708, 0])"}),
+                 ("Read the tool pose", {"urscript": "textmsg(get_actual_tcp_pose())"})]
 
 
 def cards():
