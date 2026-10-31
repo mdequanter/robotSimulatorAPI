@@ -325,7 +325,7 @@ name.
 | `scoutmini` | fwd, turn (mecanum `options={"variant": "mecanum"}`: + strafe) | FL, FR, RL, RR | – | ros | variant, topics {`/odom`, `/scout_status`, `/scan` (360 ranges)}, ros |
 | `hunterse` | fwd, turn (turn steers) | RL, RR (rear wheels), `steer`° (central angle) | – | ros | steerDeg, topics {`/odom`, `/hunter_status` (with `steering_angle`), `/scan`}, ros |
 | `bunker` | fwd, turn (teleop keys) | FL, FR, RL, RR (the sprockets of the two tracks) | – | ros | variant (mini / pro), topics {`/odom`, `/bunker_status`, `/scan`}, ros |
-| `mir250` | fwd, turn (manual control while held) | L, R (drive wheels) | – | rest | status (as GET /status: state_id, state_text, mission_text, position {x, y, orientation°}, battery, errors), queue [{id, mission_id, state}], rest (last answers) |
+| `mir250` | fwd, turn (manual control while held; the selected robot) | L, R (drive wheels) | – | rest | status (as GET /status of the selected robot: robot_name, state_id, state_text, mission_text, position {x, y, orientation°}, battery, errors), queue [{id, mission_id, state}], rest (last answers), selected, fleet [{name, ip, state_text, mission_text, position}] (2–4 robots) |
 | `rangermini` | fwd, turn, strafe (the mode follows: fwd + turn dual Ackermann, turn alone spin, strafe side slip, fwd + strafe parallel) | FL, FR, RL, RR (drive), SFL, SFR, SRL, SRR (steering) | – | ros | motionMode (0 dual Ackermann, 1 parallel, 2 spin, 3 side slip), motionModeName, steeringDeg [FL, FR, RL, RR], topics {`/odom`, `/motion_state`, `/system_state`, `/battery_state`, `/scan` (360 ranges)}, ros |
 | `rbkairos` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (wheels), `shoulder_pan` … `wrist_3`° (arm) | – | ros | model, arm_type, topics {`/robot/robotnik_base_control/odom`, `/robot/front_laser/scan`, `/robot/rear_laser/scan` (241 ranges), `/robot/joint_states`}, arm {q, tcp, grip, holding, busy, message}, blocks [{id, color, x, y, z, held}], goal, ros (last answers) |
 | `rbvogui` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (drive), `shoulder_pan` … `wrist_3`° (arm) | SFL, SFR, SRL, SRR (steering) | ros | as `rbkairos` |
@@ -395,7 +395,7 @@ Each step returns the events that happened during that step:
 | `webrtc` | `go2`, `go2w`, `g1`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
 | `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
-| `rest` | `mir250`: the answer to a REST request (`method`, `path`, `code` = HTTP status, `data`); a mission that ends blocked (`method`: EVENT, `data` {state_text, errors}) | no |
+| `rest` | `mir250`: the answer to a REST request (`method`, `path`, `robot` = the robot's address, `code` = HTTP status, `data`); a mission that ends blocked (`method`: EVENT, `robot`, `data` {robot_name, state_text, errors}) | no |
 | `urscript` | `ur5e`: a URScript program ran (`program`, `reply` from textmsg / get_actual_…, `note`); a move that failed while it ran (`program`: null, `note`) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error); `fr3`: a franky script ran (`code`, `reply` from print, `note`) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
@@ -820,6 +820,29 @@ other while it is Ready; a path blocked for 5 s aborts the mission (state 12, Er
 missions = api.step(env_id, {"rest": {"method": "GET", "path": "/missions"}})["events"][0]["data"]
 api.step(env_id, {"rest": {"method": "POST", "path": "/mission_queue", "body": {"mission_id": missions[1]["guid"]}}})
 ```
+
+**A fleet.** The page has three MiR250s by default (`options={"fleet": 1…4}`, `?fleet=` in the browser), each with its
+own address (`192.168.12.20`, `.21`, `.22`, `.23`), state and mission queue, on one map: the positions and missions are
+shared (plus `Dock 2`, `Dock 3` … where the others start, 0.9 m apart to the left of the first). Add `"robot"` to a
+request to send it to another robot (its address, name `MiR250-2` or number 2; default: the selected robot); the answer
+event carries `robot`. `{"fleet": {"select": 2}}` selects robot 2: the one the keys drive, the camera follows and
+`obs.pose` / `obs.extra.status` describe; the others run their missions by themselves. The robots see each other with
+their scanners (a robot in the way blocks a mission as any obstacle does). `extra.fleet` lists every robot (`name`,
+`ip`, `state_text`, `mission_text`, `position`), `extra.selected` the selected one's address.
+
+[`python/mir_rest.py`](python/mir_rest.py) has one class for a real MiR and for the simulator, so a program tested here
+runs unchanged on the robot:
+
+```python
+from mir_rest import MiR
+robots = [MiR.simulator(api, env_id, f"192.168.12.{20 + k}") for k in range(3)]   # Node API (wait() steps it)
+# MiR.remote(RemoteSession(url, code), ip): the page in a browser (?remote=CODE); MiR(ip, user, password): a real robot
+robots[1].queue("Move to Station B"); robots[1].wait(10)
+print(robots[1].status()["state_text"])
+```
+
+In the page's terminal, `import requests` reaches the simulated robots at their addresses
+(`requests.get("http://192.168.12.21/api/v2.0.0/status", headers=H)`), so the code for a real MiR runs there as it is.
 
 ### AgileX LIMO
 

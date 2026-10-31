@@ -20383,6 +20383,34 @@
     },
     {
      "group": "Missions",
+     "label": "Move to Dock 2",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/mission_queue -H \"Content-Type: application/json\" -d '{\"mission_id\":\"5a17c3ed-6b2f-11ee-9d4c-94c691a3f3ed\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/mission_queue",
+       "body": {
+        "mission_id": "5a17c3ed-6b2f-11ee-9d4c-94c691a3f3ed"
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "Move to Dock 3",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/mission_queue -H \"Content-Type: application/json\" -d '{\"mission_id\":\"5a17c3ee-6b2f-11ee-9d4c-94c691a3f3ee\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/mission_queue",
+       "body": {
+        "mission_id": "5a17c3ee-6b2f-11ee-9d4c-94c691a3f3ee"
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
      "label": "GET /mission_queue",
      "line": "curl -X GET http://192.168.12.20/api/v2.0.0/mission_queue -H \"Authorization: Basic …\"",
      "action": {
@@ -20432,11 +20460,51 @@
        }
       }
      }
+    },
+    {
+     "group": "More actions",
+     "label": "Robot 2: GET /status",
+     "action": {
+      "rest": {
+       "method": "GET",
+       "path": "/status",
+       "robot": "192.168.12.21"
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Robot 3: its mission queue",
+     "action": {
+      "rest": {
+       "method": "GET",
+       "path": "/mission_queue",
+       "robot": "192.168.12.22"
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Select robot 2",
+     "action": {
+      "fleet": {
+       "select": 2
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Select robot 1",
+     "action": {
+      "fleet": {
+       "select": 1
+      }
+     }
     }
    ],
    "telemetry": {
     "status": {
-     "robot_name": "MiR250",
+     "robot_name": "MiR250-1",
      "robot_model": "MiR250",
      "state_id": 3,
      "state_text": "Ready",
@@ -20454,7 +20522,31 @@
      }
     },
     "queue": [],
-    "rest": []
+    "rest": [],
+    "selected": "192.168.12.20",
+    "fleet": [
+     {
+      "name": "MiR250-1",
+      "ip": "192.168.12.20",
+      "state_text": "Ready",
+      "mission_text": "Waiting for new missions",
+      "position": "{…}"
+     },
+     {
+      "name": "MiR250-2",
+      "ip": "192.168.12.21",
+      "state_text": "Ready",
+      "mission_text": "Waiting for new missions",
+      "position": "{…}"
+     },
+     {
+      "name": "MiR250-3",
+      "ip": "192.168.12.22",
+      "state_text": "Ready",
+      "mission_text": "Waiting for new missions",
+      "position": "{…}"
+     }
+    ]
    }
   }
  ]
