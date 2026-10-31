@@ -19799,6 +19799,206 @@
     },
     "ros": []
    }
+  },
+  {
+   "robot": "ur5e",
+   "page": "indexXArm6.php?model=ur5e",
+   "name": "Universal Robots UR5e",
+   "title": "UFACTORY xArm 5 Lite / 6 / 7 / 850",
+   "text": "On a table with coloured blocks: four models from 5 to 7 joints, 70 or 85 cm reach",
+   "category": "Robot arms",
+   "image": "img/ur5e.jpg",
+   "interfaces": [
+    {
+     "key": "urscript",
+     "family": "URScript"
+    }
+   ],
+   "drive": [],
+   "motors": [
+    {
+     "id": "joint1",
+     "name": "Base",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -360,
+      360
+     ]
+    },
+    {
+     "id": "joint2",
+     "name": "Shoulder",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -360,
+      360
+     ]
+    },
+    {
+     "id": "joint3",
+     "name": "Elbow",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "joint4",
+     "name": "Wrist 1",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -360,
+      360
+     ]
+    },
+    {
+     "id": "joint5",
+     "name": "Wrist 2",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -360,
+      360
+     ]
+    },
+    {
+     "id": "joint6",
+     "name": "Wrist 3",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -360,
+      360
+     ]
+    },
+    {
+     "id": "gripper",
+     "name": "Gripper opening (mm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      0,
+      85
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "urscript"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask",
+    "depth",
+    "depthcolor",
+    "external"
+   ],
+   "worlds": false,
+   "commands": [
+    {
+     "group": "More actions",
+     "label": "Home, facing the table",
+     "action": {
+      "urscript": "movej([3.1416, -1.5708, 1.5708, -1.5708, -1.5708, 0], a=1.4, v=1.05)"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Straight line down",
+     "action": {
+      "urscript": "movel(p[0.35, 0, 0.2, 3.1416, 0, 0], a=1.2, v=0.25)"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Gripper half closed",
+     "action": {
+      "urscript": "rq_move_and_wait(128)"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Program: wait, then turn the base",
+     "action": {
+      "urscript": "sleep(1.0)\nmovej([d2r(150), -1.5708, 1.5708, -1.5708, -1.5708, 0])"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Read the tool pose",
+     "action": {
+      "urscript": "textmsg(get_actual_tcp_pose())"
+     }
+    }
+   ],
+   "telemetry": {
+    "tcp": {
+     "x": 0.3,
+     "y": 0,
+     "z": 0.42,
+     "yawDeg": 0
+    },
+    "holding": null,
+    "below": {
+     "depth_mm": 488,
+     "gap_mm": 407,
+     "height_mm": 0,
+     "block": null,
+     "u": 309,
+     "v": 223
+    },
+    "busy": false,
+    "urscript": [],
+    "blocks": [
+     {
+      "id": "red1",
+      "color": "red",
+      "x": 0.442,
+      "y": -0.351,
+      "z": 0.02,
+      "yawDeg": 37.5,
+      "held": false
+     },
+     {
+      "id": "red2",
+      "color": "red",
+      "x": 0.281,
+      "y": -0.391,
+      "z": 0.02,
+      "yawDeg": 109.9,
+      "held": false
+     },
+     {
+      "id": "green1",
+      "color": "green",
+      "x": -0.232,
+      "y": -0.128,
+      "z": 0.02,
+      "yawDeg": 79.4,
+      "held": false
+     },
+     {
+      "id": "green2",
+      "color": "green",
+      "x": 0.114,
+      "y": -0.365,
+      "z": 0.02,
+      "yawDeg": 103.2,
+      "held": false
+     },
+     "…"
+    ]
+   }
   }
  ]
 }
