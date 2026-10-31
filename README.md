@@ -298,6 +298,7 @@ name.
 | `r1` | fwd, turn, strafe (the app's joystick) | – | 26 joints (`left_hip_pitch` … `right_wrist_roll`, `waist_yaw`, `waist_pitch`, `head_yaw`, `head_pitch`); R1 Air (`?variant=air`): 20 (no waist, head or wrists) | webrtc, fell | model, fsm_id, fsm_name, fsm_reported, reporting, posture, arm_action, velocity, webrtc (last responses) |
 | `rosbotxl` | fwd, turn, strafe (mecanum; `?variant=wheels`: fwd, turn) | FL, FR, RL, RR | – | ros | variant, topics {`/odometry/filtered`, `/rosbot_xl_base_controller/odom`, `/scan` (360 ranges, null = no echo), `/joint_states`, `/battery_state`}, leds, ros (last answers) |
 | `leorover` | fwd, turn (teleop keys) | FL, RL, FR, RR | – | ros | topics {`/wheel_odom`, `/merged_odom`, `/imu/rpy`, `/firmware/battery`, `/joint_states`, `/scan` (only with the LiDAR accessory)}, lidar, ros (last answers) |
+| `phoenix` | fwd, turn, strafe (the Phoenix code walks) | `RR_coxa` … `LF_tibia` (18)° | – | serial | mode (gait / serial), gait, walking, bodyHeight, legsUp, pulses {SSC-32 channel: µs}, joints {RR … LF: [coxa, femur, tibia]°}, blocked, serial (last replies) |
 | `bittle` | fwd, turn (the app's joystick: kwkF / kbk / kwkL / kwkR) | `j0` (head), `j8`–`j11` (shoulders), `j12`–`j15` (knees)° | – | serial | skill, gait, paused, gyro, joints {0, 8…15}, bodyHeight, blocked, serial (last replies) |
 | `roboworks` | fwd, turn (teleop keys; turn steers) | L, R (rear wheels), steer° (servo) | – | ros | model, topics {`/odom`, `/scan` (360 ranges, null = no echo), `/PowerVoltage`}, steerDeg, ros (last answers) |
 | `mecabot` | fwd, turn, strafe | FL, FR, RL, RR | – | ros | model, topics {`/odom`, `/scan`, `/PowerVoltage`}, ros (last answers) |
@@ -383,7 +384,7 @@ Each step returns the events that happened during that step:
 | `cliff` | `create3`: a cliff sensor sees a drop (`sensors`: which ones) | no |
 | `webrtc` | `go2`, `go2w`, `g1`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
 | `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `rangermini`, `limo`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
-| `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`) | no |
+| `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
 | `tello` | `tello`: the answer of the drone to a Tello SDK command (`command`, `code`, `reply`) | no |
@@ -822,6 +823,17 @@ Put them in the action as `serial` (one string or a list): `{"serial": "kwkF"}`,
 (`line`, `reply`): the token letter, or the joint table for `j`. All 56 skills of the real robot are there with its own
 joint data (OpenCat, MIT); gaits keep going until the next token. Joints: 0 head, 8–11 shoulders, 12–15 knees (left
 front, right front, right back, left back). The page has a Serial monitor (`indexBittle.php?serial=1`) to type tokens.
+
+### Lynxmotion Phoenix hexapod
+
+Lynxmotion Phoenix 3DOF (`phoenix`, `indexPhoenix.php`, [documentation](https://robotics.dinno.be/docs-lynxmotion-phoenix.html)):
+six legs with a coxa, femur and tibia servo each, on an SSC-32U. The drive axes walk it as the Phoenix code does (inverse
+kinematics, `fwd` / `strafe` / `turn`); the gait (tripod, triple tripod, ripple, wave) and the body height are under Setup.
+`serial` takes SSC-32U lines: `{"serial": "#24P1600 #25P2000T500"}` (a group move, pulses 500–2500 µs), `Q` (`+` moving,
+`.` done), `QP 24` (pulse / 10), `STOP 24`, `VER`. A servo line (or a servo angle in `motors`) takes the servos away from the
+Phoenix code until the next drive command. Channels: right rear 0 1 2, right middle 4 5 6, right front 8 9 10, left rear
+16 17 18, left middle 20 21 22, left front 24 25 26; the right side is mirrored (a longer pulse turns the other way). The body
+moves over the feet that stand on the floor, so your own gait walks as well as it is written.
 
 ### JetBot and JetRacer
 

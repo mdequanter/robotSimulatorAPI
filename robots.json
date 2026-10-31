@@ -17933,6 +17933,338 @@
     },
     "ros": []
    }
+  },
+  {
+   "robot": "phoenix",
+   "page": "indexPhoenix.php",
+   "name": "Lynxmotion Phoenix Hexapod Simulator",
+   "title": "Lynxmotion Phoenix hexapod",
+   "text": "Six legs, 18 servos on an SSC-32U: tripod, ripple and wave gaits with inverse kinematics, or every servo yourself over serial",
+   "category": "Legs and snakes",
+   "image": "img/phoenix.jpg",
+   "interfaces": [
+    {
+     "key": "serial",
+     "family": "Serial protocol"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn",
+    "strafe"
+   ],
+   "motors": [
+    {
+     "id": "RR_coxa",
+     "name": "right rear coxa (SSC-32 #0)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "RR_femur",
+     "name": "right rear femur (SSC-32 #1)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "RR_tibia",
+     "name": "right rear tibia (SSC-32 #2)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "RM_coxa",
+     "name": "right middle coxa (SSC-32 #4)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "RM_femur",
+     "name": "right middle femur (SSC-32 #5)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "RM_tibia",
+     "name": "right middle tibia (SSC-32 #6)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "RF_coxa",
+     "name": "right front coxa (SSC-32 #8)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "RF_femur",
+     "name": "right front femur (SSC-32 #9)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "RF_tibia",
+     "name": "right front tibia (SSC-32 #10)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "LR_coxa",
+     "name": "left rear coxa (SSC-32 #16)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "LR_femur",
+     "name": "left rear femur (SSC-32 #17)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "LR_tibia",
+     "name": "left rear tibia (SSC-32 #18)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "LM_coxa",
+     "name": "left middle coxa (SSC-32 #20)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "LM_femur",
+     "name": "left middle femur (SSC-32 #21)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "LM_tibia",
+     "name": "left middle tibia (SSC-32 #22)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "LF_coxa",
+     "name": "left front coxa (SSC-32 #24)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "LF_femur",
+     "name": "left front femur (SSC-32 #25)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "LF_tibia",
+     "name": "left front tibia (SSC-32 #26)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "serial"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Poses (all 18 servos)",
+     "label": "Stand",
+     "line": "> #0P1500 #1P915 #2P1894 #4P1500 #5P915 #6P1894 #8P1500 #9P915 #10P1894 #16P1500 #17P2085 #18P1106 #20P1500 #21P2085 #22P1106 #24P1500 #25P2085 #26P1106T800",
+     "action": {
+      "serial": "#0P1500 #1P915 #2P1894 #4P1500 #5P915 #6P1894 #8P1500 #9P915 #10P1894 #16P1500 #17P2085 #18P1106 #20P1500 #21P2085 #22P1106 #24P1500 #25P2085 #26P1106T800"
+     }
+    },
+    {
+     "group": "Poses (all 18 servos)",
+     "label": "All centred (1500 µs)",
+     "line": "> #0P1500 #1P1500 #2P1500 #4P1500 #5P1500 #6P1500 #8P1500 #9P1500 #10P1500 #16P1500 #17P1500 #18P1500 #20P1500 #21P1500 #22P1500 #24P1500 #25P1500 #26P1500T1000",
+     "action": {
+      "serial": "#0P1500 #1P1500 #2P1500 #4P1500 #5P1500 #6P1500 #8P1500 #9P1500 #10P1500 #16P1500 #17P1500 #18P1500 #20P1500 #21P1500 #22P1500 #24P1500 #25P1500 #26P1500T1000"
+     }
+    },
+    {
+     "group": "Poses (all 18 servos)",
+     "label": "Lie down",
+     "line": "> #0P1500 #1P895 #2P1197 #4P1500 #5P895 #6P1197 #8P1500 #9P895 #10P1197 #16P1500 #17P2105 #18P1803 #20P1500 #21P2105 #22P1803 #24P1500 #25P2105 #26P1803T1200",
+     "action": {
+      "serial": "#0P1500 #1P895 #2P1197 #4P1500 #5P895 #6P1197 #8P1500 #9P895 #10P1197 #16P1500 #17P2105 #18P1803 #20P1500 #21P2105 #22P1803 #24P1500 #25P2105 #26P1803T1200"
+     }
+    },
+    {
+     "group": "One leg (left front: 24 coxa, 25 femur, 26 tibia)",
+     "label": "Lift it",
+     "line": "> #25P2388 #26P1358T400",
+     "action": {
+      "serial": "#25P2388 #26P1358T400"
+     }
+    },
+    {
+     "group": "One leg (left front: 24 coxa, 25 femur, 26 tibia)",
+     "label": "Swing it forward",
+     "line": "> #24P1752T400",
+     "action": {
+      "serial": "#24P1752T400"
+     }
+    },
+    {
+     "group": "One leg (left front: 24 coxa, 25 femur, 26 tibia)",
+     "label": "Put it down",
+     "line": "> #24P1500 #25P2085 #26P1106T400",
+     "action": {
+      "serial": "#24P1500 #25P2085 #26P1106T400"
+     }
+    },
+    {
+     "group": "Ask",
+     "label": "Done moving?",
+     "line": "> Q",
+     "action": {
+      "serial": "Q"
+     }
+    },
+    {
+     "group": "Ask",
+     "label": "Pulse of 24",
+     "line": "> QP 24",
+     "action": {
+      "serial": "QP 24"
+     }
+    },
+    {
+     "group": "Ask",
+     "label": "Version",
+     "line": "> VER",
+     "action": {
+      "serial": "VER"
+     }
+    }
+   ],
+   "telemetry": {
+    "mode": "gait",
+    "gait": "tripod",
+    "walking": false,
+    "bodyHeight": 0.092,
+    "legsUp": [],
+    "pulses": {},
+    "joints": {
+     "RR": [
+      0,
+      58,
+      -39
+     ],
+     "RM": [
+      0,
+      58,
+      -39
+     ],
+     "RF": [
+      0,
+      58,
+      -39
+     ],
+     "LR": [
+      0,
+      58,
+      -39
+     ],
+     "LM": [
+      0,
+      58,
+      -39
+     ],
+     "LF": [
+      0,
+      58,
+      -39
+     ]
+    },
+    "blocked": "",
+    "serial": []
+   }
   }
  ]
 }
