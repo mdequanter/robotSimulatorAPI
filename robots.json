@@ -18964,6 +18964,229 @@
     "estop": false,
     "ros": []
    }
+  },
+  {
+   "robot": "husky",
+   "page": "indexHusky.php",
+   "name": "Clearpath Husky Simulator",
+   "title": "Clearpath Husky",
+   "text": "50 kg field robot for 75 kg of payload: skid steering on big wheels, 2D LiDAR, Clearpath's ROS 2 interface",
+   "category": "Wheeled robots",
+   "image": "img/husky.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "FL",
+     "name": "Wheel FL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "FR",
+     "name": "Wheel FR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RL",
+     "name": "Wheel RL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RR",
+     "name": "Wheel RR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Drive · /a200_0000/cmd_vel",
+     "label": "Forward 0.5 m/s",
+     "line": "ros2 topic pub --once /a200_0000/cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.5, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/a200_0000/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.5,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /a200_0000/cmd_vel",
+     "label": "Curve left",
+     "line": "ros2 topic pub --once /a200_0000/cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.5, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.6}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/a200_0000/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.5,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0.6
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /a200_0000/cmd_vel",
+     "label": "Turn left 1 rad/s",
+     "line": "ros2 topic pub --once /a200_0000/cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 1}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/a200_0000/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 1
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /a200_0000/cmd_vel",
+     "label": "Stop",
+     "line": "ros2 topic pub --once /a200_0000/cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/a200_0000/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "topics": {
+     "/a200_0000/platform/odom": {
+      "header": "{…}",
+      "child_frame_id": "base_link",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/a200_0000/platform/odom/filtered": {
+      "header": "{…}",
+      "child_frame_id": "base_link",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/a200_0000/platform/emergency_stop": {
+      "data": false
+     },
+     "/a200_0000/platform/mcu/status/power": {
+      "header": "{…}",
+      "shore_power_connected": 0,
+      "battery_connected": 1,
+      "charger_connected": 0,
+      "charging_complete": 0,
+      "measured_voltages": [
+       26.76
+      ],
+      "measured_currents": [
+       1.5
+      ]
+     },
+     "/a200_0000/sensors/lidar2d_0/scan": {
+      "header": "{…}",
+      "angle_min": -2.356,
+      "angle_max": 2.356,
+      "angle_increment": 0.017,
+      "scan_time": 0.04,
+      "range_min": 0.05,
+      "range_max": 20,
+      "ranges": [
+       13.053,
+       12.962,
+       12.61,
+       12.418,
+       "…"
+      ]
+     }
+    },
+    "estop": false,
+    "ros": []
+   }
   }
  ]
 }
