@@ -324,6 +324,7 @@ name.
 | `limo` | fwd, turn (mecanum `options={"mode": "mecanum"}`: + strafe; Ackermann: turn steers) | FL, FR, RL, RR (hub motors); Ackermann: + `steer`° | – | ros | mode, motionMode (0 differential / tracked, 1 Ackermann, 2 mecanum), steerDeg (Ackermann), topics {`/odom`, `/limo_status`, `/scan` (360 ranges)}, ros |
 | `scoutmini` | fwd, turn (mecanum `options={"variant": "mecanum"}`: + strafe) | FL, FR, RL, RR | – | ros | variant, topics {`/odom`, `/scout_status`, `/scan` (360 ranges)}, ros |
 | `hunterse` | fwd, turn (turn steers) | RL, RR (rear wheels), `steer`° (central angle) | – | ros | steerDeg, topics {`/odom`, `/hunter_status` (with `steering_angle`), `/scan`}, ros |
+| `bunker` | fwd, turn (teleop keys) | FL, FR, RL, RR (the sprockets of the two tracks) | – | ros | variant (mini / pro), topics {`/odom`, `/bunker_status`, `/scan`}, ros |
 | `rangermini` | fwd, turn, strafe (the mode follows: fwd + turn dual Ackermann, turn alone spin, strafe side slip, fwd + strafe parallel) | FL, FR, RL, RR (drive), SFL, SFR, SRL, SRR (steering) | – | ros | motionMode (0 dual Ackermann, 1 parallel, 2 spin, 3 side slip), motionModeName, steeringDeg [FL, FR, RL, RR], topics {`/odom`, `/motion_state`, `/system_state`, `/battery_state`, `/scan` (360 ranges)}, ros |
 | `rbkairos` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (wheels), `shoulder_pan` … `wrist_3`° (arm) | – | ros | model, arm_type, topics {`/robot/robotnik_base_control/odom`, `/robot/front_laser/scan`, `/robot/rear_laser/scan` (241 ranges), `/robot/joint_states`}, arm {q, tcp, grip, holding, busy, message}, blocks [{id, color, x, y, z, held}], goal, ros (last answers) |
 | `rbvogui` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (drive), `shoulder_pan` … `wrist_3`° (arm) | SFL, SFR, SRL, SRR (steering) | ros | as `rbkairos` |
@@ -388,7 +389,7 @@ Each step returns the events that happened during that step:
 | `bump` | `create3`: a bumper zone closes (`zones`: which ones) | no |
 | `cliff` | `create3`: a cliff sensor sees a drop (`sensors`: which ones) | no |
 | `webrtc` | `go2`, `go2w`, `g1`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
-| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
+| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
@@ -783,6 +784,10 @@ Hunter SE (`hunterse`, `indexHunterSE.php`, [documentation](https://robotics.din
 Ackermann steering up to 4.8 m/s with the parameters of `hunter_ros2` (track 0.52 m, wheelbase 0.55 m, central angle at
 most 0.384 rad). As the driver it turns `/cmd_vel` into a steering angle: radius `|linear.x| / |angular.z|`, the largest
 angle below the wheelbase; `angular.z` alone only turns the wheels.
+
+Bunker (`bunker`, `indexBunker.php`, [documentation](https://robotics.dinno.be/docs-agilex-bunker.html)): the tracked
+Bunker Mini 2.0, or the Bunker Pro with `options={"model": "pro"}`: it turns on the spot with track slip (its wheel
+odometry drifts in turns) and climbs higher edges than wheels.
 
 ### AgileX LIMO
 
