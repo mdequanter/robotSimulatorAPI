@@ -17723,6 +17723,216 @@
     },
     "ros": []
    }
+  },
+  {
+   "robot": "limo",
+   "page": "indexLimo.php",
+   "name": "AgileX LIMO Simulator",
+   "title": "AgileX LIMO",
+   "text": "Four motion modes on one chassis: differential, Ackermann, tracks and mecanum; LiDAR and depth camera, ROS 2",
+   "category": "Wheeled robots",
+   "image": "img/limo.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "FL",
+     "name": "Hub motor FL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "FR",
+     "name": "Hub motor FR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RL",
+     "name": "Hub motor RL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RR",
+     "name": "Hub motor RR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Forward 0.3 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.3, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.3,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Curve left",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.3, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.5}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.3,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0.5
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Turn left on the spot",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 1}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 1
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Stop",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "mode": "diff",
+    "motionMode": 0,
+    "topics": {
+     "/odom": {
+      "header": "{…}",
+      "child_frame_id": "base_link",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/limo_status": {
+      "header": "{…}",
+      "vehicle_state": 0,
+      "control_mode": 1,
+      "battery_voltage": 12.48,
+      "error_code": 0,
+      "motion_mode": 0
+     },
+     "/scan": {
+      "header": "{…}",
+      "angle_min": -3.142,
+      "angle_max": 3.142,
+      "angle_increment": 0.017,
+      "scan_time": 0.125,
+      "range_min": 0.12,
+      "range_max": 12,
+      "ranges": [
+       10.422,
+       10.4,
+       10.42,
+       10.406,
+       "…"
+      ]
+     }
+    },
+    "ros": []
+   }
   }
  ]
 }
