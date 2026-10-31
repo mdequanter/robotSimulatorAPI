@@ -20265,7 +20265,8 @@
     "blocked",
     "stall",
     "goal",
-    "rest"
+    "rest",
+    "lift"
    ],
    "skills": [],
    "views": [
@@ -20411,6 +20412,48 @@
     },
     {
      "group": "Missions",
+     "label": "Pick up Shelf 1",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/mission_queue -H \"Content-Type: application/json\" -d '{\"mission_id\":\"5a17c44d-6b2f-11ee-9d4c-94c691a3f44d\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/mission_queue",
+       "body": {
+        "mission_id": "5a17c44d-6b2f-11ee-9d4c-94c691a3f44d"
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "Pick up Shelf 2",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/mission_queue -H \"Content-Type: application/json\" -d '{\"mission_id\":\"5a17c44e-6b2f-11ee-9d4c-94c691a3f44e\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/mission_queue",
+       "body": {
+        "mission_id": "5a17c44e-6b2f-11ee-9d4c-94c691a3f44e"
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
+     "label": "Place shelf",
+     "line": "curl -X POST http://192.168.12.20/api/v2.0.0/mission_queue -H \"Content-Type: application/json\" -d '{\"mission_id\":\"5a17c4b0-6b2f-11ee-9d4c-94c691a3f4b0\"}' -H \"Authorization: Basic …\"",
+     "action": {
+      "rest": {
+       "method": "POST",
+       "path": "/mission_queue",
+       "body": {
+        "mission_id": "5a17c4b0-6b2f-11ee-9d4c-94c691a3f4b0"
+       }
+      }
+     }
+    },
+    {
+     "group": "Missions",
      "label": "GET /mission_queue",
      "line": "curl -X GET http://192.168.12.20/api/v2.0.0/mission_queue -H \"Authorization: Basic …\"",
      "action": {
@@ -20500,6 +20543,20 @@
        "select": 1
       }
      }
+    },
+    {
+     "group": "More actions",
+     "label": "Lift the shelf above it (by hand)",
+     "action": {
+      "lift": true
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Lower the shelf (by hand)",
+     "action": {
+      "lift": false
+     }
     }
    ],
    "telemetry": {
@@ -20523,6 +20580,28 @@
     },
     "queue": [],
     "rest": [],
+    "shelves": [
+     {
+      "guid": "5a17c1f4-6b2f-11ee-9d4c-94c691a3f1f4",
+      "name": "Shelf 1",
+      "pos_x": 2.2,
+      "pos_y": -0.9,
+      "orientation": 0,
+      "type_id": 5,
+      "map_id": "5a17c000-6b2f-11ee-9d4c-94c691a3f000",
+      "carried_by": null
+     },
+     {
+      "guid": "5a17c1f5-6b2f-11ee-9d4c-94c691a3f1f5",
+      "name": "Shelf 2",
+      "pos_x": 2.2,
+      "pos_y": 2.4,
+      "orientation": 0,
+      "type_id": 5,
+      "map_id": "5a17c000-6b2f-11ee-9d4c-94c691a3f000",
+      "carried_by": null
+     }
+    ],
     "selected": "192.168.12.20",
     "fleet": [
      {

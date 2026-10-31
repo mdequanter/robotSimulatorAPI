@@ -325,7 +325,7 @@ name.
 | `scoutmini` | fwd, turn (mecanum `options={"variant": "mecanum"}`: + strafe) | FL, FR, RL, RR | – | ros | variant, topics {`/odom`, `/scout_status`, `/scan` (360 ranges)}, ros |
 | `hunterse` | fwd, turn (turn steers) | RL, RR (rear wheels), `steer`° (central angle) | – | ros | steerDeg, topics {`/odom`, `/hunter_status` (with `steering_angle`), `/scan`}, ros |
 | `bunker` | fwd, turn (teleop keys) | FL, FR, RL, RR (the sprockets of the two tracks) | – | ros | variant (mini / pro), topics {`/odom`, `/bunker_status`, `/scan`}, ros |
-| `mir250` | fwd, turn (manual control while held; the selected robot) | L, R (drive wheels) | – | rest | status (as GET /status of the selected robot: robot_name, state_id, state_text, mission_text, position {x, y, orientation°}, battery, errors), queue [{id, mission_id, state}], rest (last answers), selected, fleet [{name, ip, state_text, mission_text, position}] (2–4 robots) |
+| `mir250` | fwd, turn (manual control while held; the selected robot) | L, R (drive wheels) | – | rest | status (as GET /status of the selected robot: robot_name, state_id, state_text, mission_text, position {x, y, orientation°}, battery, errors), queue [{id, mission_id, state}], rest (last answers), shelves [{name, pos_x, pos_y, orientation, carried_by}], selected, fleet [{name, ip, state_text, mission_text, position}] (2–4 robots) |
 | `rangermini` | fwd, turn, strafe (the mode follows: fwd + turn dual Ackermann, turn alone spin, strafe side slip, fwd + strafe parallel) | FL, FR, RL, RR (drive), SFL, SFR, SRL, SRR (steering) | – | ros | motionMode (0 dual Ackermann, 1 parallel, 2 spin, 3 side slip), motionModeName, steeringDeg [FL, FR, RL, RR], topics {`/odom`, `/motion_state`, `/system_state`, `/battery_state`, `/scan` (360 ranges)}, ros |
 | `rbkairos` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (wheels), `shoulder_pan` … `wrist_3`° (arm) | – | ros | model, arm_type, topics {`/robot/robotnik_base_control/odom`, `/robot/front_laser/scan`, `/robot/rear_laser/scan` (241 ranges), `/robot/joint_states`}, arm {q, tcp, grip, holding, busy, message}, blocks [{id, color, x, y, z, held}], goal, ros (last answers) |
 | `rbvogui` | fwd, turn, strafe (teleop keys) | FL, FR, RL, RR (drive), `shoulder_pan` … `wrist_3`° (arm) | SFL, SFR, SRL, SRR (steering) | ros | as `rbkairos` |
@@ -396,6 +396,7 @@ Each step returns the events that happened during that step:
 | `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
 | `rest` | `mir250`: the answer to a REST request (`method`, `path`, `robot` = the robot's address, `code` = HTTP status, `data`); a mission that ends blocked (`method`: EVENT, `robot`, `data` {robot_name, state_text, errors}) | no |
+| `lift` | `mir250`: the lift worked by hand (`robot`, `message`: lifting, lowering, or why not) | no |
 | `urscript` | `ur5e`: a URScript program ran (`program`, `reply` from textmsg / get_actual_…, `note`); a move that failed while it ran (`program`: null, `note`) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error); `fr3`: a franky script ran (`code`, `reply` from print, `note`) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
@@ -820,6 +821,14 @@ other while it is Ready; a path blocked for 5 s aborts the mission (state 12, Er
 missions = api.step(env_id, {"rest": {"method": "GET", "path": "/missions"}})["events"][0]["data"]
 api.step(env_id, {"rest": {"method": "POST", "path": "/mission_queue", "body": {"mission_id": missions[1]["guid"]}}})
 ```
+
+**Shelf carts.** The robots have a shelf lift (as MiR's Shelf Carrier) and the warehouse has two shelf carts (`Shelf 1`,
+`Shelf 2`, in front of the docks). Missions `Pick up Shelf 1` / `Pick up Shelf 2` drive to the cart's nearest end, straight in under it
+and lift it 8 cm; `Place shelf` lowers it where the robot stands and drives out backwards. Carrying a cart the robot is as wide as the
+cart; a robot that has no room to turn aborts the mission after 5 s (state Error, as a blocked path). The carts are positions of type 5
+(`GET /positions`, where they stand now), `GET /status` has `top_module` (`height_mm`, `lifted`, `shelf`), `extra.shelves` lists them
+with `carried_by`. `{"lift": true | false}` works the selected robot's lift by hand (a `lift` event with the outcome). Other worlds
+have no carts (the pick missions end with an error).
 
 **A fleet.** The page has three MiR250s by default (`options={"fleet": 1…4}`, `?fleet=` in the browser), each with its
 own address (`192.168.12.20`, `.21`, `.22`, `.23`), state and mission queue, on one map: the positions and missions are
