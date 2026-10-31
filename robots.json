@@ -17381,6 +17381,348 @@
     },
     "serial": []
    }
+  },
+  {
+   "robot": "rangermini",
+   "page": "indexRangerMini.php",
+   "name": "AgileX Ranger Mini 3.0 Simulator",
+   "title": "AgileX Ranger Mini 3.0",
+   "text": "Four independently steered wheels: dual Ackermann, crab, side slip and spin from one /cmd_vel, ROS 2",
+   "category": "Wheeled robots",
+   "image": "img/rangermini.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn",
+    "strafe"
+   ],
+   "motors": [
+    {
+     "id": "FL",
+     "name": "Drive FL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "FR",
+     "name": "Drive FR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RL",
+     "name": "Drive RL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "RR",
+     "name": "Drive RR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "SFL",
+     "name": "Steering FL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "SFR",
+     "name": "Steering FR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "SRL",
+     "name": "Steering RL",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "SRR",
+     "name": "Steering RR",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Dual Ackermann",
+     "label": "Forward 0.6 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.6, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.6,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Dual Ackermann",
+     "label": "Curve left (r = 1 m)",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.5, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.5}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.5,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0.5
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Dual Ackermann",
+     "label": "Curve right (r = 0.6 m)",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.4, y: 0, z: 0}, angular: {x: 0, y: 0, z: -0.67}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.4,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": -0.67
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Parallel, side slip, spin",
+     "label": "Crab 30° left",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.43, y: 0.25, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.43,
+         "y": 0.25,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Parallel, side slip, spin",
+     "label": "Sideways left 0.4 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0.4, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0.4,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Parallel, side slip, spin",
+     "label": "Spin left 0.8 rad/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.8}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0.8
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Parallel, side slip, spin",
+     "label": "Stop",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "motionMode": 0,
+    "motionModeName": "dual Ackermann",
+    "steeringDeg": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "topics": {
+     "/odom": {
+      "header": "{…}",
+      "child_frame_id": "base_link",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/motion_state": {
+      "header": "{…}",
+      "motion_mode": 0
+     },
+     "/system_state": {
+      "header": "{…}",
+      "vehicle_state": 0,
+      "control_mode": 1,
+      "error_code": 0,
+      "battery_voltage": 50.52,
+      "motion_mode": 0
+     },
+     "/battery_state": {
+      "header": "{…}",
+      "voltage": 50.52,
+      "current": -1.5,
+      "percentage": 0.92,
+      "power_supply_status": 2,
+      "power_supply_technology": 4,
+      "present": true
+     },
+     "/scan": {
+      "header": "{…}",
+      "angle_min": -3.142,
+      "angle_max": 3.142,
+      "angle_increment": 0.017,
+      "scan_time": 0.1,
+      "range_min": 0.1,
+      "range_max": 12,
+      "ranges": [
+       null,
+       null,
+       null,
+       10.709,
+       "…"
+      ]
+     }
+    },
+    "ros": []
+   }
   }
  ]
 }
