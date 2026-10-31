@@ -318,6 +318,7 @@ name.
 | `tron1w` | fwd, turn (the handheld remote) | – | 6 leg joints + `wheel_L_Joint`, `wheel_R_Joint` | ws, fell | as `tron1`, plus stair, odom (after request_enable_odom) |
 | `panther` | fwd, turn (mecanum `?variant=mecanum`: + strafe) | FL, FR, RL, RR | – | ros | variant, topics {`/odometry/wheels`, `/odometry/filtered`, `/battery/battery_status`, `/hardware/e_stop`, `/joint_states`, `/scan` (accessory)}, estop, lights, lidar, ros |
 | `jaguar` | fwd, turn (the gamepad: `PING` + `MMW !M` lines) | FL, FR, RL, RR (channel sign: the right ones − = forward) | – | tcp, watchdog | estop, watchdog_ok, power [[FL, FR], [RL, RR]], encoders {FL, FR, RL, RR, m_per_count}, imu {raw {gyro, acc, mag}, gyro_dps, acc_g, compass_deg, yaw}, gps {fix, lat, lon, speed_kn, course, sats, hdop}, battery_v, temps, amps, surface_mu, connections, real {connected, robot, mode, lines, battery_v, gps}, tcp (last answers) |
+| `jackal` | fwd, turn (teleop keys) | FL, FR, RL, RR | – | ros | topics {`/j100_0000/platform/odom`, `/j100_0000/platform/odom/filtered`, `/j100_0000/platform/emergency_stop`, `/j100_0000/platform/mcu/status/power`, `/j100_0000/sensors/lidar2d_0/scan` (271 ranges, 270°)}, estop, ros |
 | `summitxl` | fwd, turn (mecanum `?variant=mecanum`: + strafe) | FL, FR, RL, RR | – | ros | variant, topics {`/robot/robotnik_base_control/odom`, `/robot/front_laser/scan` (271 ranges, 270°), `/robot/joint_states`, `/robot/battery_estimator/data`, `/robot/robotnik_base_hw/emergency_stop`}, motorsEnabled, ros |
 | `limo` | fwd, turn (mecanum `options={"mode": "mecanum"}`: + strafe; Ackermann: turn steers) | FL, FR, RL, RR (hub motors); Ackermann: + `steer`° | – | ros | mode, motionMode (0 differential / tracked, 1 Ackermann, 2 mecanum), steerDeg (Ackermann), topics {`/odom`, `/limo_status`, `/scan` (360 ranges)}, ros |
 | `rangermini` | fwd, turn, strafe (the mode follows: fwd + turn dual Ackermann, turn alone spin, strafe side slip, fwd + strafe parallel) | FL, FR, RL, RR (drive), SFL, SFR, SRL, SRR (steering) | – | ros | motionMode (0 dual Ackermann, 1 parallel, 2 spin, 3 side slip), motionModeName, steeringDeg [FL, FR, RL, RR], topics {`/odom`, `/motion_state`, `/system_state`, `/battery_state`, `/scan` (360 ranges)}, ros |
@@ -384,7 +385,7 @@ Each step returns the events that happened during that step:
 | `bump` | `create3`: a bumper zone closes (`zones`: which ones) | no |
 | `cliff` | `create3`: a cliff sensor sees a drop (`sensors`: which ones) | no |
 | `webrtc` | `go2`, `go2w`, `g1`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
-| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `rangermini`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
+| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `rangermini`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
@@ -775,6 +776,15 @@ ROS 2 education robot with four motion modes on one chassis, chosen with `option
 inner wheel at most 28°), `tracked` (differential with tracks: more slip, worse odometry) and `mecanum` (`linear.y` drives
 sideways). In `/cmd_vel` (Twist, stops 0.5 s after the last message); out `/odom` (wheel odometry), `/imu`, `/scan` (360°),
 `/limo_status` (`motion_mode` 0 differential or tracked, 1 Ackermann, 2 mecanum) and the depth camera's colour image.
+
+### Clearpath Jackal and Husky
+
+Clearpath Jackal J100 (`jackal`, `indexJackal.php`, [documentation](https://robotics.dinno.be/docs-clearpath-jackal.html)):
+Clearpath's ROS 2 interface (Humble), everything in the namespace of the robot's serial (here `/j100_0000`): in
+`/j100_0000/cmd_vel` (Twist, stops 0.5 s after the last message; Jazzy robots take a TwistStamped); out
+`platform/odom` (wheels), `platform/odom/filtered` (wheels + IMU), `sensors/imu_0/data`, `platform/joint_states`,
+`platform/emergency_stop`, `platform/mcu/status/power` and `sensors/lidar2d_0/scan` (a 270° 2D LiDAR). The e-stop is
+under Setup.
 
 ### AgileX Ranger Mini 3.0
 

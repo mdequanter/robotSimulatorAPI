@@ -47,7 +47,7 @@ const ROBOTS = {
   agibotd1: 'indexAgiBotD1.php', h2: 'indexH2.php', boosterk1: 'indexBoosterK1.php', tron1: 'indexTron1.php', tron1w: 'indexTron1.php?variant=wheel',
   panther: 'indexPanther.php', jaguar: 'indexJaguar.php', summitxl: 'indexSummitXL.php', rbkairos: 'indexRBKairos.php', rbvogui: 'indexRBKairos.php?variant=vogui',
   xarm6: 'indexXArm6.php', xarm7: 'indexXArm6.php?model=7', omx: 'indexOpenManipulator.php', driftx: 'indexDriftX.php',
-  rangermini: 'indexRangerMini.php', limo: 'indexLimo.php', phoenix: 'indexPhoenix.php', spot: 'indexSpot.php',
+  rangermini: 'indexRangerMini.php', limo: 'indexLimo.php', phoenix: 'indexPhoenix.php', spot: 'indexSpot.php', jackal: 'indexJackal.php',
 };
 
 // Suggested reward (the client may compute its own from obs + events): progress along the lane,
