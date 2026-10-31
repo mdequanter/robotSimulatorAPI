@@ -538,7 +538,10 @@ botopiaEnv.step({ drive: { fwd: 1 } }, { dt: 0.1 })   // in normal mode the page
 Environments instead of the obstacle course (Setup → Environment, `?world=` in the page, `options={"world": …}` in
 the API): `botopia` (the Kyosho Mini-Z 50x50 Race track), `corridor` (the Corridor Environment) and `park` (the ε
 track as an earth path in the grass, with pebbles, puddles, a hedge in the middle of the loop, bushes and trees; the
-lane `track` works there as on the course, so `track_yolo.py` and `go2_track_yolo.py` take `--world park`).
+lane `track` works there as on the course, so `track_yolo.py` and `go2_track_yolo.py` take `--world park`). The
+examples of the [world editor](https://robotics.dinno.be/design-your-world.html) are built in too: `house` (a house with
+a garden), `hospital` (a hospital ward with lifts), `warehouse` (pallet racks and aisles) and `maze` (the maze of
+tutorial 14). Worlds that users build themselves stay in their own browser, so the API does not have them.
 
 ```python
 env = api.create("go2", "track", options={"world": "park"})
