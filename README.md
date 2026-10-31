@@ -310,6 +310,7 @@ name.
 | `tello` | fwd, turn, strafe, up (the app's sticks) | `m1` … `m4` (read only) | – | tello | phase (landed / takeoff / flying / landing / flip / falling), sdk, height_cm, battery, flight_s, flight_left_s, max_height_m, stream, downvision, mission_pads, pad, busy, state (the SDK state packet), tello (last answers) |
 | `xgo` / `xgomini` | fwd, turn, strafe (the app's joystick) | – | 15 servos (`m11` … `m43` legs, `m51` gripper, `m52` `m53` arm) | xgo | model, action, actionName, move {x, y, turn}, gait, pace, markTime, height_mm, attitude {r, p, y}, imu, lying, arm {x, z, claw}, cube {x, y, z, held}, motors, blocked, xgo (last answers) |
 | `a2` / `as2` | fwd, turn, strafe (the remote) | – | 12 joints (`FL_hip`, `FL_thigh`, `FL_calf`, …) | sdk | model, sportmodestate {mode (FSM 0–15), mode_name, progress, position, velocity, yaw_speed, body_height}, gait, speed_level, trajectory, sdk (last answers) |
+| `spot` | fwd, turn, strafe (the tablet's joysticks, while it stands with power on) | – | 12 joints (`FL_hip`, `FL_thigh`, `FL_calf`, …) | ros | lease, power, estop, standing, stairMode, mode, topics {`/odometry`, `/status/feet`, `/status/battery_states`, `/status/power_state`}, ros |
 | `agibotd1` | fwd, turn, strafe (the remote) | – | 12 joints | sdk | ctrl_mode (0 / 1 / 18 / 21 / 51), position, body_velocity, battery, move, two_leg, sdk (last answers) |
 | `h2` | fwd, turn, strafe (the remote's joystick) | – | 31 joints (`left_hip_pitch` … `right_wrist_yaw`, `waist_yaw/roll/pitch`, `head_yaw/pitch`) | sdk, fell | fsm_id, fsm_name, fsm_mode, posture, arm_action, velocity, balance_mode, speed_mode, swing_height, stand_height, sdk (last answers) |
 | `boosterk1` | fwd, turn, strafe (the app's joystick) | – | 22 joints (`head_yaw`, `head_pitch`, `left_shoulder_pitch` … `right_crank_down`) | booster, fell | mode, mode_name, posture, action, gait, head {pitch, yaw}, odometer {x, y, theta}, velocity, booster (last answers) |
@@ -383,7 +384,7 @@ Each step returns the events that happened during that step:
 | `bump` | `create3`: a bumper zone closes (`zones`: which ones) | no |
 | `cliff` | `create3`: a cliff sensor sees a drop (`sensors`: which ones) | no |
 | `webrtc` | `go2`, `go2w`, `g1`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
-| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `rangermini`, `limo`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
+| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `rangermini`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
@@ -748,6 +749,23 @@ after the last message; teleop: `--ros-args -p stamped:=true`); out `/odometry/w
 namespace `/robot`: `/robot/cmd_vel` (Twist; teleop: `--ros-args -r cmd_vel:=/robot/cmd_vel`) or
 `/robot/robotnik_base_control/cmd_vel` (TwistStamped); out odom, IMU, the 270° front laser, joint states, e-stop, battery
 and the PTZ camera image. Both are too big for the 60 cm corridor.
+
+### Boston Dynamics Spot
+
+Boston Dynamics Spot (`spot`, `indexSpot.php`, [documentation](https://robotics.dinno.be/docs-boston-dynamics-spot.html)):
+the ROS 2 interface of the `spot_ros2` driver. It starts as with `auto_claim`, `auto_power_on` and `auto_stand` (standing,
+lease held). Services (`std_srvs/srv/Trigger`, answer `success` + `message`): `/claim`, `/release` (power off first),
+`/power_on` (needs the lease, no e-stop), `/power_off` (sits first), `/stand`, `/sit`, `/stop`, `/self_right`,
+`/estop/gentle` (sits, then power off), `/estop/hard` (power off at once), `/estop/release`; `/stair_mode`
+(`std_srvs/srv/SetBool`: higher, slower steps). Topics in: `/cmd_vel` (Twist, up to 1.6 m/s, stops 0.5 s after the last
+message; only with lease, power and standing, else the answer says why) and `/body_pose` (Pose: body tilt and height while
+it stands). Out: `/odometry`, `/joint_states`, `/status/feet`, `/status/battery_states`, `/status/power_state`,
+`/status/estop`, `/status/leases` and the front camera image.
+
+```python
+for srv in ["/sit", "/power_off", "/release", "/claim", "/power_on", "/stand"]:
+    api.step(env_id, {"ros": {"kind": "service", "name": srv}})
+```
 
 ### AgileX LIMO
 

@@ -18265,6 +18265,482 @@
     "blocked": "",
     "serial": []
    }
+  },
+  {
+   "robot": "spot",
+   "page": "indexSpot.php",
+   "name": "Boston Dynamics Spot Simulator",
+   "title": "Boston Dynamics Spot",
+   "text": "The 32 kg industrial robot dog: claim the lease, power on, stand and walk through the spot_ros2 driver, ROS 2",
+   "category": "Robot dogs",
+   "image": "img/spot.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn",
+    "strafe"
+   ],
+   "motors": [
+    {
+     "id": "FL_hip",
+     "name": "Front left hip",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -60,
+      60
+     ]
+    },
+    {
+     "id": "FL_thigh",
+     "name": "Front left thigh",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -260,
+      260
+     ]
+    },
+    {
+     "id": "FL_calf",
+     "name": "Front left calf",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -170,
+      170
+     ]
+    },
+    {
+     "id": "FR_hip",
+     "name": "Front right hip",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -60,
+      60
+     ]
+    },
+    {
+     "id": "FR_thigh",
+     "name": "Front right thigh",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -260,
+      260
+     ]
+    },
+    {
+     "id": "FR_calf",
+     "name": "Front right calf",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -170,
+      170
+     ]
+    },
+    {
+     "id": "RL_hip",
+     "name": "Rear left hip",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -60,
+      60
+     ]
+    },
+    {
+     "id": "RL_thigh",
+     "name": "Rear left thigh",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -260,
+      260
+     ]
+    },
+    {
+     "id": "RL_calf",
+     "name": "Rear left calf",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -170,
+      170
+     ]
+    },
+    {
+     "id": "RR_hip",
+     "name": "Rear right hip",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -60,
+      60
+     ]
+    },
+    {
+     "id": "RR_thigh",
+     "name": "Rear right thigh",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -260,
+      260
+     ]
+    },
+    {
+     "id": "RR_calf",
+     "name": "Rear right calf",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -170,
+      170
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Start and stop",
+     "label": "claim",
+     "line": "ros2 service call /claim std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/claim",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "Start and stop",
+     "label": "power on",
+     "line": "ros2 service call /power_on std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/power_on",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "Start and stop",
+     "label": "stand",
+     "line": "ros2 service call /stand std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/stand",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "Start and stop",
+     "label": "sit",
+     "line": "ros2 service call /sit std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/sit",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "Start and stop",
+     "label": "power off",
+     "line": "ros2 service call /power_off std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/power_off",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "Start and stop",
+     "label": "release",
+     "line": "ros2 service call /release std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/release",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "Walk · /cmd_vel",
+     "label": "Forward 0.5 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.5, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.5,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Walk · /cmd_vel",
+     "label": "Side step left 0.3 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0.3, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0.3,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Walk · /cmd_vel",
+     "label": "Turn left 0.6 rad/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.6}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0.6
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Walk · /cmd_vel",
+     "label": "Stop",
+     "line": "ros2 service call /stop std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/stop",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "Body and modes",
+     "label": "Look up",
+     "line": "ros2 topic pub --once /body_pose geometry_msgs/msg/Pose \"{position: {x: 0, y: 0, z: 0}, orientation: {x: 0, y: -0.13, z: 0, w: 0.99}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/body_pose",
+       "type": "geometry_msgs/msg/Pose",
+       "msg": {
+        "position": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "orientation": {
+         "x": 0,
+         "y": -0.13,
+         "z": 0,
+         "w": 0.99
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Body and modes",
+     "label": "Crouch 10 cm",
+     "line": "ros2 topic pub --once /body_pose geometry_msgs/msg/Pose \"{position: {x: 0, y: 0, z: -0.1}, orientation: {x: 0, y: 0, z: 0, w: 1}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/body_pose",
+       "type": "geometry_msgs/msg/Pose",
+       "msg": {
+        "position": {
+         "x": 0,
+         "y": 0,
+         "z": -0.1
+        },
+        "orientation": {
+         "x": 0,
+         "y": 0,
+         "z": 0,
+         "w": 1
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Body and modes",
+     "label": "Stair mode on",
+     "line": "ros2 service call /stair_mode std_srvs/srv/SetBool \"{data: true}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/stair_mode",
+       "type": "std_srvs/srv/SetBool",
+       "msg": {
+        "data": true
+       }
+      }
+     }
+    },
+    {
+     "group": "Body and modes",
+     "label": "Stair mode off",
+     "line": "ros2 service call /stair_mode std_srvs/srv/SetBool \"{data: false}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/stair_mode",
+       "type": "std_srvs/srv/SetBool",
+       "msg": {
+        "data": false
+       }
+      }
+     }
+    },
+    {
+     "group": "E-Stop",
+     "label": "Gentle",
+     "line": "ros2 service call /estop/gentle std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/estop/gentle",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "E-Stop",
+     "label": "Hard",
+     "line": "ros2 service call /estop/hard std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/estop/hard",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "E-Stop",
+     "label": "Release",
+     "line": "ros2 service call /estop/release std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/estop/release",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "lease": true,
+    "power": true,
+    "estop": null,
+    "standing": true,
+    "stairMode": false,
+    "mode": "stand",
+    "topics": {
+     "/odometry": {
+      "header": "{…}",
+      "child_frame_id": "body",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/status/feet": {
+      "states": [
+       "{…}",
+       "{…}",
+       "{…}",
+       "{…}"
+      ]
+     },
+     "/status/battery_states": {
+      "battery_states": [
+       "{…}"
+      ]
+     },
+     "/status/power_state": {
+      "motor_power_state": 2,
+      "shore_power_state": 2,
+      "locomotion_charge_percentage": 88,
+      "locomotion_estimated_runtime": "{…}"
+     }
+    },
+    "ros": []
+   }
   }
  ]
 }
