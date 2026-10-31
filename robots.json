@@ -19802,10 +19802,10 @@
   },
   {
    "robot": "ur5e",
-   "page": "indexXArm6.php?model=ur5e",
+   "page": "indexUR5e.php",
    "name": "Universal Robots UR5e",
-   "title": "UFACTORY xArm 5 Lite / 6 / 7 / 850",
-   "text": "On a table with coloured blocks: four models from 5 to 7 joints, 70 or 85 cm reach",
+   "title": "Universal Robots UR5e",
+   "text": "The industry's collaborative arm: six joints, 85 cm reach, driven with URScript (movej, movel, Robotiq gripper)",
    "category": "Robot arms",
    "image": "img/ur5e.jpg",
    "interfaces": [
@@ -19963,37 +19963,37 @@
      {
       "id": "red1",
       "color": "red",
-      "x": 0.442,
-      "y": -0.351,
+      "x": -0.512,
+      "y": 0.088,
       "z": 0.02,
-      "yawDeg": 37.5,
+      "yawDeg": 16.9,
       "held": false
      },
      {
       "id": "red2",
       "color": "red",
-      "x": 0.281,
-      "y": -0.391,
+      "x": -0.388,
+      "y": -0.018,
       "z": 0.02,
-      "yawDeg": 109.9,
+      "yawDeg": 91.6,
       "held": false
      },
      {
       "id": "green1",
       "color": "green",
-      "x": -0.232,
-      "y": -0.128,
+      "x": -0.263,
+      "y": 0.07,
       "z": 0.02,
-      "yawDeg": 79.4,
+      "yawDeg": 178.6,
       "held": false
      },
      {
       "id": "green2",
       "color": "green",
-      "x": 0.114,
-      "y": -0.365,
+      "x": 0.048,
+      "y": 0.296,
       "z": 0.02,
-      "yawDeg": 103.2,
+      "yawDeg": 169.9,
       "held": false
      },
      "…"
