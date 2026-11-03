@@ -97,7 +97,10 @@ class BotopiaAPI:
         """action: {"drive": {"fwd", "turn", "strafe"}} and/or {"motors": {id: value}}, or
         {"skill": name} on pages with skills (quadruped). Returns {obs, events, reward, done}; with
         image (e.g. {"view": "robot", "width": 64}) also "image": the JPEG bytes of that view after
-        the step. until="idle": dt is the maximum, the step ends as soon as the skill has finished."""
+        the step; with "labels": True (or a list of item kinds) in image also "labels": the boxes of the
+        world's items in that same picture (object detection, see labels()). {"place": {"random": True}}
+        in the action puts the robot on a free spot first ("placed": where). until="idle": dt is the
+        maximum, the step ends as soon as the skill has finished."""
         body = {"action": action, "dt": dt, "frame": frame}
         if until:
             body["until"] = until
@@ -122,8 +125,17 @@ class BotopiaAPI:
 
     def frame(self, env_id, quality=0.8, view="scene", width=320):
         """JPEG bytes: view "scene" = the 3D view of the simulator, "robot" = what the robot's own
-        front camera sees (width × width·3/4 pixels), "external" = a fixed camera beside the robot (xArm)."""
+        front camera sees (width × width·3/4 pixels), "external" = a fixed camera beside the robot (xArm),
+        or another camera of the robot ("gripper" on the TurtleBot3 with OpenMANIPULATOR-X)."""
         return self.http.request("GET", f"/api/envs/{env_id}/frame?quality={quality}&view={view}&width={width}", raw=True)
+
+    def labels(self, env_id, view="robot", width=320, classes=None):
+        """The boxes of the world's items in a camera's view now, for training an object detector:
+        {"width", "height", "names", "boxes": [{"cls", "x", "y", "w", "h", "px"}]} in pixels from the top
+        left (px: how many pixels of the item are visible). classes: the item kinds to label, in the order
+        of their class numbers (default: every kind in the world)."""
+        q = f"view={view}&width={width}" + (f"&classes={','.join(classes)}" if classes else "")
+        return self.http.request("GET", f"/api/envs/{env_id}/labels?{q}")
 
     def close(self, env_id):
         return self.http.request("DELETE", f"/api/envs/{env_id}")

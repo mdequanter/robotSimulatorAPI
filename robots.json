@@ -20627,6 +20627,995 @@
      }
     ]
    }
+  },
+  {
+   "robot": "turtlebot3",
+   "page": "indexTurtleBot3.php",
+   "name": "TurtleBot3 Burger Simulator",
+   "title": "TurtleBot3 Burger",
+   "text": "The small ROS 2 robot many courses start with: Dynamixel wheels, OpenCR and an LDS LiDAR",
+   "category": "Wheeled robots",
+   "image": "img/turtlebot3burger.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "L",
+     "name": "Left wheel (XL430-W250)",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "R",
+     "name": "Right wheel (XL430-W250)",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Forward 0.15 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.15, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.15,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Turn left 1 rad/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 1}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 1
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Curve right",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.12, y: 0, z: 0}, angular: {x: 0, y: 0, z: -0.6}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.12,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": -0.6
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Stop",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Services",
+     "label": "Motors off",
+     "line": "ros2 service call /motor_power std_srvs/srv/SetBool \"{data: false}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/motor_power",
+       "type": "std_srvs/srv/SetBool",
+       "msg": {
+        "data": false
+       }
+      }
+     }
+    },
+    {
+     "group": "Services",
+     "label": "Motors on",
+     "line": "ros2 service call /motor_power std_srvs/srv/SetBool \"{data: true}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/motor_power",
+       "type": "std_srvs/srv/SetBool",
+       "msg": {
+        "data": true
+       }
+      }
+     }
+    },
+    {
+     "group": "Services",
+     "label": "Reset odometry",
+     "line": "ros2 service call /reset std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/reset",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "Services",
+     "label": "Sound",
+     "line": "ros2 service call /sound turtlebot3_msgs/srv/Sound \"{value: 1}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/sound",
+       "type": "turtlebot3_msgs/srv/Sound",
+       "msg": {
+        "value": 1
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "model": "burger",
+    "topics": {
+     "/odom": {
+      "header": "{…}",
+      "child_frame_id": "base_footprint",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/scan": {
+      "header": "{…}",
+      "angle_min": 0,
+      "angle_max": 6.283,
+      "angle_increment": 0.017,
+      "scan_time": 0.2,
+      "range_min": 0.16,
+      "range_max": 8,
+      "ranges": [
+       6.081,
+       6.069,
+       6.097,
+       6.109,
+       "…"
+      ]
+     },
+     "/joint_states": {
+      "header": "{…}",
+      "name": [
+       "wheel_left_joint",
+       "wheel_right_joint"
+      ],
+      "position": [
+       0,
+       0
+      ],
+      "velocity": [
+       0,
+       0
+      ],
+      "effort": []
+     },
+     "/battery_state": {
+      "voltage": 12.48,
+      "percentage": 92,
+      "design_capacity": 1.8,
+      "present": true
+     }
+    },
+    "robots": [
+     {
+      "domain": 0,
+      "pose": [
+       0,
+       0,
+       0
+      ]
+     }
+    ],
+    "selected": 0,
+    "ros": []
+   }
+  },
+  {
+   "robot": "tb3waffle",
+   "page": "indexTurtleBot3.php?model=waffle",
+   "name": "TurtleBot3 Waffle Pi Simulator",
+   "title": "TurtleBot3 Burger",
+   "text": "The small ROS 2 robot many courses start with: Dynamixel wheels, OpenCR and an LDS LiDAR",
+   "category": "Wheeled robots",
+   "image": "img/turtlebot3burger.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "L",
+     "name": "Left wheel (XM430-W210)",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "R",
+     "name": "Right wheel (XM430-W210)",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Forward 0.15 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.15, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.15,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Turn left 1 rad/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 1}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 1
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Curve right",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.12, y: 0, z: 0}, angular: {x: 0, y: 0, z: -0.6}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.12,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": -0.6
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Stop",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Services",
+     "label": "Motors off",
+     "line": "ros2 service call /motor_power std_srvs/srv/SetBool \"{data: false}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/motor_power",
+       "type": "std_srvs/srv/SetBool",
+       "msg": {
+        "data": false
+       }
+      }
+     }
+    },
+    {
+     "group": "Services",
+     "label": "Motors on",
+     "line": "ros2 service call /motor_power std_srvs/srv/SetBool \"{data: true}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/motor_power",
+       "type": "std_srvs/srv/SetBool",
+       "msg": {
+        "data": true
+       }
+      }
+     }
+    },
+    {
+     "group": "Services",
+     "label": "Reset odometry",
+     "line": "ros2 service call /reset std_srvs/srv/Trigger \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/reset",
+       "type": "std_srvs/srv/Trigger",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "Services",
+     "label": "Sound",
+     "line": "ros2 service call /sound turtlebot3_msgs/srv/Sound \"{value: 1}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/sound",
+       "type": "turtlebot3_msgs/srv/Sound",
+       "msg": {
+        "value": 1
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "model": "waffle",
+    "topics": {
+     "/odom": {
+      "header": "{…}",
+      "child_frame_id": "base_footprint",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/scan": {
+      "header": "{…}",
+      "angle_min": 0,
+      "angle_max": 6.283,
+      "angle_increment": 0.017,
+      "scan_time": 0.2,
+      "range_min": 0.16,
+      "range_max": 8,
+      "ranges": [
+       6.109,
+       6.062,
+       6.079,
+       6.083,
+       "…"
+      ]
+     },
+     "/joint_states": {
+      "header": "{…}",
+      "name": [
+       "wheel_left_joint",
+       "wheel_right_joint"
+      ],
+      "position": [
+       0,
+       0
+      ],
+      "velocity": [
+       0,
+       0
+      ],
+      "effort": []
+     },
+     "/battery_state": {
+      "voltage": 12.48,
+      "percentage": 92,
+      "design_capacity": 1.8,
+      "present": true
+     }
+    },
+    "robots": [
+     {
+      "domain": 0,
+      "pose": [
+       0,
+       0,
+       0
+      ]
+     }
+    ],
+    "selected": 0,
+    "ros": []
+   }
+  },
+  {
+   "robot": "tb3manipulator",
+   "page": "indexTurtleBot3.php?model=manipulator",
+   "name": "TurtleBot3 with OpenMANIPULATOR-X Simulator",
+   "title": "TurtleBot3 Burger",
+   "text": "The small ROS 2 robot many courses start with: Dynamixel wheels, OpenCR and an LDS LiDAR",
+   "category": "Wheeled robots",
+   "image": "img/turtlebot3burger.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "L",
+     "name": "Left wheel (XM430-W210)",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "R",
+     "name": "Right wheel (XM430-W210)",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "joint1",
+     "name": "joint1 (XM430-W350)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "joint2",
+     "name": "joint2 (XM430-W350)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "joint3",
+     "name": "joint3 (XM430-W350)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "joint4",
+     "name": "joint4 (XM430-W350)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -180,
+      180
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask",
+    "gripper"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Forward 0.15 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.15, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.15,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Turn left 1 rad/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 1}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 1
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Curve right",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.12, y: 0, z: 0}, angular: {x: 0, y: 0, z: -0.6}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.12,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": -0.6
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Drive · /cmd_vel",
+     "label": "Stop",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm · joint trajectories",
+     "label": "Init pose",
+     "line": "ros2 topic pub --once /arm_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory \"{joint_names: [\"joint1\", \"joint2\", \"joint3\", \"joint4\"], points: [{positions: [0, 0, 0, 0], time_from_start: {sec: 2, nanosec: 0}}]}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/arm_controller/joint_trajectory",
+       "type": "trajectory_msgs/msg/JointTrajectory",
+       "msg": {
+        "joint_names": [
+         "joint1",
+         "joint2",
+         "joint3",
+         "joint4"
+        ],
+        "points": [
+         {
+          "positions": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "time_from_start": {
+           "sec": 2,
+           "nanosec": 0
+          }
+         }
+        ]
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm · joint trajectories",
+     "label": "Home pose",
+     "line": "ros2 topic pub --once /arm_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory \"{joint_names: [\"joint1\", \"joint2\", \"joint3\", \"joint4\"], points: [{positions: [0, -1, 0.3, 0.7], time_from_start: {sec: 2, nanosec: 0}}]}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/arm_controller/joint_trajectory",
+       "type": "trajectory_msgs/msg/JointTrajectory",
+       "msg": {
+        "joint_names": [
+         "joint1",
+         "joint2",
+         "joint3",
+         "joint4"
+        ],
+        "points": [
+         {
+          "positions": [
+           0,
+           -1,
+           0.3,
+           0.7
+          ],
+          "time_from_start": {
+           "sec": 2,
+           "nanosec": 0
+          }
+         }
+        ]
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm · joint trajectories",
+     "label": "Reach forward",
+     "line": "ros2 action send_goal /arm_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"joint1\", \"joint2\", \"joint3\", \"joint4\"], points: [{positions: [0, 0.6, -0.2, 0.8], time_from_start: {sec: 3, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/arm_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "joint1",
+          "joint2",
+          "joint3",
+          "joint4"
+         ],
+         "points": [
+          {
+           "positions": [
+            0,
+            0.6,
+            -0.2,
+            0.8
+           ],
+           "time_from_start": {
+            "sec": 3,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm · joint trajectories",
+     "label": "Look left",
+     "line": "ros2 action send_goal /arm_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"joint1\", \"joint2\", \"joint3\", \"joint4\"], points: [{positions: [1.2, -0.6, 0.2, 0.6], time_from_start: {sec: 2, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/arm_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "joint1",
+          "joint2",
+          "joint3",
+          "joint4"
+         ],
+         "points": [
+          {
+           "positions": [
+            1.2,
+            -0.6,
+            0.2,
+            0.6
+           ],
+           "time_from_start": {
+            "sec": 2,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Gripper · /gripper_controller/gripper_cmd",
+     "label": "Open",
+     "line": "ros2 action send_goal /gripper_controller/gripper_cmd control_msgs/action/GripperCommand \"{command: {position: 0.019, max_effort: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/gripper_controller/gripper_cmd",
+       "type": "control_msgs/action/GripperCommand",
+       "msg": {
+        "command": {
+         "position": 0.019,
+         "max_effort": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Gripper · /gripper_controller/gripper_cmd",
+     "label": "Close",
+     "line": "ros2 action send_goal /gripper_controller/gripper_cmd control_msgs/action/GripperCommand \"{command: {position: -0.01, max_effort: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/gripper_controller/gripper_cmd",
+       "type": "control_msgs/action/GripperCommand",
+       "msg": {
+        "command": {
+         "position": -0.01,
+         "max_effort": 0
+        }
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "model": "manipulator",
+    "topics": {
+     "/odom": {
+      "header": "{…}",
+      "child_frame_id": "base_footprint",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/scan": {
+      "header": "{…}",
+      "angle_min": 0,
+      "angle_max": 6.283,
+      "angle_increment": 0.017,
+      "scan_time": 0.2,
+      "range_min": 0.16,
+      "range_max": 8,
+      "ranges": [
+       6.07,
+       6.09,
+       6.055,
+       6.087,
+       "…"
+      ]
+     },
+     "/joint_states": {
+      "header": "{…}",
+      "name": [
+       "wheel_left_joint",
+       "wheel_right_joint",
+       "joint1",
+       "joint2",
+       "…"
+      ],
+      "position": [
+       0,
+       0,
+       0,
+       -1,
+       "…"
+      ],
+      "velocity": [
+       0,
+       0,
+       0,
+       0,
+       "…"
+      ],
+      "effort": []
+     }
+    },
+    "robots": [
+     {
+      "domain": 0,
+      "pose": [
+       0,
+       0,
+       0
+      ]
+     }
+    ],
+    "selected": 0,
+    "arm": {
+     "joints": [
+      0,
+      -1,
+      0.3,
+      0.7
+     ],
+     "gripper": 0,
+     "holding": null,
+     "moving": false
+    },
+    "ros": []
+   }
   }
  ]
 }

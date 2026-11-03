@@ -28,6 +28,7 @@ if (ROOT && !isSite(ROOT)) { console.error(`--site ${ROOT}: no simulator site th
 const KEY = arg('key', process.env.ROBOTSIM_KEY || '');
 const PORT = Number(arg('port', 8780));
 const SHOW = process.argv.includes('--show');
+const GPU = process.argv.includes('--gpu');          // headless with the graphics card: camera pictures several times faster
 // Headless Chrome draws all its tabs in ONE (software) GPU process, so several browsers render in
 // parallel: --browsers N (default one per 4 CPU cores, at most 4). --show uses one visible browser.
 const BROWSERS = SHOW ? 1 : Math.max(1, Number(arg('browsers', Math.min(4, Math.round(os.cpus().length / 4)))));
@@ -40,6 +41,7 @@ const ROBOTS = {
   whegs: 'indexWhegs.php', quadruped: 'indexQuadruped.php', mini: 'indexSmall.php', wheellegs: 'indexWheelLegs.php',
   ostrich: 'indexOstrich.php', humanoid: 'indexHumanoid.php', snake: 'indexSnake.php', create3: 'indexCreate3.php',
   go2: 'indexGo2.php', g1: 'indexG1.php', turtlebot4: 'indexTurtleBot4.php',
+  turtlebot3: 'indexTurtleBot3.php', tb3waffle: 'indexTurtleBot3.php?model=waffle', tb3manipulator: 'indexTurtleBot3.php?model=manipulator',
   go2w: 'indexGo2W.php', r1: 'indexR1.php', rosbotxl: 'indexROSbotXL.php', leorover: 'indexLeoRover.php', bittle: 'indexBittle.php',
   roboworks: 'indexRoboworks.php', mecabot: 'indexRoboworks.php?variant=mecabot', ugvrover: 'indexUGVRover.php',
   jetbot: 'indexJetBot.php', jetracer: 'indexJetRacer.php', xarm5: 'indexXArm6.php?model=5', xarm850: 'indexXArm6.php?model=850',
@@ -126,9 +128,10 @@ const START_PAGE = `<title>Botopia API</title><body style="margin:0;display:grid
 async function startChrome(i) {
   const port = PORT + 1 + i, profile = fs.mkdtempSync(path.join(os.tmpdir(), 'botopia-chrome-'));
   const proc = spawn(findChrome(), [
-    // Headless: software WebGL (SwiftShader), works without a GPU. Visible (--show): the normal GPU,
-    // because with SwiftShader a visible Chrome window on Windows stays blank.
-    ...(SHOW ? [] : ['--headless=new', '--use-angle=swiftshader', '--enable-unsafe-swiftshader']),
+    // Headless: software WebGL (SwiftShader), works without a GPU; --gpu: headless on the graphics card (much faster
+    // camera pictures, e.g. collecting a dataset). Visible (--show): the normal GPU, because with SwiftShader a visible
+    // Chrome window on Windows stays blank.
+    ...(SHOW ? [] : GPU ? ['--headless=new', '--enable-gpu', '--ignore-gpu-blocklist'] : ['--headless=new', '--use-angle=swiftshader', '--enable-unsafe-swiftshader']),
     `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--window-size=960,600',
     // A fresh profile would otherwise open Chrome's welcome / search-engine screens over our tabs.
     '--no-first-run', '--no-default-browser-check', '--disable-search-engine-choice-screen',
@@ -232,15 +235,23 @@ async function closeEnv(env) {
 // in the same call (training from camera images).
 // mask: the track band in the robot's view (PNG); external: a fixed camera (xArm); real: the real USB camera (OM-X page);
 // depth / depthcolor: the depth of a RealSense D435 (the xArm's wrist camera), mm as a PNG (mm = R·256 + G) or coloured.
+// Other cameras a page names in info().views (the gripper camera of the TurtleBot3 with OpenMANIPULATOR-X: 'gripper') too.
+// labels (with image): the boxes of the world's items in that same picture, for training an object detector: true (every
+// kind of item) or a list of the kinds to label, in the order of their class numbers → "labels": { width, height, names,
+// boxes: [{ cls, x, y, w, h, px }] } (pixels from the top left).
 const VIEWS = ['scene', 'robot', 'mask', 'external', 'real', 'depth', 'depthcolor'];
-const imageExpr = image => image ? `window.botopiaEnv.frame(${Number(image.quality ?? 0.9)}, ${JSON.stringify(VIEWS.includes(image.view) ? image.view : 'robot')}, ${Math.max(16, Math.min(1280, Number(image.width) || 84))}).split(',')[1]` : 'undefined';
+const viewOf = (env, v) => (VIEWS.includes(v) || env.info?.views?.includes(v) ? v : null);
+const imageExpr = (image, env) => image ? `window.botopiaEnv.frame(${Number(image.quality ?? 0.9)}, ${JSON.stringify(viewOf(env, image.view) || 'robot')}, ${Math.max(16, Math.min(1280, Number(image.width) || 84))}).split(',')[1]` : 'undefined';
+const labelsExpr = (image, env) => image?.labels ? `window.botopiaEnv.labels(${JSON.stringify(viewOf(env, image.view) || 'robot')}, ${Math.max(16, Math.min(1280, Number(image.width) || 84))}, ${JSON.stringify(Array.isArray(image.labels) ? image.labels : null)})` : 'undefined';
 // until: 'idle' ends the step early when a running skill has finished (dt is then the maximum).
 async function stepEnv(env, { action = {}, dt = 0.05, frame = 1 / 60, image = null, until = null }) {
   usedBy = env.robot; usedAt = Date.now();
   const r = await env.tab.evaluate(`(() => { const r = window.botopiaEnv.step(${JSON.stringify(action)}, ${JSON.stringify({ dt, frame, render: SHOW, until })});
-    r.image = ${imageExpr(image)}; return r; })()`);
+    r.image = ${imageExpr(image, env)}; r.labels = ${labelsExpr(image, env)}; r.placed = window.botopiaEnv.placed; window.botopiaEnv.placed = undefined; return r; })()`);
   const out = { obs: r.obs, events: r.events, reward: reward(env.lastObs, r), done: r.obs.done };
   if (r.image) out.image = r.image;
+  if (r.labels) out.labels = r.labels;
+  if (r.placed !== undefined) out.placed = r.placed;      // action place: where the robot was put (null: no free spot)
   env.lastObs = r.obs;
   env.steps++;
   if (env.tab.errors.length) out.pageErrors = env.tab.errors.splice(0);
@@ -312,18 +323,25 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && action === 'obs') return send(res, 200, env.lastObs = await env.tab.evaluate('window.botopiaEnv.observe()'));
     if (req.method === 'GET' && action === 'frame') {
       const quality = Number(searchParams.get('quality') || 0.8);
-      const view = VIEWS.includes(searchParams.get('view')) ? searchParams.get('view') : 'scene';   // robot: its camera, mask: the band
+      const view = viewOf(env, searchParams.get('view')) || 'scene';   // robot: its camera, mask: the band, or a camera of the page
       const width = Math.max(32, Math.min(1280, Number(searchParams.get('width')) || 320));
       const data = await env.tab.evaluate(`window.botopiaEnv.frame(${quality}, '${view}', ${width})`);
       return send(res, 200, Buffer.from(data.split(',')[1], 'base64'), data.startsWith('data:image/png') ? 'image/png' : 'image/jpeg');
     }
+    // The boxes of the world's items in a camera's view now: ?view=gripper&width=640&classes=chair,table (default: every kind).
+    if (req.method === 'GET' && action === 'labels') {
+      const view = viewOf(env, searchParams.get('view') || 'robot') || 'robot';
+      const width = Math.max(16, Math.min(1280, Number(searchParams.get('width')) || 320));
+      const classes = searchParams.get('classes') ? searchParams.get('classes').split(',').filter(Boolean) : null;
+      return send(res, 200, await env.tab.evaluate(`window.botopiaEnv.labels(${JSON.stringify(view)}, ${width}, ${JSON.stringify(classes)})`));
+    }
     if (req.method === 'POST' && action === 'reset') {
       const { image = null, ...body } = await readJson(req);      // body: { lane, seed, start, offset, yaw, world }
       env.steps = 0;
-      const r = await env.tab.evaluate(`(() => ({ obs: window.botopiaEnv.reset(${JSON.stringify(body)}), image: ${imageExpr(image)} }))()`);
+      const r = await env.tab.evaluate(`(() => ({ obs: window.botopiaEnv.reset(${JSON.stringify(body)}), image: ${imageExpr(image, env)}, labels: ${labelsExpr(image, env)} }))()`);
       env.lastObs = r.obs;
       await drawIfShown(env);
-      return send(res, 200, r.image ? { obs: r.obs, image: r.image } : { obs: r.obs });
+      return send(res, 200, { obs: r.obs, ...(r.image ? { image: r.image } : {}), ...(r.labels ? { labels: r.labels } : {}) });
     }
     if (req.method === 'POST' && action === 'step') return send(res, 200, await stepEnv(env, await readJson(req)));
     return send(res, 404, { error: 'unknown endpoint' });
@@ -337,7 +355,7 @@ server.listen(PORT, () => {
   console.log(`Botopia simulator API on http://localhost:${PORT}/api/  (simulators: http://localhost:${PORT}/)`);
   console.log(`Simulator pages from ${SITE_URL || ROOT}`);
   if (SITE_URL && !KEY) console.log(`No --key: ${SITE_URL} only opens the robots with the API key from ${SITE_URL}account.php`);
-  console.log(`Chrome ${SHOW ? 'visible' : `headless × ${BROWSERS}`}, robots: ${Object.keys(ROBOTS).join(', ')}`);
+  console.log(`Chrome ${SHOW ? 'visible' : `headless × ${BROWSERS}${GPU ? ' on the GPU' : ''}`}, robots: ${Object.keys(ROBOTS).join(', ')}`);
 });
 const stop = async () => {
   for (const b of browsers) try { b.proc.kill(); } catch { /* ignore */ }

@@ -127,6 +127,7 @@ Start the server first (`node server.mjs --key rsk_xxxxxxxx`, your API key from 
 | [`tello_bridge.py`](python/tello_bridge.py) | the Tello EDU simulator page flies a real DJI Tello EDU and shows its video, see [below](#dji-tello-edu) | `websockets av pillow` |
 | [`jaguar_bridge.py`](python/jaguar_bridge.py) | the DrRobot Jaguar 4x4 Wheel page shows and drives the real Jaguar, and PC programs (`robot.py --ip 127.0.0.1`) drive the simulated one, see [below](#drrobot-jaguar-4x4-wheel) | `websockets` |
 | [`jaguar_cli.py`](python/jaguar_cli.py) | remote control of the Jaguar from a terminal: `status`, `release`, `drive 300 300 2`, `imu`, `gps`, `send "MM0 ?V"`; the real robot or the simulator | – |
+| [`house_yolo.py`](python/house_yolo.py) | [tutorial 19](https://robotics.dinno.be/tutorial-yolo-house.html): the TurtleBot3 with its OpenMANIPULATOR-X looks around the house; YOLO11 learns ten objects from the simulator's own labels (`collect`, `train`, `test`, `export`, `detect`) | `ultralytics` |
 | [`remote_camera.py`](python/remote_camera.py) | [tutorial 13](https://robotics.dinno.be/tutorial-camera-stream.html): the robot camera of a simulator in your browser (website API, https) on your own computer: drive with the keys, or `--follow` the earth path of the park on its own, see [below](#the-robot-camera-stream) | `numpy opencv-python` |
 
 The tutorial scripts take a command: `baseline`, `train`, `eval` or `watch` (see `--help`). Training
@@ -161,6 +162,7 @@ node server.mjs [options]       # http://localhost:8780/api/
 | Option | Meaning |
 |---|---|
 | `--show` | a visible Chrome window, to watch (one browser, redrawn every step) |
+| `--gpu` | headless Chrome draws on the graphics card instead of the CPU (SwiftShader): about ten times faster pictures, for collecting datasets |
 | `--port 8780` | port of the API; Chrome uses the next few ports |
 | `--browsers N` | headless Chrome instances that draw in parallel (default: one per 4 CPU cores, at most 4) |
 | `--chrome "path"` | where Chrome is, if it is not found (or set the `CHROME` environment variable) |
@@ -188,6 +190,7 @@ Base URL `http://localhost:8780/api`. All bodies are JSON.
 | GET | `/envs/{id}/obs` | | current observation |
 | GET | `/envs/{id}/info` | | robot, drive axes, motors, lanes, event types, `commands` |
 | GET | `/envs/{id}/frame?view=scene&width=320&quality=0.8` | | JPEG of a view, see below |
+| GET | `/envs/{id}/labels?view=robot&width=320&classes=chair,table` | | the objects in that camera view: `{ width, height, names, boxes: [{ cls, x, y, w, h, px }] }`, see below |
 | DELETE | `/envs/{id}` | | closes the environment |
 
 | Parameter | Meaning |
@@ -196,7 +199,8 @@ Base URL `http://localhost:8780/api`. All bodies are JSON.
 | `dt` | how long one step lasts in simulated seconds (default 0.05 s = 20 Hz control) |
 | `frame` | the internal simulation step (default 1/60 s); a step with `dt` 0.05 runs 3 frames |
 | `until` | `"idle"`: `dt` is the maximum, the step ends as soon as a running skill has finished |
-| `image` | `{ "view": "robot", "width": 64, "quality": 0.9 }`: the answer also has `"image"`, that JPEG in base64, without an extra request (training from pixels) |
+| `image` | `{ "view": "robot", "width": 64, "quality": 0.9 }`: the answer also has `"image"`, that JPEG in base64, without an extra request (training from pixels). With `"labels": true` (or a list of class names) also `"labels"`: the boxes of the objects in that same picture, as the labels endpoint |
+| labels | the world items (chair, table, desk, sofa, bed, bookcase, plant, fridge, toilet, person, …: the kinds of the world editor) seen by a camera: `cls` is the index in `names` (the classes you asked for, or all kinds in the world sorted), `x, y, w, h` the box in pixels of a `width` × ¾ `width` picture, `px` the visible pixels. What stands in front is taken into account: a chair behind a table only gets the box of its visible part, an object out of sight none. Ready-made labels for object detection, as in [`house_yolo.py`](python/house_yolo.py) |
 | `view` | `scene` (the 3D view), `robot` (the robot's own front camera, 4:3, `width` 32–1280), `mask` (the track band in the robot camera's view, white on black PNG: a ready-made label for segmentation), `external` (a fixed camera, arms), `real` (the real USB camera, OpenMANIPULATOR-X page); robots with a RealSense D435 (the xArms' wrist camera): `depth` (depth in mm as a lossless PNG, mm = red · 256 + green, 0 = no depth) and `depthcolor` (the same in colour) |
 | `start`, `offset`, `yaw` (reset, ε track) | metres along the track, metres beside the centre line (+ = left), degrees off the track direction |
 
@@ -265,6 +269,11 @@ stuck(0/1)]`, then per motor `duty, rpm/100` (DC) or `degrees/90` (servo).
 * **`motors`**: direct control that bypasses the robot's controller for that motor. DC motors:
   duty −1 … 1 (sign = direction, |duty| × 255 = PWM). Servos: angle in degrees. `null` releases a
   motor again. Only motors marked controllable (`info.motors[].overridable`).
+* **`place`**: puts the robot somewhere: `{ "x": 1.0, "z": -2.0, "yaw": 0.5 }` (world metres, radians), or
+  `{ "random": true, "area": [x0, z0, x1, z1] }`, a random free spot (floor, no wall or furniture) in that area, turned
+  any way. The answer has `"placed": { x, z, yaw }` (`null`: no free spot found). For datasets from many places.
+* **`show`**: `{ "image": "<JPEG in base64>", "label": "text" }` shows your own picture in a panel on the page (e.g. what
+  your detector found), `null` removes it. Watch it with `--show`.
 
 Several fields can be combined. Robots with a real-robot interface (ROS 2, WebRTC, serial, SDK…) also
 take the messages of that interface, with the names and fields of the real robot: see the
@@ -723,6 +732,26 @@ Python nodes run in it too (Pyodide, `common/rospython.js`, this simulator's rcl
 `ros2 pkg create`, `colcon build / test`, `source install/setup.bash`, `ros2 run`, `ros2 launch`, custom `.msg` / `.srv`,
 `git clone` of ros2/examples, `wget`, `rosdep`, `ros2 doctor` (`common/rosdev.js`). `tutorial-ros2-python.html` follows the
 ROS 2 Humble "Beginner: Client libraries" tutorials in Python on it.
+
+### TurtleBot3
+
+ROBOTIS TurtleBot3: `turtlebot3` (Burger), `tb3waffle` (Waffle Pi) and `tb3manipulator` (the Waffle Pi with an
+OpenMANIPULATOR-X), all `indexTurtleBot3.php`. Driven the ROS 2 way, as the TurtleBot 4 (`ros` in the action): `/cmd_vel`
+(stops 0.5 s after the last message); publishes `/odom`, `/scan` (LDS-02, 360°), `/imu`, `/joint_states`, and on the Burger
+and Waffle Pi `/battery_state`, `/sensor_state` and the services `/motor_power`, `/reset`, `/sound`. The manipulator's arm is
+`ros2_control`: a `trajectory_msgs/msg/JointTrajectory` on `/arm_controller/joint_trajectory` (joints `joint1` … `joint4`,
+radians), the actions `/arm_controller/follow_joint_trajectory` and `/gripper_controller/gripper_cmd`:
+
+```python
+arm = {"ros": {"kind": "topic", "name": "/arm_controller/joint_trajectory", "type": "trajectory_msgs/msg/JointTrajectory",
+               "msg": {"joint_names": ["joint1", "joint2", "joint3", "joint4"],
+                       "points": [{"positions": [1.2, -0.2, 0.0, 0.1], "time_from_start": {"sec": 1, "nanosec": 0}}]}}}
+r = api.step(env_id, arm, dt=1.2, image={"view": "gripper", "width": 640, "labels": True})   # look left, a picture + labels
+```
+
+Views: `robot` (the Raspberry Pi camera at the front of the Waffle Pi) and, on the manipulator, `gripper`: a camera on
+the gripper that looks where the gripper points, so the arm turns it round the room. Swarms: `?robots=3` (Burger, Waffle
+Pi), robot *k* on `ROS_DOMAIN_ID` *k*.
 
 ### Husarion ROSbot XL
 
