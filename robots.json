@@ -21616,6 +21616,232 @@
     },
     "ros": []
    }
+  },
+  {
+   "robot": "pirateshooter",
+   "page": "indexPirateShooter.php",
+   "name": "T2M Pirate Shooter Simulator",
+   "title": "T2M Pirate Shooter",
+   "text": "1/10 4x4 RC buggy with a Jetson Orin and an OpenCR: serial commands A and T, drives the real car's wheels over USB on a stand",
+   "category": "Wheeled robots",
+   "image": "img/pirateshooter.jpg",
+   "interfaces": [
+    {
+     "key": "serial",
+     "family": "Serial protocol"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "steer",
+     "name": "Steering servo (PCA9685 ch 0)",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -40,
+      40
+     ]
+    },
+    {
+     "id": "esc",
+     "name": "ESC + 550 motor (PCA9685 ch 15)",
+     "type": "dc",
+     "overridable": false,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Steering (A, 50…140: 90 straight, 120 left, 60 right)",
+     "label": "A,120",
+     "line": "ser.write(b\"A,120\\n\")",
+     "action": {
+      "serial": "A,120"
+     }
+    },
+    {
+     "group": "Steering (A, 50…140: 90 straight, 120 left, 60 right)",
+     "label": "A,105",
+     "line": "ser.write(b\"A,105\\n\")",
+     "action": {
+      "serial": "A,105"
+     }
+    },
+    {
+     "group": "Steering (A, 50…140: 90 straight, 120 left, 60 right)",
+     "label": "A,90",
+     "line": "ser.write(b\"A,90\\n\")",
+     "action": {
+      "serial": "A,90"
+     }
+    },
+    {
+     "group": "Steering (A, 50…140: 90 straight, 120 left, 60 right)",
+     "label": "A,75",
+     "line": "ser.write(b\"A,75\\n\")",
+     "action": {
+      "serial": "A,75"
+     }
+    },
+    {
+     "group": "Steering (A, 50…140: 90 straight, 120 left, 60 right)",
+     "label": "A,60",
+     "line": "ser.write(b\"A,60\\n\")",
+     "action": {
+      "serial": "A,60"
+     }
+    },
+    {
+     "group": "Steering (A, 50…140: 90 straight, 120 left, 60 right)",
+     "label": "C",
+     "line": "ser.write(b\"C\\n\")",
+     "action": {
+      "serial": "C"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "T,10",
+     "line": "ser.write(b\"T,10\\n\")",
+     "action": {
+      "serial": "T,10"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "T,20",
+     "line": "ser.write(b\"T,20\\n\")",
+     "action": {
+      "serial": "T,20"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "T,0",
+     "line": "ser.write(b\"T,0\\n\")",
+     "action": {
+      "serial": "T,0"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "T,-15",
+     "line": "ser.write(b\"T,-15\\n\")",
+     "action": {
+      "serial": "T,-15"
+     }
+    },
+    {
+     "group": "Throttle (T, % −100…100)",
+     "label": "STOP",
+     "line": "ser.write(b\"STOP\\n\")",
+     "action": {
+      "serial": "STOP"
+     }
+    },
+    {
+     "group": "Status and calibration",
+     "label": "S",
+     "line": "ser.write(b\"S\\n\")",
+     "action": {
+      "serial": "S"
+     }
+    },
+    {
+     "group": "Status and calibration",
+     "label": "O",
+     "line": "ser.write(b\"O\\n\")",
+     "action": {
+      "serial": "O"
+     }
+    },
+    {
+     "group": "Status and calibration",
+     "label": "OC,-5",
+     "line": "ser.write(b\"OC,-5\\n\")",
+     "action": {
+      "serial": "OC,-5"
+     }
+    },
+    {
+     "group": "Status and calibration",
+     "label": "OC,0",
+     "line": "ser.write(b\"OC,0\\n\")",
+     "action": {
+      "serial": "OC,0"
+     }
+    },
+    {
+     "group": "Status and calibration",
+     "label": "OL,2",
+     "line": "ser.write(b\"OL,2\\n\")",
+     "action": {
+      "serial": "OL,2"
+     }
+    },
+    {
+     "group": "Status and calibration",
+     "label": "OR,2",
+     "line": "ser.write(b\"OR,2\\n\")",
+     "action": {
+      "serial": "OR,2"
+     }
+    },
+    {
+     "group": "Status and calibration",
+     "label": "TEST",
+     "line": "ser.write(b\"TEST\\n\")",
+     "action": {
+      "serial": "TEST"
+     }
+    }
+   ],
+   "telemetry": {
+    "opencr": {
+     "angle": 90,
+     "throttle": 0,
+     "servo_deg": 85,
+     "servo_us": 1444,
+     "esc_us": 1500,
+     "offsets": {
+      "center": -5,
+      "left": 0,
+      "right": 0
+     },
+     "test": false
+    },
+    "speed_kmh": 0,
+    "wheel_deg": 0,
+    "on_stand": false,
+    "max_throttle": 20,
+    "real": {
+     "connected": false,
+     "follow": false,
+     "angle": null,
+     "throttle": null
+    },
+    "serial": []
+   }
   }
  ]
 }
