@@ -128,6 +128,7 @@ Start the server first (`node server.mjs --key rsk_xxxxxxxx`, your API key from 
 | [`jaguar_bridge.py`](python/jaguar_bridge.py) | the DrRobot Jaguar 4x4 Wheel page shows and drives the real Jaguar, and PC programs (`robot.py --ip 127.0.0.1`) drive the simulated one, see [below](#drrobot-jaguar-4x4-wheel) | `websockets` |
 | [`jaguar_cli.py`](python/jaguar_cli.py) | remote control of the Jaguar from a terminal: `status`, `release`, `drive 300 300 2`, `imu`, `gps`, `send "MM0 ?V"`; the real robot or the simulator | – |
 | [`house_yolo.py`](python/house_yolo.py) | [tutorial 19](https://robotics.dinno.be/tutorial-yolo-house.html): the TurtleBot3 with its OpenMANIPULATOR-X looks around the house; YOLO11 learns ten objects from the simulator's own labels (`collect`, `train`, `test`, `export`, `detect`) | `ultralytics` |
+| [`house_seek.py`](python/house_seek.py) | [tutorial 20](https://robotics.dinno.be/tutorial-house-seek.html): choose an object (`--target bed`); the TurtleBot3 maps the house with its LiDAR (an occupancy grid), plans a path (Dijkstra) to the nearest place it has not looked from, looks around with the gripper camera and the YOLO model of tutorial 19, and drives up to the object | `ultralytics` |
 | [`remote_camera.py`](python/remote_camera.py) | [tutorial 13](https://robotics.dinno.be/tutorial-camera-stream.html): the robot camera of a simulator in your browser (website API, https) on your own computer: drive with the keys, or `--follow` the earth path of the park on its own, see [below](#the-robot-camera-stream) | `numpy opencv-python` |
 
 The tutorial scripts take a command: `baseline`, `train`, `eval` or `watch` (see `--help`). Training
@@ -270,8 +271,9 @@ stuck(0/1)]`, then per motor `duty, rpm/100` (DC) or `degrees/90` (servo).
   duty −1 … 1 (sign = direction, |duty| × 255 = PWM). Servos: angle in degrees. `null` releases a
   motor again. Only motors marked controllable (`info.motors[].overridable`).
 * **`place`**: puts the robot somewhere: `{ "x": 1.0, "z": -2.0, "yaw": 0.5 }` (world metres, radians), or
-  `{ "random": true, "area": [x0, z0, x1, z1] }`, a random free spot (floor, no wall or furniture) in that area, turned
-  any way. The answer has `"placed": { x, z, yaw }` (`null`: no free spot found). For datasets from many places.
+  `{ "random": true, "area": [x0, z0, x1, z1] }`, a random free spot (floor, no wall or furniture, not under a table)
+  in that area, turned any way. The answer has `"placed": { x, z, yaw }` (`null`: no free spot found). The odometry
+  (`/odom` of the ROS 2 robots) starts again at zero there. For datasets from many places, or a search from a random start.
 * **`show`**: `{ "image": "<JPEG in base64>", "label": "text" }` shows your own picture in a panel on the page (e.g. what
   your detector found), `null` removes it. Watch it with `--show`.
 
