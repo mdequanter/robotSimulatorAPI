@@ -20902,12 +20902,12 @@
   },
   {
    "robot": "tb3waffle",
-   "page": "indexTurtleBot3.php?model=waffle",
+   "page": "indexTurtleBot3Waffle.php",
    "name": "TurtleBot3 Waffle Pi Simulator",
-   "title": "TurtleBot3 Burger",
-   "text": "The small ROS 2 robot many courses start with: Dynamixel wheels, OpenCR and an LDS LiDAR",
+   "title": "TurtleBot3 Waffle Pi",
+   "text": "The wider TurtleBot3: stronger motors, 30 kg payload and a Raspberry Pi camera",
    "category": "Wheeled robots",
-   "image": "img/turtlebot3burger.jpg",
+   "image": "img/turtlebot3waffle.jpg",
    "interfaces": [
     {
      "key": "ros",
@@ -21128,10 +21128,10 @@
       "range_min": 0.16,
       "range_max": 8,
       "ranges": [
+       6.1,
+       6.094,
        6.109,
-       6.062,
-       6.079,
-       6.083,
+       6.084,
        "…"
       ]
      },
@@ -21174,12 +21174,12 @@
   },
   {
    "robot": "tb3manipulator",
-   "page": "indexTurtleBot3.php?model=manipulator",
+   "page": "indexTurtleBot3Manipulator.php",
    "name": "TurtleBot3 with OpenMANIPULATOR-X Simulator",
-   "title": "TurtleBot3 Burger",
-   "text": "The small ROS 2 robot many courses start with: Dynamixel wheels, OpenCR and an LDS LiDAR",
+   "title": "TurtleBot3 + OpenMANIPULATOR-X",
+   "text": "Mobile manipulation: drive to a block, pick it up with the arm, put it down somewhere else",
    "category": "Wheeled robots",
-   "image": "img/turtlebot3burger.jpg",
+   "image": "img/turtlebot3manipulator.jpg",
    "interfaces": [
     {
      "key": "ros",
@@ -21559,10 +21559,10 @@
       "range_min": 0.16,
       "range_max": 8,
       "ranges": [
-       6.07,
-       6.09,
-       6.055,
-       6.087,
+       6.072,
+       6.085,
+       6.085,
+       6.064,
        "…"
       ]
      },
@@ -21841,6 +21841,4319 @@
      "throttle": null
     },
     "serial": []
+   }
+  },
+  {
+   "robot": "tello",
+   "page": "indexTello.php",
+   "name": "DJI Tello EDU Simulator",
+   "title": "DJI Tello EDU",
+   "text": "Mini drone: the Tello SDK and djitellopy in real Python, front and bottom camera, mission pads; flies a real Tello EDU too",
+   "category": "Drones",
+   "image": "img/tello.jpg",
+   "interfaces": [
+    {
+     "key": "tello",
+     "family": "Tello SDK"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn",
+    "strafe",
+    "up"
+   ],
+   "motors": [
+    {
+     "id": "m1",
+     "name": "M1 front left",
+     "type": "dc",
+     "overridable": false,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "m2",
+     "name": "M2 front right",
+     "type": "dc",
+     "overridable": false,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "m3",
+     "name": "M3 back right",
+     "type": "dc",
+     "overridable": false,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "m4",
+     "name": "M4 back left",
+     "type": "dc",
+     "overridable": false,
+     "range": [
+      -1,
+      1
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "tello"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask",
+    "bottom"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Control",
+     "label": "command",
+     "line": "sock.sendto(b'command', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "command"
+     }
+    },
+    {
+     "group": "Control",
+     "label": "takeoff",
+     "line": "sock.sendto(b'takeoff', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "takeoff"
+     }
+    },
+    {
+     "group": "Control",
+     "label": "land",
+     "line": "sock.sendto(b'land', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "land"
+     }
+    },
+    {
+     "group": "Control",
+     "label": "stop",
+     "line": "sock.sendto(b'stop', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "stop"
+     }
+    },
+    {
+     "group": "Control",
+     "label": "emergency",
+     "line": "sock.sendto(b'emergency', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "emergency"
+     }
+    },
+    {
+     "group": "Control",
+     "label": "streamon",
+     "line": "sock.sendto(b'streamon', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "streamon"
+     }
+    },
+    {
+     "group": "Control",
+     "label": "streamoff",
+     "line": "sock.sendto(b'streamoff', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "streamoff"
+     }
+    },
+    {
+     "group": "Control",
+     "label": "downvision 0",
+     "line": "sock.sendto(b'downvision 0', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "downvision 0"
+     }
+    },
+    {
+     "group": "Control",
+     "label": "downvision 1",
+     "line": "sock.sendto(b'downvision 1', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "downvision 1"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "up 50",
+     "line": "sock.sendto(b'up 50', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "up 50"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "down 50",
+     "line": "sock.sendto(b'down 50', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "down 50"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "forward 100",
+     "line": "sock.sendto(b'forward 100', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "forward 100"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "back 100",
+     "line": "sock.sendto(b'back 100', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "back 100"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "left 50",
+     "line": "sock.sendto(b'left 50', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "left 50"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "right 50",
+     "line": "sock.sendto(b'right 50', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "right 50"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "cw 90",
+     "line": "sock.sendto(b'cw 90', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "cw 90"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "ccw 90",
+     "line": "sock.sendto(b'ccw 90', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "ccw 90"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "go 100 50 0 60",
+     "line": "sock.sendto(b'go 100 50 0 60', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "go 100 50 0 60"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "curve 60 60 0 0 120 0 40",
+     "line": "sock.sendto(b'curve 60 60 0 0 120 0 40', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "curve 60 60 0 0 120 0 40"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "flip f",
+     "line": "sock.sendto(b'flip f', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "flip f"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "flip b",
+     "line": "sock.sendto(b'flip b', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "flip b"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "speed 50",
+     "line": "sock.sendto(b'speed 50', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "speed 50"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "rc 0 40 0 30",
+     "line": "sock.sendto(b'rc 0 40 0 30', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "rc 0 40 0 30"
+     }
+    },
+    {
+     "group": "Move (cm, degrees)",
+     "label": "rc 0 0 0 0",
+     "line": "sock.sendto(b'rc 0 0 0 0', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "rc 0 0 0 0"
+     }
+    },
+    {
+     "group": "Mission pads",
+     "label": "mon",
+     "line": "sock.sendto(b'mon', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "mon"
+     }
+    },
+    {
+     "group": "Mission pads",
+     "label": "moff",
+     "line": "sock.sendto(b'moff', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "moff"
+     }
+    },
+    {
+     "group": "Mission pads",
+     "label": "mdirection 0",
+     "line": "sock.sendto(b'mdirection 0', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "mdirection 0"
+     }
+    },
+    {
+     "group": "Mission pads",
+     "label": "go 0 0 60 40 m1",
+     "line": "sock.sendto(b'go 0 0 60 40 m1', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "go 0 0 60 40 m1"
+     }
+    },
+    {
+     "group": "Mission pads",
+     "label": "go 0 0 60 40 m-2",
+     "line": "sock.sendto(b'go 0 0 60 40 m-2', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "go 0 0 60 40 m-2"
+     }
+    },
+    {
+     "group": "Mission pads",
+     "label": "jump 0 0 80 40 0 m1 m4",
+     "line": "sock.sendto(b'jump 0 0 80 40 0 m1 m4', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "jump 0 0 80 40 0 m1 m4"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "battery?",
+     "line": "sock.sendto(b'battery?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "battery?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "height?",
+     "line": "sock.sendto(b'height?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "height?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "tof?",
+     "line": "sock.sendto(b'tof?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "tof?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "time?",
+     "line": "sock.sendto(b'time?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "time?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "speed?",
+     "line": "sock.sendto(b'speed?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "speed?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "attitude?",
+     "line": "sock.sendto(b'attitude?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "attitude?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "baro?",
+     "line": "sock.sendto(b'baro?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "baro?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "temp?",
+     "line": "sock.sendto(b'temp?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "temp?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "wifi?",
+     "line": "sock.sendto(b'wifi?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "wifi?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "sdk?",
+     "line": "sock.sendto(b'sdk?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "sdk?"
+     }
+    },
+    {
+     "group": "Read",
+     "label": "sn?",
+     "line": "sock.sendto(b'sn?', ('192.168.10.1', 8889))",
+     "action": {
+      "tello": "sn?"
+     }
+    }
+   ],
+   "telemetry": {
+    "phase": "landed",
+    "sdk": false,
+    "height_cm": 0,
+    "battery": 100,
+    "flight_s": 0,
+    "flight_left_s": 600,
+    "max_height_m": 2,
+    "stream": false,
+    "downvision": false,
+    "mission_pads": false,
+    "pad": -1,
+    "busy": null
+   }
+  },
+  {
+   "robot": "nero",
+   "page": "indexNERO.php",
+   "name": "AgileX OPEN NERO",
+   "title": "AgileX OPEN NERO",
+   "text": "Two 7-joint arms with grippers and three cameras: pick, place and hand blocks over, mirror teleoperation, the ROS 2 driver of each arm",
+   "category": "Robot arms",
+   "image": "img/nero.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [],
+   "motors": [
+    {
+     "id": "left_joint1",
+     "name": "Left arm J1 base",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -154.99998048556108,
+      154.99998048556108
+     ]
+    },
+    {
+     "id": "left_joint2",
+     "name": "Left arm J2 shoulder",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -99.69465635276325,
+      99.69465635276325
+     ]
+    },
+    {
+     "id": "left_joint3",
+     "name": "Left arm J3 upper arm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -157.56339366097637,
+      157.56339366097637
+     ]
+    },
+    {
+     "id": "left_joint4",
+     "name": "Left arm J4 elbow",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -57.86873730821315,
+      122.61296815799618
+     ]
+    },
+    {
+     "id": "left_joint5",
+     "name": "Left arm J5 forearm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -157.56339366097637,
+      157.56339366097637
+     ]
+    },
+    {
+     "id": "left_joint6",
+     "name": "Left arm J6 wrist",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -42.00000081144469,
+      49.99999851047218
+     ]
+    },
+    {
+     "id": "left_joint7",
+     "name": "Left arm J7 flange",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -89.99999846476551,
+      89.99999846476551
+     ]
+    },
+    {
+     "id": "left_gripper",
+     "name": "Left arm gripper (mm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      0,
+      100
+     ]
+    },
+    {
+     "id": "right_joint1",
+     "name": "Right arm J1 base",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -154.99998048556108,
+      154.99998048556108
+     ]
+    },
+    {
+     "id": "right_joint2",
+     "name": "Right arm J2 shoulder",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -99.69465635276325,
+      99.69465635276325
+     ]
+    },
+    {
+     "id": "right_joint3",
+     "name": "Right arm J3 upper arm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -157.56339366097637,
+      157.56339366097637
+     ]
+    },
+    {
+     "id": "right_joint4",
+     "name": "Right arm J4 elbow",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -57.86873730821315,
+      122.61296815799618
+     ]
+    },
+    {
+     "id": "right_joint5",
+     "name": "Right arm J5 forearm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -157.56339366097637,
+      157.56339366097637
+     ]
+    },
+    {
+     "id": "right_joint6",
+     "name": "Right arm J6 wrist",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -42.00000081144469,
+      49.99999851047218
+     ]
+    },
+    {
+     "id": "right_joint7",
+     "name": "Right arm J7 flange",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -89.99999846476551,
+      89.99999846476551
+     ]
+    },
+    {
+     "id": "right_gripper",
+     "name": "Right arm gripper (mm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      0,
+      100
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask",
+    "left_wrist",
+    "right_wrist"
+   ],
+   "worlds": false,
+   "commands": [
+    {
+     "group": "More actions",
+     "label": "Left arm: go to (300, 150, 150) mm",
+     "action": {
+      "moveTo": {
+       "arm": "left",
+       "x": 300,
+       "y": 150,
+       "z": 150
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Right arm: go to (250, -150, 150) mm, turned 0°",
+     "action": {
+      "moveTo": {
+       "arm": "right",
+       "x": 250,
+       "y": -150,
+       "z": 150,
+       "yaw": 0
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Left arm: pick a block",
+     "action": {
+      "pick": "left"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Hand it over",
+     "action": {
+      "handover": true
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Right arm: place it",
+     "action": {
+      "place": "right"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Mirror on (teleoperation)",
+     "action": {
+      "mirror": true
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Mirror off",
+     "action": {
+      "mirror": false
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "ROS 2: left arm to a pose (move_p)",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/left_arm/control/move_p",
+       "msg": {
+        "pose": {
+         "position": {
+          "x": -0.35,
+          "y": -0.1,
+          "z": 0.12
+         },
+         "orientation": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 0.0
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "ROS 2: right gripper open 8 cm",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/right_arm/control/joint_states",
+       "msg": {
+        "name": [
+         "gripper"
+        ],
+        "position": [
+         0.08
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "left": {
+     "joints": [
+      -0.5,
+      12.2,
+      -12.7,
+      104.5,
+      "…"
+     ],
+     "gripper": 60,
+     "tcp_mm": [
+      300,
+      240,
+      160
+     ],
+     "holding": null,
+     "enabled": true,
+     "estop": false,
+     "busy": false
+    },
+    "right": {
+     "joints": [
+      12.5,
+      12,
+      -1.4,
+      104.5,
+      "…"
+     ],
+     "gripper": 60,
+     "tcp_mm": [
+      300,
+      -240,
+      160
+     ],
+     "holding": null,
+     "enabled": true,
+     "estop": false,
+     "busy": false
+    },
+    "mirror": false,
+    "blocks": [
+     {
+      "id": 0,
+      "color": "red",
+      "x": 0.3,
+      "y": 0.2,
+      "z": 0.02,
+      "yawDeg": 0,
+      "heldBy": []
+     },
+     {
+      "id": 1,
+      "color": "green",
+      "x": 0.4,
+      "y": 0.33,
+      "z": 0.02,
+      "yawDeg": 17.2,
+      "heldBy": []
+     },
+     {
+      "id": 2,
+      "color": "blue",
+      "x": 0.3,
+      "y": 0.44,
+      "z": 0.02,
+      "yawDeg": -11.5,
+      "heldBy": []
+     },
+     {
+      "id": 3,
+      "color": "yellow",
+      "x": 0.3,
+      "y": -0.2,
+      "z": 0.02,
+      "yawDeg": 0,
+      "heldBy": []
+     },
+     "…"
+    ]
+   }
+  },
+  {
+   "robot": "openarm",
+   "page": "indexOpenArm.php",
+   "name": "Enactic OpenArm 2.0",
+   "title": "Enactic OpenArm 2.0",
+   "text": "Fully open-source bimanual arms: two seven-joint arms with grippers and cameras, CAN-FD at 1 kHz, programmed with openarm_can (Python) or ROS 2",
+   "category": "Robot arms",
+   "image": "img/openarm.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [],
+   "motors": [
+    {
+     "id": "left_joint1",
+     "name": "Left arm J1 shoulder",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -80,
+      200
+     ]
+    },
+    {
+     "id": "left_joint2",
+     "name": "Left arm J2 shoulder",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -10,
+      190
+     ]
+    },
+    {
+     "id": "left_joint3",
+     "name": "Left arm J3 upper arm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "left_joint4",
+     "name": "Left arm J4 elbow",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      0,
+      140
+     ]
+    },
+    {
+     "id": "left_joint5",
+     "name": "Left arm J5 forearm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "left_joint6",
+     "name": "Left arm J6 wrist",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -45,
+      45
+     ]
+    },
+    {
+     "id": "left_joint7",
+     "name": "Left arm J7 wrist",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "left_gripper",
+     "name": "Left arm gripper (mm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      0,
+      88
+     ]
+    },
+    {
+     "id": "right_joint1",
+     "name": "Right arm J1 shoulder",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -80,
+      200
+     ]
+    },
+    {
+     "id": "right_joint2",
+     "name": "Right arm J2 shoulder",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -10,
+      190
+     ]
+    },
+    {
+     "id": "right_joint3",
+     "name": "Right arm J3 upper arm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "right_joint4",
+     "name": "Right arm J4 elbow",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      0,
+      140
+     ]
+    },
+    {
+     "id": "right_joint5",
+     "name": "Right arm J5 forearm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "right_joint6",
+     "name": "Right arm J6 wrist",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -45,
+      45
+     ]
+    },
+    {
+     "id": "right_joint7",
+     "name": "Right arm J7 wrist",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -90,
+      90
+     ]
+    },
+    {
+     "id": "right_gripper",
+     "name": "Right arm gripper (mm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      0,
+      88
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask",
+    "left_gripper",
+    "right_gripper"
+   ],
+   "worlds": false,
+   "commands": [
+    {
+     "group": "More actions",
+     "label": "Left arm: go to (300, 150, 150) mm",
+     "action": {
+      "moveTo": {
+       "arm": "left",
+       "x": 300,
+       "y": 150,
+       "z": 150
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Right arm: go to (250, -150, 150) mm, turned 0°",
+     "action": {
+      "moveTo": {
+       "arm": "right",
+       "x": 250,
+       "y": -150,
+       "z": 150,
+       "yaw": 0
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Left arm: pick a block",
+     "action": {
+      "pick": "left"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Hand it over",
+     "action": {
+      "handover": true
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Right arm: place it",
+     "action": {
+      "place": "right"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Mirror on (teleoperation)",
+     "action": {
+      "mirror": true
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Mirror off",
+     "action": {
+      "mirror": false
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "ROS 2: left arm trajectory",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/left_joint_trajectory_controller/follow_joint_trajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "openarm_left_joint1",
+          "openarm_left_joint2",
+          "openarm_left_joint3",
+          "openarm_left_joint4",
+          "openarm_left_joint5",
+          "openarm_left_joint6",
+          "openarm_left_joint7"
+         ],
+         "points": [
+          {
+           "positions": [
+            0.6,
+            0.2,
+            0.0,
+            1.4,
+            0.0,
+            0.0,
+            0.0
+           ],
+           "time_from_start": {
+            "sec": 3
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "ROS 2: right gripper open",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/right_gripper_controller/follow_joint_trajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "openarm_right_finger_joint1"
+         ],
+         "points": [
+          {
+           "positions": [
+            -0.7854
+           ],
+           "time_from_start": {
+            "sec": 1
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "left": {
+     "joints": [
+      -3.2,
+      54.7,
+      -30,
+      115.5,
+      "…"
+     ],
+     "gripper": 60,
+     "tcp_mm": [
+      160,
+      200,
+      160
+     ],
+     "holding": null,
+     "busy": false
+    },
+    "right": {
+     "joints": [
+      -3.2,
+      54.7,
+      -30,
+      115.5,
+      "…"
+     ],
+     "gripper": 60,
+     "tcp_mm": [
+      160,
+      -200,
+      160
+     ],
+     "holding": null,
+     "busy": false
+    },
+    "mirror": false,
+    "blocks": [
+     {
+      "id": 0,
+      "color": "red",
+      "x": 0.12,
+      "y": 0.1,
+      "z": 0.02,
+      "yawDeg": 0,
+      "heldBy": []
+     },
+     {
+      "id": 1,
+      "color": "green",
+      "x": 0.21,
+      "y": 0.18,
+      "z": 0.02,
+      "yawDeg": -17.2,
+      "heldBy": []
+     },
+     {
+      "id": 2,
+      "color": "blue",
+      "x": 0.12,
+      "y": 0.28,
+      "z": 0.02,
+      "yawDeg": 11.5,
+      "heldBy": []
+     },
+     {
+      "id": 3,
+      "color": "yellow",
+      "x": 0.12,
+      "y": -0.1,
+      "z": 0.02,
+      "yawDeg": 0,
+      "heldBy": []
+     },
+     "…"
+    ]
+   }
+  },
+  {
+   "robot": "lrmate",
+   "page": "indexLRMate.php",
+   "name": "FANUC LR Mate 200iD",
+   "title": "FANUC LR Mate 200iD",
+   "text": "The small industrial arm of the factory: six axes, 71.7 cm reach, driven from a PC with RMI (JSON over TCP) or FANUC's ROS 2 driver",
+   "category": "Robot arms",
+   "image": "img/lrmate.jpg",
+   "interfaces": [
+    {
+     "key": "rmi",
+     "family": "FANUC RMI (JSON over TCP)"
+    },
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [],
+   "motors": [
+    {
+     "id": "joint1",
+     "name": "Turn",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -170,
+      170
+     ]
+    },
+    {
+     "id": "joint2",
+     "name": "Arm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -100,
+      145
+     ]
+    },
+    {
+     "id": "joint3",
+     "name": "Forearm",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -70,
+      205
+     ]
+    },
+    {
+     "id": "joint4",
+     "name": "Wrist roll",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -190,
+      190
+     ]
+    },
+    {
+     "id": "joint5",
+     "name": "Wrist bend",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -125,
+      125
+     ]
+    },
+    {
+     "id": "joint6",
+     "name": "Faceplate",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -360,
+      360
+     ]
+    },
+    {
+     "id": "gripper",
+     "name": "Gripper opening (mm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      0,
+      85
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "rmi",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask",
+    "depth",
+    "depthcolor",
+    "external"
+   ],
+   "worlds": false,
+   "commands": [
+    {
+     "group": "More actions",
+     "label": "RMI: connect and initialize",
+     "action": {
+      "rmi": [
+       {
+        "Communication": "FRC_Connect"
+       },
+       {
+        "Command": "FRC_Initialize"
+       }
+      ]
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "RMI: straight line to (400, 0, 0) mm",
+     "action": {
+      "rmi": {
+       "Instruction": "FRC_LinearMotion",
+       "SequenceID": 1,
+       "Position": {
+        "X": 400,
+        "Y": 0,
+        "Z": 0,
+        "W": 180,
+        "P": 0,
+        "R": 0
+       },
+       "SpeedType": "mmSec",
+       "Speed": 200,
+       "TermType": "FINE"
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "RMI: joints, J1 30° and J5 -90°",
+     "action": {
+      "rmi": {
+       "Instruction": "FRC_JointMotionJRep",
+       "SequenceID": 2,
+       "JointAngle": {
+        "J1": 30,
+        "J2": 0,
+        "J3": 0,
+        "J4": 0,
+        "J5": -90,
+        "J6": 0
+       },
+       "SpeedType": "Percent",
+       "Speed": 50,
+       "TermType": "FINE"
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "RMI: close the gripper (DO[1] ON)",
+     "action": {
+      "rmi": {
+       "Command": "FRC_WriteDOUT",
+       "PortNumber": 1,
+       "PortValue": "ON"
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "RMI: open the gripper (DO[1] OFF)",
+     "action": {
+      "rmi": {
+       "Command": "FRC_WriteDOUT",
+       "PortNumber": 1,
+       "PortValue": "OFF"
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "RMI: read the joints",
+     "action": {
+      "rmi": {
+       "Command": "FRC_ReadJointAngles"
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "RMI: read the tool position",
+     "action": {
+      "rmi": {
+       "Command": "FRC_ReadCartesianPosition"
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "ROS 2: joint trajectory (radians)",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/joint_trajectory_controller/follow_joint_trajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "J1",
+          "J2",
+          "J3",
+          "J4",
+          "J5",
+          "J6"
+         ],
+         "points": [
+          {
+           "positions": [
+            0.5,
+            0.3,
+            0.0,
+            0.0,
+            -1.2,
+            0.0
+           ],
+           "time_from_start": {
+            "sec": 2
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "tcp": {
+     "x": 0.3,
+     "y": 0,
+     "z": 0.42,
+     "yawDeg": 0
+    },
+    "holding": null,
+    "below": {
+     "depth_mm": 488,
+     "gap_mm": 407,
+     "height_mm": 0,
+     "block": null,
+     "u": 309,
+     "v": 223
+    },
+    "busy": false,
+    "rmi": {
+     "connected": false,
+     "initialized": false,
+     "hold": false,
+     "nextSequenceID": 1,
+     "override": 100,
+     "utool": 1,
+     "last": []
+    },
+    "jointsController": [
+     0,
+     -15.26,
+     -5.69,
+     0,
+     "…"
+    ],
+    "blocks": [
+     {
+      "id": "red1",
+      "color": "red",
+      "x": -0.304,
+      "y": 0.163,
+      "z": 0.02,
+      "yawDeg": 121.9,
+      "held": false
+     },
+     {
+      "id": "red2",
+      "color": "red",
+      "x": 0.268,
+      "y": -0.245,
+      "z": 0.02,
+      "yawDeg": 99,
+      "held": false
+     },
+     {
+      "id": "green1",
+      "color": "green",
+      "x": -0.397,
+      "y": 0.196,
+      "z": 0.02,
+      "yawDeg": 76,
+      "held": false
+     },
+     {
+      "id": "green2",
+      "color": "green",
+      "x": 0.031,
+      "y": 0.395,
+      "z": 0.02,
+      "yawDeg": 166.3,
+      "held": false
+     },
+     "…"
+    ]
+   }
+  },
+  {
+   "robot": "g1edu",
+   "page": "indexG1EDU.php",
+   "name": "Unitree G1 EDU Simulator",
+   "title": "Unitree G1 EDU",
+   "text": "Humanoid, the EDU version: also unitree_sdk2 (low level, every joint) and ROS 2 besides the WebRTC of the app",
+   "category": "Humanoids and bipeds",
+   "image": "img/g1-edu-hanging.jpg",
+   "interfaces": [
+    {
+     "key": "sdk",
+     "family": "Maker SDK"
+    },
+    {
+     "key": "webrtc",
+     "family": "Unitree WebRTC"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn",
+    "strafe"
+   ],
+   "motors": [
+    {
+     "id": "left_hip_pitch",
+     "name": "left hip pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "left_hip_roll",
+     "name": "left hip roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "left_hip_yaw",
+     "name": "left hip yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "left_knee",
+     "name": "left knee",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "left_ankle_pitch",
+     "name": "left ankle pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "left_ankle_roll",
+     "name": "left ankle roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "right_hip_pitch",
+     "name": "right hip pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "right_hip_roll",
+     "name": "right hip roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "right_hip_yaw",
+     "name": "right hip yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "right_knee",
+     "name": "right knee",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "right_ankle_pitch",
+     "name": "right ankle pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "right_ankle_roll",
+     "name": "right ankle roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -160,
+      160
+     ]
+    },
+    {
+     "id": "waist_yaw",
+     "name": "waist yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -150,
+      150
+     ]
+    },
+    {
+     "id": "left_shoulder_pitch",
+     "name": "left shoulder pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_shoulder_roll",
+     "name": "left shoulder roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_shoulder_yaw",
+     "name": "left shoulder yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_elbow",
+     "name": "left elbow",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_wrist_roll",
+     "name": "left wrist roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_shoulder_pitch",
+     "name": "right shoulder pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_shoulder_roll",
+     "name": "right shoulder roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_shoulder_yaw",
+     "name": "right shoulder yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_elbow",
+     "name": "right elbow",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_wrist_roll",
+     "name": "right wrist roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "webrtc",
+    "sdk",
+    "fell"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "FSM state (7101)",
+     "label": "Zero torque 0",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":0}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 0
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Damp 1",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":1}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 1
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Squat 2",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":2}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 2
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Sit 3",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":3}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 3
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Lock stand 4",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":4}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 4
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Start (walk) 200",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":200}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 200
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Walk 500",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":500}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 500
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Walk + waist 501",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":501}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 501
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Run 801",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":801}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 801
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Lie → stand 702",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":702}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 702
+       }
+      }
+     }
+    },
+    {
+     "group": "FSM state (7101)",
+     "label": "Squat ↔ stand 706",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7101,\"parameter\":{\"data\":706}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7101,
+       "parameter": {
+        "data": 706
+       }
+      }
+     }
+    },
+    {
+     "group": "Velocity (7105) · joystick",
+     "label": "Forward 0.5 m/s, 2 s",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7105,\"parameter\":{\"velocity\":[0.5,0,0],\"duration\":2}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7105,
+       "parameter": {
+        "velocity": [
+         0.5,
+         0,
+         0
+        ],
+        "duration": 2
+       }
+      }
+     }
+    },
+    {
+     "group": "Velocity (7105) · joystick",
+     "label": "Sideways 0.3 m/s, 2 s",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7105,\"parameter\":{\"velocity\":[0,0.3,0],\"duration\":2}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7105,
+       "parameter": {
+        "velocity": [
+         0,
+         0.3,
+         0
+        ],
+        "duration": 2
+       }
+      }
+     }
+    },
+    {
+     "group": "Velocity (7105) · joystick",
+     "label": "Turn 0.8 rad/s, 2 s",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7105,\"parameter\":{\"velocity\":[0,0,0.8],\"duration\":2}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7105,
+       "parameter": {
+        "velocity": [
+         0,
+         0,
+         0.8
+        ],
+        "duration": 2
+       }
+      }
+     }
+    },
+    {
+     "group": "Velocity (7105) · joystick",
+     "label": "Joystick: turn right",
+     "line": "conn.datachannel.pub_sub.publish_without_callback(\"rt/wirelesscontroller\", {\"lx\":0,\"ly\":0,\"rx\":0.6,\"ry\":0,\"keys\":0})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/wirelesscontroller",
+       "data": {
+        "lx": 0,
+        "ly": 0,
+        "rx": 0.6,
+        "ry": 0,
+        "keys": 0
+       }
+      }
+     }
+    },
+    {
+     "group": "Velocity (7105) · joystick",
+     "label": "Joystick: forward",
+     "line": "conn.datachannel.pub_sub.publish_without_callback(\"rt/wirelesscontroller\", {\"lx\":0,\"ly\":0.6,\"rx\":0,\"ry\":0,\"keys\":0})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/wirelesscontroller",
+       "data": {
+        "lx": 0,
+        "ly": 0.6,
+        "rx": 0,
+        "ry": 0,
+        "keys": 0
+       }
+      }
+     }
+    },
+    {
+     "group": "Velocity (7105) · joystick",
+     "label": "Joystick: stop",
+     "line": "conn.datachannel.pub_sub.publish_without_callback(\"rt/wirelesscontroller\", {\"lx\":0,\"ly\":0,\"rx\":0,\"ry\":0,\"keys\":0})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/wirelesscontroller",
+       "data": {
+        "lx": 0,
+        "ly": 0,
+        "rx": 0,
+        "ry": 0,
+        "keys": 0
+       }
+      }
+     }
+    },
+    {
+     "group": "Velocity (7105) · joystick",
+     "label": "Get FSM id",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/sport/request\", {\"api_id\":7001})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/sport/request",
+       "api_id": 7001
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Left kiss 12",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":12}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 12
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Hands up 15",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":15}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 15
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Clap 17",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":17}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 17
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "High five 18",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":18}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 18
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Hug 19",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":19}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 19
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Arm heart 20",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":20}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 20
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Right heart 21",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":21}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 21
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Reject 22",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":22}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 22
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Right hand up 23",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":23}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 23
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "X-ray 24",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":24}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 24
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Face wave 25",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":25}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 25
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "High wave 26",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":26}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 26
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Handshake 27",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":27}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 27
+       }
+      }
+     }
+    },
+    {
+     "group": "Arm actions (7106)",
+     "label": "Release 99",
+     "line": "await conn.datachannel.pub_sub.publish_request_new(\"rt/api/arm/request\", {\"api_id\":7106,\"parameter\":{\"data\":99}})",
+     "action": {
+      "webrtc": {
+       "topic": "rt/api/arm/request",
+       "api_id": 7106,
+       "parameter": {
+        "data": 99
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · FSM",
+     "label": "ZeroTorque 0",
+     "line": "loco.ZeroTorque()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7101,
+       "parameter": {
+        "data": 0
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · FSM",
+     "label": "Damp 1",
+     "line": "loco.Damp()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7101,
+       "parameter": {
+        "data": 1
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · FSM",
+     "label": "Sit 3",
+     "line": "loco.Sit()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7101,
+       "parameter": {
+        "data": 3
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · FSM",
+     "label": "SetFsmId(4) lock stand 4",
+     "line": "loco.SetFsmId(4)",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7101,
+       "parameter": {
+        "data": 4
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · FSM",
+     "label": "Start 200",
+     "line": "loco.Start()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7101,
+       "parameter": {
+        "data": 200
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · FSM",
+     "label": "Lie2StandUp 702",
+     "line": "loco.Lie2StandUp()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7101,
+       "parameter": {
+        "data": 702
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · FSM",
+     "label": "Squat2StandUp 706",
+     "line": "loco.Squat2StandUp()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7101,
+       "parameter": {
+        "data": 706
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · walk and hands",
+     "label": "Move 0.4 m/s, 2 s",
+     "line": "loco.SetVelocity(0.4, 0, 0, 2)",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7105,
+       "parameter": {
+        "velocity": [
+         0.4,
+         0,
+         0
+        ],
+        "duration": 2
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · walk and hands",
+     "label": "Turn 0.6 rad/s, 2 s",
+     "line": "loco.SetVelocity(0, 0, 0.6, 2)",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7105,
+       "parameter": {
+        "velocity": [
+         0,
+         0,
+         0.6
+        ],
+        "duration": 2
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · walk and hands",
+     "label": "StopMove",
+     "line": "loco.StopMove()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7105,
+       "parameter": {
+        "velocity": [
+         0,
+         0,
+         0
+        ],
+        "duration": 1
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · walk and hands",
+     "label": "WaveHand",
+     "line": "loco.WaveHand()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7106,
+       "parameter": {
+        "data": 0
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · walk and hands",
+     "label": "ShakeHand",
+     "line": "loco.ShakeHand(0)",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7106,
+       "parameter": {
+        "data": 2
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · walk and hands",
+     "label": "ShakeHand end",
+     "line": "loco.ShakeHand(1)",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7106,
+       "parameter": {
+        "data": 3
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · walk and hands",
+     "label": "LowStand",
+     "line": "loco.LowStand()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7104,
+       "parameter": {
+        "data": 0
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · walk and hands",
+     "label": "HighStand",
+     "line": "loco.HighStand()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7104,
+       "parameter": {
+        "data": 4294967295
+       }
+      }
+     }
+    },
+    {
+     "group": "LocoClient · walk and hands",
+     "label": "GetFsmId",
+     "line": "loco.GetFsmId()",
+     "action": {
+      "sdk": {
+       "service": "sport",
+       "api_id": 7001
+      }
+     }
+    },
+    {
+     "group": "G1ArmActionClient",
+     "label": "High wave 26",
+     "line": "arm.ExecuteAction(26)",
+     "action": {
+      "sdk": {
+       "service": "arm",
+       "api_id": 7106,
+       "parameter": {
+        "action_id": 26
+       }
+      }
+     }
+    },
+    {
+     "group": "G1ArmActionClient",
+     "label": "Clap 17",
+     "line": "arm.ExecuteAction(17)",
+     "action": {
+      "sdk": {
+       "service": "arm",
+       "api_id": 7106,
+       "parameter": {
+        "action_id": 17
+       }
+      }
+     }
+    },
+    {
+     "group": "G1ArmActionClient",
+     "label": "High five 18",
+     "line": "arm.ExecuteAction(18)",
+     "action": {
+      "sdk": {
+       "service": "arm",
+       "api_id": 7106,
+       "parameter": {
+        "action_id": 18
+       }
+      }
+     }
+    },
+    {
+     "group": "G1ArmActionClient",
+     "label": "Hands up 15",
+     "line": "arm.ExecuteAction(15)",
+     "action": {
+      "sdk": {
+       "service": "arm",
+       "api_id": 7106,
+       "parameter": {
+        "action_id": 15
+       }
+      }
+     }
+    },
+    {
+     "group": "G1ArmActionClient",
+     "label": "Release 99",
+     "line": "arm.ExecuteAction(99)",
+     "action": {
+      "sdk": {
+       "service": "arm",
+       "api_id": 7106,
+       "parameter": {
+        "action_id": 99
+       }
+      }
+     }
+    },
+    {
+     "group": "MotionSwitcherClient",
+     "label": "CheckMode",
+     "line": "msc.CheckMode()",
+     "action": {
+      "sdk": {
+       "service": "motion_switcher",
+       "api_id": 1001
+      }
+     }
+    },
+    {
+     "group": "MotionSwitcherClient",
+     "label": "ReleaseMode (low level)",
+     "line": "msc.ReleaseMode()",
+     "action": {
+      "sdk": {
+       "service": "motion_switcher",
+       "api_id": 1003
+      }
+     }
+    },
+    {
+     "group": "MotionSwitcherClient",
+     "label": "SelectMode(\"ai\")",
+     "line": "msc.SelectMode(\"ai\")",
+     "action": {
+      "sdk": {
+       "service": "motion_switcher",
+       "api_id": 1002,
+       "parameter": {
+        "name": "ai"
+       }
+      }
+     }
+    },
+    {
+     "group": "rt/lowcmd (released) · rt/arm_sdk (walking)",
+     "label": "Low: zero pose",
+     "line": "lowcmd_publisher.Write(cmd)   # every joint to 0 rad, kp 60, kd 1.5",
+     "action": {
+      "sdk": {
+       "topic": "rt/lowcmd",
+       "note": "every joint to 0 rad, kp 60, kd 1.5",
+       "msg": {
+        "mode_pr": 0,
+        "mode_machine": 4,
+        "motor_cmd": [
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         }
+        ],
+        "reserve": [
+         0,
+         0,
+         0,
+         0
+        ],
+        "crc": 860723771
+       }
+      }
+     }
+    },
+    {
+     "group": "rt/lowcmd (released) · rt/arm_sdk (walking)",
+     "label": "Low: bend knees",
+     "line": "lowcmd_publisher.Write(cmd)   # hips −0.6, knees 1.2, ankles −0.6 rad",
+     "action": {
+      "sdk": {
+       "topic": "rt/lowcmd",
+       "note": "hips −0.6, knees 1.2, ankles −0.6 rad",
+       "msg": {
+        "mode_pr": 0,
+        "mode_machine": 4,
+        "motor_cmd": [
+         {
+          "mode": 1,
+          "q": -0.6,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 1.2,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": -0.6,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": -0.6,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 1.2,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": -0.6,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.3,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.9,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.3,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.9,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         }
+        ],
+        "reserve": [
+         0,
+         0,
+         0,
+         0
+        ],
+        "crc": 1786748087
+       }
+      }
+     }
+    },
+    {
+     "group": "rt/lowcmd (released) · rt/arm_sdk (walking)",
+     "label": "Low: damping",
+     "line": "lowcmd_publisher.Write(cmd)   # kp 0, kd 2: the joints only resist speed",
+     "action": {
+      "sdk": {
+       "topic": "rt/lowcmd",
+       "note": "kp 0, kd 2: the joints only resist speed",
+       "msg": {
+        "mode_pr": 0,
+        "mode_machine": 4,
+        "motor_cmd": [
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 2,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         }
+        ],
+        "reserve": [
+         0,
+         0,
+         0,
+         0
+        ],
+        "crc": 1509740227
+       }
+      }
+     }
+    },
+    {
+     "group": "rt/lowcmd (released) · rt/arm_sdk (walking)",
+     "label": "arm_sdk: arms up",
+     "line": "arm_sdk_publisher.Write(cmd)   # shoulders −2.6 rad, weight 1",
+     "action": {
+      "sdk": {
+       "topic": "rt/arm_sdk",
+       "note": "shoulders −2.6 rad, weight 1",
+       "msg": {
+        "mode_pr": 0,
+        "mode_machine": 4,
+        "motor_cmd": [
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": -2.6,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.25,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.2,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": -2.6,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": -0.25,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.2,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 1,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         }
+        ],
+        "reserve": [
+         0,
+         0,
+         0,
+         0
+        ],
+        "crc": 1494983475
+       }
+      }
+     }
+    },
+    {
+     "group": "rt/lowcmd (released) · rt/arm_sdk (walking)",
+     "label": "arm_sdk: let go",
+     "line": "arm_sdk_publisher.Write(cmd)   # weight 0: the walking controller has the arms again",
+     "action": {
+      "sdk": {
+       "topic": "rt/arm_sdk",
+       "note": "weight 0: the walking controller has the arms again",
+       "msg": {
+        "mode_pr": 0,
+        "mode_machine": 4,
+        "motor_cmd": [
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 60,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": -2.6,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.25,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.2,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": -2.6,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": -0.25,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0.2,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 1,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 30,
+          "kd": 1.5,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         },
+         {
+          "mode": 0,
+          "q": 0,
+          "dq": 0,
+          "tau": 0,
+          "kp": 0,
+          "kd": 0,
+          "reserve": 0
+         }
+        ],
+        "reserve": [
+         0,
+         0,
+         0,
+         0
+        ],
+        "crc": 1642723873
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "fsm_id": 3,
+    "fsm_name": "sit",
+    "fsm_mode": 0,
+    "posture": "chair",
+    "arm_action": null,
+    "velocity": [
+     0,
+     0,
+     0
+    ],
+    "stand_height": 1,
+    "webrtc": [],
+    "model": "edu",
+    "motion_mode": "ai",
+    "lowcmd_count": 0,
+    "arm_sdk_weight": 0
    }
   }
  ]

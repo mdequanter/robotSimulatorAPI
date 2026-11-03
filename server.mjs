@@ -41,7 +41,7 @@ const ROBOTS = {
   whegs: 'indexWhegs.php', quadruped: 'indexQuadruped.php', mini: 'indexSmall.php', wheellegs: 'indexWheelLegs.php',
   ostrich: 'indexOstrich.php', humanoid: 'indexHumanoid.php', snake: 'indexSnake.php', create3: 'indexCreate3.php',
   go2: 'indexGo2.php', g1: 'indexG1.php', turtlebot4: 'indexTurtleBot4.php',
-  turtlebot3: 'indexTurtleBot3.php', tb3waffle: 'indexTurtleBot3.php?model=waffle', tb3manipulator: 'indexTurtleBot3.php?model=manipulator',
+  turtlebot3: 'indexTurtleBot3.php', tb3waffle: 'indexTurtleBot3Waffle.php', tb3manipulator: 'indexTurtleBot3Manipulator.php',
   go2w: 'indexGo2W.php', r1: 'indexR1.php', rosbotxl: 'indexROSbotXL.php', leorover: 'indexLeoRover.php', bittle: 'indexBittle.php',
   roboworks: 'indexRoboworks.php', mecabot: 'indexRoboworks.php?variant=mecabot', ugvrover: 'indexUGVRover.php',
   jetbot: 'indexJetBot.php', jetracer: 'indexJetRacer.php', xarm5: 'indexXArm6.php?model=5', xarm850: 'indexXArm6.php?model=850',
@@ -50,6 +50,7 @@ const ROBOTS = {
   panther: 'indexPanther.php', jaguar: 'indexJaguar.php', summitxl: 'indexSummitXL.php', rbkairos: 'indexRBKairos.php', rbvogui: 'indexRBKairos.php?variant=vogui',
   xarm6: 'indexXArm6.php', xarm7: 'indexXArm6.php?model=7', omx: 'indexOpenManipulator.php', driftx: 'indexDriftX.php', pirateshooter: 'indexPirateShooter.php',
   rangermini: 'indexRangerMini.php', limo: 'indexLimo.php', phoenix: 'indexPhoenix.php', spot: 'indexSpot.php', jackal: 'indexJackal.php', husky: 'indexHusky.php', scoutmini: 'indexScoutMini.php', hunterse: 'indexHunterSE.php', bunker: 'indexBunker.php', ur5e: 'indexUR5e.php', fr3: 'indexFR3.php', mir250: 'indexMiR250.php',
+  tello: 'indexTello.php', nero: 'indexNERO.php', openarm: 'indexOpenArm.php', lrmate: 'indexLRMate.php', g1edu: 'indexG1EDU.php',
 };
 
 // Suggested reward (the client may compute its own from obs + events): progress along the lane,

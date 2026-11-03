@@ -20,7 +20,12 @@ ROOT = os.path.dirname(HERE)                                                    
 # Interface families, by the key of their messages in an action.
 FAMILY = {"webrtc": "Unitree WebRTC", "ros": "ROS 2", "serial": "Serial protocol", "sdk": "Maker SDK",
           "python": "Python library", "xgo": "xgolib (Python)", "booster": "Booster SDK", "ws": "WebSocket API", "tcp": "TCP text protocol",
-          "tello": "Tello SDK", "urscript": "URScript", "rest": "REST API (HTTP)"}
+          "tello": "Tello SDK", "urscript": "URScript", "rest": "REST API (HTTP)", "rmi": "FANUC RMI (JSON over TCP)"}
+
+# Pages without a card of their own on index.php (a second button on another robot's card): page → (title, text, image).
+# The category comes from the card of the page they forward to.
+OWN_CARD = {"indexG1EDU.php": ("Unitree G1 EDU", "Humanoid, the EDU version: also unitree_sdk2 (low level, every joint) and ROS 2 "
+                               "besides the WebRTC of the app", "img/g1-edu-hanging.jpg", "indexG1.php")}
 
 # Actions that are not console buttons (page-specific action fields), per robot.
 EXTRA = {
@@ -41,6 +46,36 @@ EXTRA["mir250"] = [("Robot 2: GET /status", {"rest": {"method": "GET", "path": "
                    ("Robot 3: its mission queue", {"rest": {"method": "GET", "path": "/mission_queue", "robot": "192.168.12.22"}}),
                    ("Select robot 2", {"fleet": {"select": 2}}), ("Select robot 1", {"fleet": {"select": 1}}),
                    ("Lift the shelf above it (by hand)", {"lift": True}), ("Lower the shelf (by hand)", {"lift": False})]
+# NERO and OpenArm: two arms at a table, without console buttons in the API; moveTo is in mm in the table frame.
+TWO_ARMS = [("Left arm: go to (300, 150, 150) mm", {"moveTo": {"arm": "left", "x": 300, "y": 150, "z": 150}}),
+            ("Right arm: go to (250, -150, 150) mm, turned 0°", {"moveTo": {"arm": "right", "x": 250, "y": -150, "z": 150, "yaw": 0}}),
+            ("Left arm: pick a block", {"pick": "left"}), ("Hand it over", {"handover": True}),
+            ("Right arm: place it", {"place": "right"}), ("Mirror on (teleoperation)", {"mirror": True}),
+            ("Mirror off", {"mirror": False})]
+EXTRA["nero"] = TWO_ARMS + [
+    ("ROS 2: left arm to a pose (move_p)", {"ros": {"kind": "topic", "name": "/left_arm/control/move_p", "msg": {
+        "pose": {"position": {"x": -0.35, "y": -0.1, "z": 0.12}, "orientation": {"x": 1.0, "y": 0.0, "z": 0.0, "w": 0.0}}}}}),
+    ("ROS 2: right gripper open 8 cm", {"ros": {"kind": "topic", "name": "/right_arm/control/joint_states",
+                                               "msg": {"name": ["gripper"], "position": [0.08]}}})]
+EXTRA["openarm"] = TWO_ARMS + [
+    ("ROS 2: left arm trajectory", {"ros": {"kind": "action", "name": "/left_joint_trajectory_controller/follow_joint_trajectory", "msg": {
+        "trajectory": {"joint_names": [f"openarm_left_joint{k}" for k in range(1, 8)],
+                       "points": [{"positions": [0.6, 0.2, 0.0, 1.4, 0.0, 0.0, 0.0], "time_from_start": {"sec": 3}}]}}}}),
+    ("ROS 2: right gripper open", {"ros": {"kind": "action", "name": "/right_gripper_controller/follow_joint_trajectory", "msg": {
+        "trajectory": {"joint_names": ["openarm_right_finger_joint1"], "points": [{"positions": [-0.7854], "time_from_start": {"sec": 1}}]}}}})]
+EXTRA["lrmate"] = [
+    ("RMI: connect and initialize", {"rmi": [{"Communication": "FRC_Connect"}, {"Command": "FRC_Initialize"}]}),
+    ("RMI: straight line to (400, 0, 0) mm", {"rmi": {"Instruction": "FRC_LinearMotion", "SequenceID": 1,
+        "Position": {"X": 400, "Y": 0, "Z": 0, "W": 180, "P": 0, "R": 0}, "SpeedType": "mmSec", "Speed": 200, "TermType": "FINE"}}),
+    ("RMI: joints, J1 30° and J5 -90°", {"rmi": {"Instruction": "FRC_JointMotionJRep", "SequenceID": 2,
+        "JointAngle": {"J1": 30, "J2": 0, "J3": 0, "J4": 0, "J5": -90, "J6": 0}, "SpeedType": "Percent", "Speed": 50, "TermType": "FINE"}}),
+    ("RMI: close the gripper (DO[1] ON)", {"rmi": {"Command": "FRC_WriteDOUT", "PortNumber": 1, "PortValue": "ON"}}),
+    ("RMI: open the gripper (DO[1] OFF)", {"rmi": {"Command": "FRC_WriteDOUT", "PortNumber": 1, "PortValue": "OFF"}}),
+    ("RMI: read the joints", {"rmi": {"Command": "FRC_ReadJointAngles"}}),
+    ("RMI: read the tool position", {"rmi": {"Command": "FRC_ReadCartesianPosition"}}),
+    ("ROS 2: joint trajectory (radians)", {"ros": {"kind": "action", "name": "/joint_trajectory_controller/follow_joint_trajectory", "msg": {
+        "trajectory": {"joint_names": ["J1", "J2", "J3", "J4", "J5", "J6"],
+                       "points": [{"positions": [0.5, 0.3, 0.0, 0.0, -1.2, 0.0], "time_from_start": {"sec": 2}}]}}}})]
 EXTRA["fr3"] = [("Ready pose", {"python": "robot.move(JointMotion([0, -0.785, 0, -2.356, 0, 1.571, 0.785]))"}),
                 ("Straight line, hand down", {"python": "robot.move(CartesianMotion(Affine([0.4, 0.0, 0.2], [1, 0, 0, 0])))"}),
                 ("10 cm to the left (relative)", {"python": "robot.move(CartesianMotion(Affine([0.0, 0.1, 0.0]), ReferenceType.Relative))"}),
@@ -115,6 +150,9 @@ def main():
         worlds = worlds or info.get("worlds")
         base = page.split("?")[0]
         title, text, cat, img = card.get(page) or card.get(base) or (info.get("name", rid), "", "Other", "")
+        if base in OWN_CARD:                             # a second button on another robot's card
+            title, text, img, parent = OWN_CARD[base]
+            cat = card.get(parent, (0, 0, cat))[2]
         own = f"img/{rid}.jpg"                           # a variant with its own picture
         if os.path.exists(os.path.join(ROOT, own)):
             img = own

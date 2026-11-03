@@ -304,6 +304,7 @@ name.
 | `create3` | fwd, turn | L, R | – | bump, cliff | bumpers {left, right} (as the Python SDK), bumpZones {left, front_left, front_center, front_right, right}, irIntensity {side_left … right: 0–4095}, cliff {side_left, front_left, front_right, side_right}, wheelDrop {left, right} |
 | `go2` | fwd, turn, strafe (the app's joystick) | – | 12 joints (`FL_hip`, `FL_thigh`, `FL_calf`, …) | webrtc | sportmodestate {mode, gait_type, body_height, foot_raise_height, velocity, yaw_speed, range_obstacle [front, left, right, back]}, state, motionMode, avoid, webrtc (last responses) |
 | `g1` | fwd, turn, strafe (the app's joystick) | – | 23 joints (`left_hip_pitch` … `right_wrist_roll`, `waist_yaw`) | webrtc, fell | fsm_id, fsm_name, fsm_mode, posture, arm_action, velocity, webrtc (last responses) |
+| `g1edu` | fwd, turn, strafe (the app's joystick) | – | 23 joints | webrtc, sdk, fell | as `g1`, plus model (edu), motion_mode, lowcmd_count, arm_sdk_weight, sdk (last answers) |
 | `turtlebot4` | fwd, turn (teleop keys) | L, R | – | ros, bump, cliff | model, topics {`/odom`, `/scan` (360 ranges, null = no echo), `/hazard_detection`, `/ir_intensity`, `/battery_state`, `/dock_status`, `/wheel_vels`}, goal, estop, safety_override, ros (last answers) |
 | `go2w` | fwd, turn (the app's joystick) | – | 4 wheels (`FL_wheel` … `RR_wheel`), 12 joints (`FL_hip`, `FL_thigh`, `FL_calf`, …) | webrtc | sportmodestate {mode, gait_type, body_height, wheel_speed [FL, FR, RL, RR rad/s], velocity, yaw_speed, range_obstacle}, state, motionMode, avoid, lifting [legs lifting their wheel], webrtc |
 | `r1` | fwd, turn, strafe (the app's joystick) | – | 26 joints (`left_hip_pitch` … `right_wrist_roll`, `waist_yaw`, `waist_pitch`, `head_yaw`, `head_pitch`); R1 Air (`?variant=air`): 20 (no waist, head or wrists) | webrtc, fell | model, fsm_id, fsm_name, fsm_reported, reporting, posture, arm_action, velocity, webrtc (last responses) |
@@ -344,6 +345,9 @@ name.
 | `xarm850` | – | `joint1`–`joint6`°, `gripper` | – | – | as `xarm6` |
 | `ur5e` | – (it stays on its table) | `joint1`–`joint6`°, `gripper` (opening in mm, 0–85) | – | urscript | as `xarm6`, plus urscript (last programs: `program`, `reply`, `note`) |
 | `fr3` | – (it stays on its table) | `joint1`–`joint7`°, `gripper` (opening in mm, 0–80) | – | python | as `xarm6`, plus python (last scripts: `code`, `reply`, `note`) |
+| `lrmate` | – (it stays on its table) | `joint1`–`joint6`°, `gripper` (opening in mm, 0–85) | – | rmi, ros | as `xarm6`, plus below (the D435's view straight down), rmi {connected, initialized, hold, nextSequenceID, override, utool, last}, jointsController (J3 as the controller counts it) |
+| `nero` | – (two arms on a table) | `left_joint1`–`left_joint7`°, `left_gripper` (mm, 0–100), the same `right_…` | – | – | left / right {joints, gripper, tcp_mm, holding, enabled, estop, busy}, mirror, blocks [{id, color, x, y, z, yawDeg, heldBy}] |
+| `openarm` | – (two arms on a stand) | `left_joint1`–`left_joint7`°, `left_gripper` (mm, 0–88), the same `right_…` | – | – | left / right {joints, gripper, tcp_mm, holding, busy}, mirror, blocks |
 | `sespro` | – | `joint1`–`joint5`°, `gripper` (mm, 0–85) | – | serial | as `xarm6`, plus lss {limp [servo ids], status [LSS Q code per servo 1–6], led [0–7]}, serial (last answers) |
 | `xarm6` | – (it stays on its table) | `joint1`–`joint6`°, `gripper` (opening in mm, 0–85) | – | – | tcp {x, y, z, yawDeg} (point between the finger pads, base frame), holding, busy, blocks [{id, color, x, y, z, yawDeg, held}] |
 | `xarm7` | – | `joint1`–`joint7`°, `gripper` | – | – | as `xarm6` |
@@ -403,18 +407,19 @@ Each step returns the events that happened during that step:
 | `jump` | `ostrich` takes off | no |
 | `bump` | `create3`: a bumper zone closes (`zones`: which ones) | no |
 | `cliff` | `create3`: a cliff sensor sees a drop (`sensors`: which ones) | no |
-| `webrtc` | `go2`, `go2w`, `g1`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
-| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
+| `webrtc` | `go2`, `go2w`, `g1`, `g1edu`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
+| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`, `nero`, `openarm`, `lrmate`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
 | `rest` | `mir250`: the answer to a REST request (`method`, `path`, `robot` = the robot's address, `code` = HTTP status, `data`); a mission that ends blocked (`method`: EVENT, `robot`, `data` {robot_name, state_text, errors}) | no |
 | `lift` | `mir250`: the lift worked by hand (`robot`, `message`: lifting, lowering, or why not) | no |
 | `urscript` | `ur5e`: a URScript program ran (`program`, `reply` from textmsg / get_actual_…, `note`); a move that failed while it ran (`program`: null, `note`) | no |
+| `rmi` | `lrmate`: the answers to RMI packets (`packets`, `reply`: one per packet); a motion instruction that is done (`packet`: null, `reply` with its `SequenceID`) | no |
 | `python` | `jetbot`, `jetracer`: the result of a Python line (`out` or the error); `fr3`: a franky script ran (`code`, `reply` from print, `note`) | no |
 | `xgo` | `xgo`, `xgomini`: the answer to an xgolib call (`line`, `code`, `reply`) | no |
 | `tello` | `tello`: the answer of the drone to a Tello SDK command (`command`, `code`, `reply`) | no |
 | `tcp` | `jaguar`: what the motor boards answer to a line (`line`, `code`, `reply`) | no |
 | `watchdog` | `jaguar`: no line for 0.3 s while the motors had a command: the controller set them to 0 (`reason`) | no |
-| `sdk` | `a2`, `as2`, `agibotd1`, `h2`: the answer of the maker's SDK call (code, data) | no |
+| `sdk` | `a2`, `as2`, `agibotd1`, `h2`, `g1edu` (unitree_sdk2): the answer of the maker's SDK call (code, data) | no |
 | `booster` | `boosterk1`: the status of a B1LocoClient call (0, 400, 409, 501, 502) | no |
 | `ws` | `tron1`, `tron1w`: an answer or push of the TRON 1 WebSocket (`title` response_… / notify_…, `data.result`) | no |
 | `door` | `quadruped` in the door lane: `state` = `unlatched`, `opened`, `closed` or `latched` | no |
@@ -639,6 +644,13 @@ it down on the chair again. In the obstacle lanes it starts standing, in state 2
 G1 skin (looks only, the robot behaves the same): `options={"skin": "technopolis"}` (`indexG1.php?skin=technopolis`, or *Skin*
 under Setup) gives it silver shells and the light-blue TECHNOPOLIS T-shirt, `"dinno"` silver shells and a T-shirt in the
 Dinno logo's colours (black to blue) with the Dinno logo and robotics.dinno.be; the default is `unitree` (white shells).
+
+Unitree G1 EDU (`g1edu`, `indexG1.php?model=edu` or `indexG1EDU.php`): the G1 with what the EDU adds, besides the same
+WebRTC: **unitree_sdk2** as `sdk` in the action. The high-level clients go by service and API id, as LocoClient does
+(`{"sdk": {"service": "sport", "api_id": 7101, "parameter": {"data": 4}}}`: lock stand), `motion_switcher` 1001 / 1002 / 1003
+(check, select `{"name": "ai"}`, release); after a release `{"sdk": {"topic": "rt/lowcmd", "msg": {…}}}` moves every joint
+itself (q, dq, kp, kd, tau per motor), while walking `rt/arm_sdk` takes the arms over with `arm_sdk_weight`. Every answer
+is an `sdk` event. The ready-made actions in api.html show each message with its unitree_sdk2 line.
 
 Go2 GPS map (`common/gpsmap.js`): every metre the dog walks, also in rounds on a track, is a metre along a route of
 waypoints on a map. Set the route with `{"gps": {"route": [[lat, lon], …], "start": true}}` (also `stop`, `mode`:
@@ -1086,6 +1098,45 @@ adds to the present pose in the base frame), `robot.relative_dynamics_factor = 0
 
 ```python
 api.step(env_id, {"python": "robot.relative_dynamics_factor = 0.2\nrobot.move(CartesianMotion(Affine([0.4, 0.1, 0.25], [1, 0, 0, 0])))"})
+```
+
+### FANUC LR Mate 200iD
+
+FANUC LR Mate 200iD (`lrmate`, `indexXArm6.php?model=lrmate` or `indexLRMate.php`,
+[documentation](https://robotics.dinno.be/docs-fanuc-lr-mate-200id.html)): the arm page with FANUC's small six-joint arm
+(717 mm reach), a parallel gripper on DO[1] and the wrist D435. `rmi` takes **RMI** packets (Remote Motion Interface,
+option R912: JSON over TCP), one or a list: first `{"Communication": "FRC_Connect"}` and `{"Command": "FRC_Initialize"}`,
+then motion instructions numbered by `SequenceID` (`FRC_LinearMotion`, `FRC_JointMotion`, their `Relative` and `JRep`
+forms, `FRC_WaitTime`, `FRC_WaitDIN`), answered when done, and commands (`FRC_ReadJointAngles`,
+`FRC_ReadCartesianPosition`, `FRC_WriteDOUT`, `FRC_ReadDIN`, `FRC_SetOverRide`, `FRC_Abort`, `FRC_Pause`, `FRC_Continue`,
+`FRC_Reset`, `FRC_GetStatus`, …). Positions in mm and degrees (W, P, R) in the world frame, on the J1 axis at the height
+of J2. `ros` works as FANUC's `fanuc_driver`: `/joint_trajectory_controller` (J1 … J6 in radians; J3 as the URDF counts
+it) and the services of `/fanuc_gpio_controller`.
+
+```python
+api.step(env_id, {"rmi": [{"Communication": "FRC_Connect"}, {"Command": "FRC_Initialize"}]})
+api.step(env_id, {"rmi": {"Instruction": "FRC_LinearMotion", "SequenceID": 1, "Position": {"X": 400, "Y": 0, "Z": 0, "W": 180, "P": 0, "R": 0},
+                          "SpeedType": "mmSec", "Speed": 200, "TermType": "FINE"}}, dt=3)
+api.step(env_id, {"rmi": {"Command": "FRC_WriteDOUT", "PortNumber": 1, "PortValue": "ON"}})     # close the gripper
+```
+
+### AgileX NERO and Enactic OpenArm 2.0
+
+AgileX OPEN NERO (`nero`, `indexNERO.php`, [documentation](https://robotics.dinno.be/docs-agilex-nero.html)) and Enactic
+OpenArm 2.0 (`openarm`, `indexOpenArm.php`, [documentation](https://robotics.dinno.be/docs-enactic-openarm.html)): two
+seven-joint arms at a table with blocks, a camera on each wrist (views `left_wrist` / `right_wrist`, OpenArm
+`left_gripper` / `right_gripper`). The same skills on both: `{"moveTo": {"arm": "left", "x": 300, "y": 150, "z": 150, "yaw": 0}}`
+(mm in the table frame, x forward, y left, z up, the gripper looking down), `{"pick": "left"}`, `{"place": "right"}`,
+`{"handover": true}` (the arm holding a block gives it to the other) and `{"mirror": true}` (the other arm copies the
+selected one, as in teleoperation). `motors` sets the joints directly. `ros` takes the robot's own ROS 2 interface:
+NERO as the AgileX driver (`/left_arm/control/move_j`, `move_p`, `move_l`, `joint_states` with `gripper` in metres;
+feedback on `/left_arm/feedback/…`), OpenArm as `openarm_bringup` starts it (`/left_joint_trajectory_controller/follow_joint_trajectory`,
+`/right_gripper_controller/follow_joint_trajectory`). Where a goal is out of reach, `obs.stuck` says so.
+
+```python
+api.step(env_id, {"pick": "left"}, dt=4)
+api.step(env_id, {"handover": True}, dt=6)
+api.step(env_id, {"ros": {"kind": "topic", "name": "/right_arm/control/joint_states", "msg": {"name": ["gripper"], "position": [0.08]}}})  # NERO
 ```
 
 ### xArm 5 Lite, UFACTORY 850 and SES-PRO
