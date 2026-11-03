@@ -115,7 +115,7 @@ Start the server first (`node server.mjs --key rsk_xxxxxxxx`, your API key from 
 | [`testgo2.py`](python/testgo2.py) | Go2 walks up the stairs in real time | – |
 | [`testAckermann.py`](python/testAckermann.py) | Ackermann car follows the track using its camera (hand-written) | `numpy pillow` |
 | [`botopia.py`](python/botopia.py) | run it for a demo: a random driver and four robots | – |
-| [`camera_view.py`](python/camera_view.py) | live window with the robot's camera; drive with the keys | `numpy opencv-python` |
+| [`camera_view.py`](python/camera_view.py) | live window with the robot's camera; drive with the keys; `--world house --yolo python/models/house_yolo11n.pt` draws a YOLO model's boxes on it | `numpy opencv-python` (`ultralytics` for `--yolo`) |
 | [`corridor_rl.py`](python/corridor_rl.py) | [tutorial 6](https://robotics.dinno.be/tutorial-rl-corridor.html): PPO, the fastest lap through the corridor | `stable-baselines3 gymnasium pillow` |
 | [`track_vision_rl.py`](python/track_vision_rl.py) | [tutorial 7](https://robotics.dinno.be/tutorial-rl-vision.html): PPO with a CNN, drive the ε track from the camera | `stable-baselines3 gymnasium pillow` |
 | [`track_yolo.py`](python/track_yolo.py) | [tutorial 8](https://robotics.dinno.be/tutorial-yolo-track.html): YOLO segmentation finds the path, RL keeps the robot in the middle | `ultralytics stable-baselines3 gymnasium` |

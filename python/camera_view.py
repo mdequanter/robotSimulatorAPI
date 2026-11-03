@@ -3,15 +3,17 @@
     node server.mjs                       (in another terminal; port 8780)
     python python/camera_view.py          (TurtleBot 4 on the start square)
     python python/camera_view.py --robot skid --lane track --auto
+    python python/camera_view.py --robot pirateshooter --world house --yolo python/models/house_yolo11n.pt
 
 The window shows the robot's own camera (left) and the 3D view of the simulator (right). On the
 camera picture the light pixels of the road are tinted green, with a cross at their centre: that is
-what the --auto driver steers by.
+what the --auto driver steers by. With --yolo MODEL the camera picture shows that YOLO model's boxes
+instead (e.g. python/models/house_yolo11n.pt of tutorial 19 in --world house, or yolo11n.pt: COCO).
 
 Keys (click the window first):  W / S forward / back,  A / D turn,  Q / E sideways (robots that can),
 space stop,  F auto-drive on / off (follow the road),  R reset,  P save a picture,  Esc quit.
 
-Needs: numpy, opencv-python (pip install numpy opencv-python).
+Needs: numpy, opencv-python (pip install numpy opencv-python); --yolo also ultralytics.
 """
 import argparse, os, sys, time
 import numpy as np
@@ -52,7 +54,17 @@ def main():
     ap.add_argument("--width", type=int, default=640, help="width of the camera picture in pixels")
     ap.add_argument("--auto", action="store_true", help="start with auto-drive (follow the road) on")
     ap.add_argument("--dt", type=float, default=0.05, help="simulated seconds per step")
+    ap.add_argument("--world", help="another environment: house, park, course, … (see api.html)")
+    ap.add_argument("--yolo", help="a YOLO model (.pt or .onnx): draw its boxes on the camera picture")
+    ap.add_argument("--conf", type=float, default=0.4, help="--yolo: the lowest score shown")
     a = ap.parse_args()
+    model = None
+    if a.yolo:
+        try:
+            from ultralytics import YOLO
+        except ImportError:
+            sys.exit("--yolo needs ultralytics: pip install ultralytics")
+        model = YOLO(a.yolo)
 
     api = BotopiaAPI(a.url)
     try:
@@ -61,7 +73,7 @@ def main():
         sys.exit(f"Could not reach the simulator API at {a.url}: {e}\nStart it with: node server.mjs")
     eid, axes = env["id"], env["info"]["drive"]
     cam = {"view": "robot", "width": a.width, "quality": 0.85}
-    obs, jpg = api.reset(eid, lane=a.lane, image=cam)
+    obs, jpg = api.reset(eid, lane=a.lane, image=cam, world=a.world)
     print(f"{env['info']['name']} ({a.robot}) · drive axes: {', '.join(axes) or 'none'}")
     print(__doc__.split("Keys")[1].split("Needs")[0].strip())
 
@@ -91,13 +103,18 @@ def main():
                     print(f"{ev['t']:7.2f}s  event {ev['type']}: {ev}")
 
             # Picture: camera with the road tinted green, its centre marked; the 3D view beside it.
-            view = img.copy()
-            view[mask > 0] = (0.55 * view[mask > 0] + 0.45 * np.array([60, 220, 60])).astype(np.uint8)
+            # With --yolo: the model's boxes instead of the road.
+            if model is not None:
+                view = model.predict(img, conf=a.conf, verbose=False)[0].plot()
+            else:
+                view = img.copy()
+                view[mask > 0] = (0.55 * view[mask > 0] + 0.45 * np.array([60, 220, 60])).astype(np.uint8)
             h, w = view.shape[:2]
-            if centre is not None:
+            if centre is not None and model is None:
                 cx = int((centre + 1) * w / 2)
                 cv2.drawMarker(view, (cx, int(h * 0.8)), (0, 0, 255), cv2.MARKER_CROSS, 18, 2)
-            cv2.line(view, (w // 2, int(h * 0.58)), (w // 2, h), (255, 255, 255), 1)
+            if model is None:
+                cv2.line(view, (w // 2, int(h * 0.58)), (w // 2, h), (255, 255, 255), 1)
             scene = decode(api.frame(eid, view="scene", quality=0.7))
             scene = cv2.resize(scene, (int(scene.shape[1] * h / scene.shape[0]), h))
             frame = np.hstack([view, scene])
