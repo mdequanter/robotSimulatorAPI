@@ -7,7 +7,7 @@ result = arm.motion_enable(
     servo_id=7
 )
 
-print("Resultaat:", result)
-print("Controllerfout:", arm.get_err_warn_code())
+print("Result:", result)
+print("Controller error:", arm.get_err_warn_code())
 
 arm.disconnect()
