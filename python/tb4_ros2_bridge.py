@@ -19,6 +19,10 @@ Robot k is on ROS_DOMAIN_ID (base + k), as in the lab, each in its own rclpy con
 them all on one domain under /robot0, /robot1, ... instead. Time is the simulation's: /clock, so use
 use_sim_time:=true in your nodes. --rate 1 runs in real time, 0 as fast as the simulator can.
 
+Odometry errors (default none: the simulator's odometry, which only drifts when a wheel slips):
+--odom-scale (distance), --odom-drift (heading per metre), --odom-noise, --gyro-bias. They make the
+simulation's odometry as poor as the real robot's: what an EKF must correct, and what sim-to-real tunes.
+
 Frames: odom → base_link from the wheel odometry (it drifts when a wheel slips, as on the real robot);
 base_link → rplidar_link (4 cm behind the middle, angle 0 straight ahead) and → oakd_rgb_camera_frame /
 oakd_rgb_camera_optical_frame. Note: on the real TurtleBot 4 the URDF turns rplidar_link by 90 degrees, so
@@ -109,6 +113,11 @@ class RobotNode(Node):
         self.create_service(ResetPose, 'reset_pose', self.on_reset_pose, callback_group=self.cb)
         self.cmd = None                   # (Twist dict, wall time) of the last /cmd_vel
         self.static_sent = False
+        # The odometry's errors (--odom-scale, --odom-drift, --odom-noise, --gyro-bias): all 0 passes the
+        # simulator's own odometry through; otherwise the bridge integrates its own from the true motion.
+        self.err = bridge.err
+        self.est = self.prev = None        # the odometry with errors, and the true pose of the step before
+        self.imu_yaw = 0.0
 
     # ---------- in ----------
     def on_cmd_vel(self, msg):
@@ -150,7 +159,33 @@ class RobotNode(Node):
 
     def on_reset_pose(self, req, res):
         self.bridge.request(self.k, {'kind': 'service', 'name': '/reset_pose', 'msg': {}})
+        self.est = None                    # the odometry with errors starts again at 0 too
         return res
+
+    def odom_with_errors(self, pose, sim_odom):
+        """The odometry as wheels with errors would give it, from the true motion of this step."""
+        tx, ty, tyaw = float(pose[0]), -float(pose[1]), float(pose[2])
+        p, o = sim_odom['pose']['pose']['position'], sim_odom['pose']['pose']['orientation']
+        sim = (float(p['x']), float(p['y']), 2 * math.atan2(float(o['z']), float(o['w'])))
+        if self.est is None or self.prev is None or (abs(sim[0]) + abs(sim[1]) < 1e-4 and abs(self.est[0]) + abs(self.est[1]) > 0.01):
+            self.est, self.imu_yaw = list(sim), sim[2]          # a start, a reset or a dock: start again where the simulator is
+        else:
+            px, py, pyaw = self.prev
+            dx, dy = tx - px, ty - py
+            fwd = math.cos(pyaw) * dx + math.sin(pyaw) * dy
+            side = -math.sin(pyaw) * dx + math.cos(pyaw) * dy
+            dyaw = math.atan2(math.sin(tyaw - pyaw), math.cos(tyaw - pyaw))
+            e, rnd = self.err, np.random.normal
+            n = e['noise'] * math.sqrt(abs(fwd) + 1e-9)
+            fwd2 = fwd * (1 + e['scale']) + rnd(0, n)
+            dyaw2 = dyaw + e['drift'] * abs(fwd) + rnd(0, n)
+            c, sn = math.cos(self.est[2]), math.sin(self.est[2])
+            self.est[0] += c * fwd2 - sn * side
+            self.est[1] += sn * fwd2 + c * side
+            self.est[2] = math.atan2(math.sin(self.est[2] + dyaw2), math.cos(self.est[2] + dyaw2))
+            self.imu_yaw += dyaw + e['gyro_bias'] * self.bridge.a.dt
+        self.prev = (tx, ty, tyaw)
+        return self.est
 
     # ---------- out ----------
     def publish_all(self, t, topics, pose, imu, image, model, with_scan=True):
@@ -163,6 +198,9 @@ class RobotNode(Node):
             m = Odometry()
             m.header.stamp, m.header.frame_id, m.child_frame_id = st, 'odom', 'base_link'
             p, o = odom['pose']['pose']['position'], odom['pose']['pose']['orientation']
+            if self.err['on'] and pose is not None:
+                ex, ey, eyaw = self.odom_with_errors(pose, odom)
+                p, o = {'x': ex, 'y': ey}, {'x': 0.0, 'y': 0.0, 'z': math.sin(eyaw / 2), 'w': math.cos(eyaw / 2)}
             m.pose.pose.position.x, m.pose.pose.position.y = float(p['x']), float(p['y'])
             m.pose.pose.orientation.x, m.pose.pose.orientation.y = float(o['x']), float(o['y'])
             m.pose.pose.orientation.z, m.pose.pose.orientation.w = float(o['z']), float(o['w'])
@@ -192,8 +230,10 @@ class RobotNode(Node):
         if imu is not None:
             m = Imu()
             m.header.stamp, m.header.frame_id = st, 'imu_link'
-            m.orientation.z, m.orientation.w = math.sin(yaw_odom / 2), math.cos(yaw_odom / 2)
-            g, a = imu.get('gyro', [0, 0, 0]), imu.get('accel', [0, 0, 9.81])
+            yaw_imu = self.imu_yaw if self.err['on'] else yaw_odom
+            m.orientation.z, m.orientation.w = math.sin(yaw_imu / 2), math.cos(yaw_imu / 2)
+            g, a = list(imu.get('gyro', [0, 0, 0])), imu.get('accel', [0, 0, 9.81])
+            g[2] = float(g[2]) + self.err['gyro_bias']
             m.angular_velocity.x, m.angular_velocity.y, m.angular_velocity.z = (float(v) for v in g)
             m.linear_acceleration.x, m.linear_acceleration.y, m.linear_acceleration.z = (float(v) for v in a)
             m.orientation_covariance[0] = m.orientation_covariance[4] = m.orientation_covariance[8] = 0.01
@@ -272,6 +312,8 @@ class Bridge:
             opts['robots'] = a.robots
         if a.variant != 'standard':
             opts['variant'] = a.variant
+        self.err = {'scale': a.odom_scale, 'drift': a.odom_drift, 'noise': a.odom_noise, 'gyro_bias': a.gyro_bias}
+        self.err['on'] = any(self.err.values())
         env = self.api.create('turtlebot4', options=opts)
         self.id = env['id']
         self.lock = threading.Lock()
@@ -377,6 +419,10 @@ def main():
     ap.add_argument('--variant', default='standard', choices=['standard', 'lite'])
     ap.add_argument('--dt', type=float, default=0.05, help='simulated seconds per step (0.05: 20 Hz)')
     ap.add_argument('--rate', type=float, default=1.0, help='speed against the wall clock (1: real time, 0: as fast as possible)')
+    ap.add_argument('--odom-scale', type=float, default=0.0, help='odometry: distance error, e.g. 0.02 = 2%% too far')
+    ap.add_argument('--odom-drift', type=float, default=0.0, help='odometry: heading error in rad per metre driven, e.g. 0.01')
+    ap.add_argument('--odom-noise', type=float, default=0.0, help='odometry: random error, m and rad per square root of a metre')
+    ap.add_argument('--gyro-bias', type=float, default=0.0, help='IMU: a constant error of the turning speed in rad/s, e.g. 0.002')
     ap.add_argument('--camera-hz', type=float, default=10.0, help='camera pictures per simulated second (0: no camera)')
     a = ap.parse_args()
     b = Bridge(a)

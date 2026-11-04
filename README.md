@@ -764,7 +764,8 @@ oakd_rgb_camera_frame and its optical frame), `/imu`, `/hazard_detection`, `/doc
 `/oakd/rgb/preview/image_raw` (250 × 250 bgr8, `--camera-hz`) with `camera_info`, `/clock` (use `use_sim_time:=true`) and
 `/sim/ground_truth` (nav_msgs/Odometry in the frame `track`: what the robot does not know). In: `/cmd_vel`; actions `/undock`,
 `/dock`, `/drive_distance`, `/rotate_angle`, `/navigate_to_position`; services `/e_stop`, `/reset_pose`. `--rate 1` keeps the
-simulation in real time, `--rate 0` runs it as fast as it goes. Needs `rclpy`, `irobot_create_msgs`, numpy and Pillow.
+simulation in real time, `--rate 0` runs it as fast as it goes. `--odom-scale 0.02 --odom-drift 0.01 --odom-noise 0.005 --gyro-bias 0.002`
+give the odometry and the IMU the errors of a real robot (default: none). Needs `rclpy`, `irobot_create_msgs`, numpy and Pillow.
 
 ### TurtleBot3
 
