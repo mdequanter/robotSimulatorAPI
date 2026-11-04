@@ -747,6 +747,25 @@ Python nodes run in it too (Pyodide, `common/rospython.js`, this simulator's rcl
 `git clone` of ros2/examples, `wget`, `rosdep`, `ros2 doctor` (`common/rosdev.js`). `tutorial-ros2-python.html` follows the
 ROS 2 Humble "Beginner: Client libraries" tutorials in Python on it.
 
+#### The TurtleBot 4 as a real ROS 2 robot: `python/tb4_ros2_bridge.py`
+
+With ROS 2 Humble on the same computer, the bridge makes every simulated TurtleBot 4 a real ROS 2 robot, with the
+topics, actions and services of the real one, so Nav2, slam_toolbox, robot_localization, RViz and your own nodes run
+against the simulator unchanged (the TurtleBot 4 course, master level):
+
+```bash
+node server.mjs --site ../robotSimulator          # or --key rsk_... for https://robotics.dinno.be
+python3 python/tb4_ros2_bridge.py --world botopia --docked          # the race track, the robot on its dock
+python3 python/tb4_ros2_bridge.py --world botopia --robots 2        # two robots: ROS_DOMAIN_ID 0 and 1 (--namespace: /robot0, /robot1)
+```
+
+Out: `/scan` (5 Hz), `/odom` and `/tf` odom → base_link (20 Hz), `/tf_static` (base_footprint, rplidar_link, imu_link,
+oakd_rgb_camera_frame and its optical frame), `/imu`, `/hazard_detection`, `/dock_status`, `/battery_state`,
+`/oakd/rgb/preview/image_raw` (250 × 250 bgr8, `--camera-hz`) with `camera_info`, `/clock` (use `use_sim_time:=true`) and
+`/sim/ground_truth` (nav_msgs/Odometry in the frame `track`: what the robot does not know). In: `/cmd_vel`; actions `/undock`,
+`/dock`, `/drive_distance`, `/rotate_angle`, `/navigate_to_position`; services `/e_stop`, `/reset_pose`. `--rate 1` keeps the
+simulation in real time, `--rate 0` runs it as fast as it goes. Needs `rclpy`, `irobot_create_msgs`, numpy and Pillow.
+
 ### TurtleBot3
 
 ROBOTIS TurtleBot3: `turtlebot3` (Burger), `tb3waffle` (Waffle Pi) and `tb3manipulator` (the Waffle Pi with an
