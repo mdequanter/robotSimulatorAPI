@@ -305,6 +305,7 @@ name.
 | `go2` | fwd, turn, strafe (the app's joystick) | – | 12 joints (`FL_hip`, `FL_thigh`, `FL_calf`, …) | webrtc | sportmodestate {mode, gait_type, body_height, foot_raise_height, velocity, yaw_speed, range_obstacle [front, left, right, back]}, state, motionMode, avoid, webrtc (last responses) |
 | `g1` | fwd, turn, strafe (the app's joystick) | – | 23 joints (`left_hip_pitch` … `right_wrist_roll`, `waist_yaw`) | webrtc, fell | fsm_id, fsm_name, fsm_mode, posture, arm_action, velocity, webrtc (last responses) |
 | `g1edu` | fwd, turn, strafe (the app's joystick) | – | 23 joints | webrtc, sdk, fell | as `g1`, plus model (edu), motion_mode, lowcmd_count, arm_sdk_weight, sdk (last answers) |
+| `g1d` | fwd, turn (the wheeled base, differential drive) | L, R (wheels), `waist_yaw`, `waist_pitch`, `left_shoulder_pitch` … `left_wrist_yaw` (7 per arm), the same `right_…` | – | ros | model (g1d-u6), topics {`/odom`, `/scan`, `/joint_states`}, upper {joints (rad, `lift_joint` m), height_m, grip_mm, holding, busy, message}, blocks, goal |
 | `turtlebot4` | fwd, turn (teleop keys) | L, R | – | ros, bump, cliff | model, topics {`/odom`, `/scan` (360 ranges, null = no echo), `/hazard_detection`, `/ir_intensity`, `/battery_state`, `/dock_status`, `/wheel_vels`}, goal, estop, safety_override, ros (last answers) |
 | `go2w` | fwd, turn (the app's joystick) | – | 4 wheels (`FL_wheel` … `RR_wheel`), 12 joints (`FL_hip`, `FL_thigh`, `FL_calf`, …) | webrtc | sportmodestate {mode, gait_type, body_height, wheel_speed [FL, FR, RL, RR rad/s], velocity, yaw_speed, range_obstacle}, state, motionMode, avoid, lifting [legs lifting their wheel], webrtc |
 | `r1` | fwd, turn, strafe (the app's joystick) | – | 26 joints (`left_hip_pitch` … `right_wrist_roll`, `waist_yaw`, `waist_pitch`, `head_yaw`, `head_pitch`); R1 Air (`?variant=air`): 20 (no waist, head or wrists) | webrtc, fell | model, fsm_id, fsm_name, fsm_reported, reporting, posture, arm_action, velocity, webrtc (last responses) |
@@ -348,6 +349,7 @@ name.
 | `lrmate` | – (it stays on its table) | `joint1`–`joint6`°, `gripper` (opening in mm, 0–85) | – | rmi, ros | as `xarm6`, plus below (the D435's view straight down), rmi {connected, initialized, hold, nextSequenceID, override, utool, last}, jointsController (J3 as the controller counts it) |
 | `nero` | – (two arms on a table) | `left_joint1`–`left_joint7`°, `left_gripper` (mm, 0–100), the same `right_…` | – | – | left / right {joints, gripper, tcp_mm, holding, enabled, estop, busy}, mirror, blocks [{id, color, x, y, z, yawDeg, heldBy}] |
 | `openarm` | – (two arms on a stand) | `left_joint1`–`left_joint7`°, `left_gripper` (mm, 0–88), the same `right_…` | – | – | left / right {joints, gripper, tcp_mm, holding, busy}, mirror, blocks |
+| `omxduo` | – (a torso on a table) | `left_joint1`–`left_joint5`° (J5: the wrist roll), `left_gripper` (mm, 13–65), the same `right_…` | – | – | left / right {joints, gripper, tcp_mm, tilt, roll, holding, busy}, demo {running, text}, spoon_load, mugs [{id, name, x, y, z, contents, stirred, heldBy}], cutlery |
 | `sespro` | – | `joint1`–`joint5`°, `gripper` (mm, 0–85) | – | serial | as `xarm6`, plus lss {limp [servo ids], status [LSS Q code per servo 1–6], led [0–7]}, serial (last answers) |
 | `xarm6` | – (it stays on its table) | `joint1`–`joint6`°, `gripper` (opening in mm, 0–85) | – | – | tcp {x, y, z, yawDeg} (point between the finger pads, base frame), holding, busy, blocks [{id, color, x, y, z, yawDeg, held}] |
 | `xarm7` | – | `joint1`–`joint7`°, `gripper` | – | – | as `xarm6` |
@@ -408,7 +410,7 @@ Each step returns the events that happened during that step:
 | `bump` | `create3`: a bumper zone closes (`zones`: which ones) | no |
 | `cliff` | `create3`: a cliff sensor sees a drop (`sensors`: which ones) | no |
 | `webrtc` | `go2`, `go2w`, `g1`, `g1edu`, `r1`: the answer to a WebRTC message (`topic`, `api_id`, `code`, `data`, `msg`) | no |
-| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`, `nero`, `openarm`, `lrmate`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
+| `ros` | `turtlebot4`, `rosbotxl`, `leorover`, `roboworks`, `mecabot`, `ugvrover`, `panther`, `summitxl`, `jackal`, `husky`, `rangermini`, `scoutmini`, `hunterse`, `bunker`, `limo`, `spot`, `rbkairos`, `rbvogui`, `nero`, `openarm`, `lrmate`, `g1d`: the answer to a ROS 2 message (`kind`, `name`, `code`, `text`; actions also `status` SUCCEEDED / ABORTED and the result in `data` when the goal ends) | no |
 | `serial` | `bittle`: the answer to an OpenCat serial token (`line`, `reply`); `pirateshooter`: what `rccar.ino` prints for a line (`line`, `code`, `reply`); `driftx`: what `xiao_drift.ino` prints (`line`, `code`, `reply`); `ugvrover`: to an ESP32 JSON command; `sespro`: to an LSS command (`line`, `reply`, `note`); `phoenix`: to an SSC-32U line (`line`, `reply`: empty for a move) | no |
 | `rest` | `mir250`: the answer to a REST request (`method`, `path`, `robot` = the robot's address, `code` = HTTP status, `data`); a mission that ends blocked (`method`: EVENT, `robot`, `data` {robot_name, state_text, errors}) | no |
 | `lift` | `mir250`: the lift worked by hand (`robot`, `message`: lifting, lowering, or why not) | no |
@@ -691,6 +693,22 @@ Unitree H2 (`h2`, `indexH2.php`): the high-level API of `unitree_sdk2` (H2 EDU):
 7101, "parameter": {"data": 601}}}` or `{"sdk": {"service": "arm", "api_id": 7106, "parameter": {"action_id": 26}}}`. FSM 0
 zero torque, 1 damp, 2 squat, 3 sit, 4 stand up, 601 start (walks with SetVelocity 7105); SDK error codes 7302, 7303, 7401,
 7402, 7404. It starts seated on a chair.
+
+### Unitree G1-D
+
+Unitree G1-D Ultimate A (`g1d`, `indexG1D.php`, [documentation](https://robotics.dinno.be/docs-unitree-g1d.html)): the G1's
+upper body on a lift column and a wheeled base, at a table with blocks. `drive` {fwd, turn} drives the base (up to 1.5 m/s).
+`{"lift": 0.3}` raises the lift (0 … 0.42 m), `{"upper": {"joints": {"waist_yaw_joint": 0.4}}}` sets joints by their ROS
+names (rad; `lift_joint` in m; the others stay), `{"grip": {"left": 80, "right": 0}}` opens or closes the Dex1-1 grippers
+(mm), `{"skill": "pick", "side": "left"}` grips the nearest block in reach (0.2 … 0.75 m ahead: drive closer first),
+`"place"` puts it down, `"ready"` and `"down"` are arm poses. `ros` takes the ros2_control interface: `/cmd_vel`,
+`/upper_body_controller/follow_joint_trajectory` (17 joints, partial goals) and `/left_gripper_controller/gripper_cmd`.
+
+```python
+api.step(env_id, {"lift": 0.3}, dt=4)
+api.step(env_id, {"ros": {"kind": "action", "name": "/upper_body_controller/follow_joint_trajectory", "msg": {
+    "trajectory": {"joint_names": ["waist_yaw_joint"], "points": [{"positions": [0.3], "time_from_start": {"sec": 2}}]}}}}, dt=3)
+```
 
 ### AgiBot D1
 
@@ -1296,6 +1314,25 @@ by you) sends the joint angles 20×/s, the board moves the arm at most 30°/s an
 The gripper moves only after you have calibrated it in the sketch (`GRIP_RAW_CLOSED`, `GRIP_RAW_OPEN`).
 
 ---
+
+### OMX Duo torso
+
+OMX Duo torso (`omxduo`, `indexOMXDuo.php`, [documentation](https://robotics.dinno.be/docs-omx-duo.html)): a do-it-yourself
+torso with two OpenMANIPULATOR-X arms, each with an extra wrist roll joint (J5), at a table with three mugs, jars of
+coffee, cocoa and sugar and a holder with a spoon, a fork and a knife. `{"demo": {"drink": "cocoa", "sugar": 1, "mug": 2}}`
+makes a drink with both arms (the right one holds the mug, the left one scoops upright, pours by rolling its wrist and
+stirs); `obs.extra.demo.running` turns false when it is done and `mugs[…].contents` says what went in.
+`{"moveTo": {"arm": "left", "x": 250, "y": 150, "z": 150, "tilt": 0, "roll": 45}}` (mm in the table frame from between
+the shoulders, x forward, y left; tilt down and roll in degrees), `{"pick": "right"}`, `{"place": "right"}` and
+`{"reset_table": true}`. `motors` sets the joints directly (degrees, gripper in mm). `ros` takes the ros2_control
+interface of the real robot: `/left_arm_controller/follow_joint_trajectory` (`left_joint1` … `left_joint5`, partial goals)
+and `/left_gripper_controller/gripper_cmd` (position −0.010 closed … 0.019 m open), the same for the right arm.
+
+```python
+api.step(env_id, {"demo": {"drink": "coffee", "sugar": 2, "mug": 1}}, dt=0.1)
+while api.step(env_id, {}, dt=1.0)["obs"]["extra"]["demo"]["running"]:
+    pass
+```
 
 ## Notes
 

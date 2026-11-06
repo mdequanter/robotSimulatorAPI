@@ -76,6 +76,28 @@ EXTRA["lrmate"] = [
     ("ROS 2: joint trajectory (radians)", {"ros": {"kind": "action", "name": "/joint_trajectory_controller/follow_joint_trajectory", "msg": {
         "trajectory": {"joint_names": ["J1", "J2", "J3", "J4", "J5", "J6"],
                        "points": [{"positions": [0.5, 0.3, 0.0, 0.0, -1.2, 0.0], "time_from_start": {"sec": 2}}]}}}})]
+# G1-D: the upper body (rad, lift_joint in m), the lift, the grippers (mm) and its skills; ROS 2 as on the robot.
+EXTRA["g1d"] = [
+    ("Lift up 0.3 m", {"lift": 0.3}), ("Lift down", {"lift": 0.0}),
+    ("Waist turned 0.4 rad, leaning 0.2 rad", {"upper": {"joints": {"waist_yaw_joint": 0.4, "waist_pitch_joint": 0.2}}}),
+    ("Grippers: left open 80 mm, right closed", {"grip": {"left": 80, "right": 0}}),
+    ("Pick the nearest block (left arm)", {"skill": "pick", "side": "left"}), ("Place it", {"skill": "place", "side": "left"}),
+    ("Ready pose", {"skill": "ready"}), ("Arms down", {"skill": "down"}),
+    ("ROS 2: drive forward 0.3 m/s", {"ros": {"kind": "topic", "name": "/cmd_vel", "msg": {"linear": {"x": 0.3}, "angular": {"z": 0.0}}}}),
+    ("ROS 2: upper body trajectory (lift and waist)", {"ros": {"kind": "action", "name": "/upper_body_controller/follow_joint_trajectory", "msg": {
+        "trajectory": {"joint_names": ["lift_joint", "waist_yaw_joint"], "points": [{"positions": [0.2, 0.3], "time_from_start": {"sec": 3}}]}}}})]
+# OMX Duo: two OpenMANIPULATOR-X arms with a wrist roll joint; moveTo in mm in the table frame, tilt and roll in degrees.
+EXTRA["omxduo"] = [
+    ("Make a drink: cocoa, 1 sugar, mug 2", {"demo": {"drink": "cocoa", "sugar": 1, "mug": 2}}),
+    ("Make a drink: coffee, no sugar, mug 1", {"demo": {"drink": "coffee", "sugar": 0, "mug": 1}}),
+    ("New table", {"reset_table": True}),
+    ("Left arm: go to (250, 150, 150) mm, wrist rolled 45°", {"moveTo": {"arm": "left", "x": 250, "y": 150, "z": 150, "roll": 45}}),
+    ("Right arm: go to (250, -150, 120) mm, tilted 30° down", {"moveTo": {"arm": "right", "x": 250, "y": -150, "z": 120, "tilt": 30}}),
+    ("Right arm: pick the nearest mug", {"pick": "right"}), ("Right arm: place it", {"place": "right"}),
+    ("ROS 2: left arm trajectory (J1 and the wrist roll J5)", {"ros": {"kind": "action", "name": "/left_arm_controller/follow_joint_trajectory", "msg": {
+        "trajectory": {"joint_names": ["left_joint1", "left_joint5"], "points": [{"positions": [0.3, 1.0], "time_from_start": {"sec": 2}}]}}}}),
+    ("ROS 2: right gripper open", {"ros": {"kind": "action", "name": "/right_gripper_controller/gripper_cmd", "msg": {
+        "command": {"position": 0.019, "max_effort": 1.0}}}})]
 EXTRA["fr3"] = [("Ready pose", {"python": "robot.move(JointMotion([0, -0.785, 0, -2.356, 0, 1.571, 0.785]))"}),
                 ("Straight line, hand down", {"python": "robot.move(CartesianMotion(Affine([0.4, 0.0, 0.2], [1, 0, 0, 0])))"}),
                 ("10 cm to the left (relative)", {"python": "robot.move(CartesianMotion(Affine([0.0, 0.1, 0.0]), ReferenceType.Relative))"}),

@@ -51,6 +51,7 @@ const ROBOTS = {
   xarm6: 'indexXArm6.php', xarm7: 'indexXArm6.php?model=7', omx: 'indexOpenManipulator.php', driftx: 'indexDriftX.php', pirateshooter: 'indexPirateShooter.php',
   rangermini: 'indexRangerMini.php', limo: 'indexLimo.php', phoenix: 'indexPhoenix.php', spot: 'indexSpot.php', jackal: 'indexJackal.php', husky: 'indexHusky.php', scoutmini: 'indexScoutMini.php', hunterse: 'indexHunterSE.php', bunker: 'indexBunker.php', ur5e: 'indexUR5e.php', fr3: 'indexFR3.php', mir250: 'indexMiR250.php',
   tello: 'indexTello.php', nero: 'indexNERO.php', openarm: 'indexOpenArm.php', lrmate: 'indexLRMate.php', g1edu: 'indexG1EDU.php',
+  g1d: 'indexG1D.php', omxduo: 'indexOMXDuo.php',
 };
 
 // Suggested reward (the client may compute its own from obs + events): progress along the lane,

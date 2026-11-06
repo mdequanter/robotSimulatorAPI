@@ -26155,6 +26155,1279 @@
     "lowcmd_count": 0,
     "arm_sdk_weight": 0
    }
+  },
+  {
+   "robot": "g1d",
+   "page": "indexG1D.php",
+   "name": "Unitree G1-D Simulator",
+   "title": "Unitree G1-D Ultimate A",
+   "text": "The G1's upper body on a lift and a wheeled base: drive to a table, pick and place with two arms",
+   "category": "Humanoids and bipeds",
+   "image": "img/g1d.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [
+    "fwd",
+    "turn"
+   ],
+   "motors": [
+    {
+     "id": "L",
+     "name": "left wheel",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "R",
+     "name": "right wheel",
+     "type": "dc",
+     "overridable": true,
+     "range": [
+      -1,
+      1
+     ]
+    },
+    {
+     "id": "waist_yaw",
+     "name": "waist yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -150,
+      150
+     ]
+    },
+    {
+     "id": "waist_pitch",
+     "name": "waist pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -150,
+      150
+     ]
+    },
+    {
+     "id": "left_shoulder_pitch",
+     "name": "left shoulder pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_shoulder_roll",
+     "name": "left shoulder roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_shoulder_yaw",
+     "name": "left shoulder yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_elbow",
+     "name": "left elbow",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_wrist_roll",
+     "name": "left wrist roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_wrist_pitch",
+     "name": "left wrist pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_wrist_yaw",
+     "name": "left wrist yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_shoulder_pitch",
+     "name": "right shoulder pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_shoulder_roll",
+     "name": "right shoulder roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_shoulder_yaw",
+     "name": "right shoulder yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_elbow",
+     "name": "right elbow",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_wrist_roll",
+     "name": "right wrist roll",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_wrist_pitch",
+     "name": "right wrist pitch",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_wrist_yaw",
+     "name": "right wrist yaw",
+     "type": "servo",
+     "overridable": false,
+     "range": [
+      -180,
+      180
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal",
+    "ros"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": true,
+   "commands": [
+    {
+     "group": "Base · /cmd_vel (stops 0.5 s after the last message)",
+     "label": "Forward 0.3 m/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.3, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0.3,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Base · /cmd_vel (stops 0.5 s after the last message)",
+     "label": "Turn left 0.5 rad/s",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.5}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0.5
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Base · /cmd_vel (stops 0.5 s after the last message)",
+     "label": "Stop",
+     "line": "ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}\"",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "type": "geometry_msgs/msg/Twist",
+       "msg": {
+        "linear": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        },
+        "angular": {
+         "x": 0,
+         "y": 0,
+         "z": 0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Lift and waist · FollowJointTrajectory",
+     "label": "Lift up (5 s)",
+     "line": "ros2 action send_goal /upper_body_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"lift_joint\"], points: [{positions: [0.42], time_from_start: {sec: 5, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/upper_body_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "lift_joint"
+         ],
+         "points": [
+          {
+           "positions": [
+            0.42
+           ],
+           "time_from_start": {
+            "sec": 5,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Lift and waist · FollowJointTrajectory",
+     "label": "Lift down (5 s)",
+     "line": "ros2 action send_goal /upper_body_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"lift_joint\"], points: [{positions: [0], time_from_start: {sec: 5, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/upper_body_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "lift_joint"
+         ],
+         "points": [
+          {
+           "positions": [
+            0
+           ],
+           "time_from_start": {
+            "sec": 5,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Lift and waist · FollowJointTrajectory",
+     "label": "Waist: turn left 30°",
+     "line": "ros2 action send_goal /upper_body_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"waist_yaw_joint\"], points: [{positions: [0.524], time_from_start: {sec: 2, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/upper_body_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "waist_yaw_joint"
+         ],
+         "points": [
+          {
+           "positions": [
+            0.524
+           ],
+           "time_from_start": {
+            "sec": 2,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Lift and waist · FollowJointTrajectory",
+     "label": "Waist: lean 15°",
+     "line": "ros2 action send_goal /upper_body_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"waist_pitch_joint\"], points: [{positions: [0.262], time_from_start: {sec: 2, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/upper_body_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "waist_pitch_joint"
+         ],
+         "points": [
+          {
+           "positions": [
+            0.262
+           ],
+           "time_from_start": {
+            "sec": 2,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Lift and waist · FollowJointTrajectory",
+     "label": "Waist straight",
+     "line": "ros2 action send_goal /upper_body_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"waist_yaw_joint\", \"waist_pitch_joint\"], points: [{positions: [0, 0], time_from_start: {sec: 2, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/upper_body_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "waist_yaw_joint",
+          "waist_pitch_joint"
+         ],
+         "points": [
+          {
+           "positions": [
+            0,
+            0
+           ],
+           "time_from_start": {
+            "sec": 2,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Arms · FollowJointTrajectory",
+     "label": "Both arms ready (3 s)",
+     "line": "ros2 action send_goal /upper_body_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"left_shoulder_pitch_joint\", \"left_shoulder_roll_joint\", \"left_shoulder_yaw_joint\", \"left_elbow_joint\", \"left_wrist_roll_joint\", \"left_wrist_pitch_joint\", \"left_wrist_yaw_joint\", \"right_shoulder_pitch_joint\", \"right_shoulder_roll_joint\", \"right_shoulder_yaw_joint\", \"right_elbow_joint\", \"right_wrist_roll_joint\", \"right_wrist_pitch_joint\", \"right_wrist_yaw_joint\"], points: [{positions: [-0.611, 0.209, 0, 1.396, 0, -0.349, 0, -0.611, -0.209, 0, 1.396, 0, -0.349, 0], time_from_start: {sec: 3, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/upper_body_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "left_shoulder_pitch_joint",
+          "left_shoulder_roll_joint",
+          "left_shoulder_yaw_joint",
+          "left_elbow_joint",
+          "left_wrist_roll_joint",
+          "left_wrist_pitch_joint",
+          "left_wrist_yaw_joint",
+          "right_shoulder_pitch_joint",
+          "right_shoulder_roll_joint",
+          "right_shoulder_yaw_joint",
+          "right_elbow_joint",
+          "right_wrist_roll_joint",
+          "right_wrist_pitch_joint",
+          "right_wrist_yaw_joint"
+         ],
+         "points": [
+          {
+           "positions": [
+            -0.611,
+            0.209,
+            0,
+            1.396,
+            0,
+            -0.349,
+            0,
+            -0.611,
+            -0.209,
+            0,
+            1.396,
+            0,
+            -0.349,
+            0
+           ],
+           "time_from_start": {
+            "sec": 3,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Arms · FollowJointTrajectory",
+     "label": "Both arms down (3 s)",
+     "line": "ros2 action send_goal /upper_body_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"left_shoulder_pitch_joint\", \"left_shoulder_roll_joint\", \"left_shoulder_yaw_joint\", \"left_elbow_joint\", \"left_wrist_roll_joint\", \"left_wrist_pitch_joint\", \"left_wrist_yaw_joint\", \"right_shoulder_pitch_joint\", \"right_shoulder_roll_joint\", \"right_shoulder_yaw_joint\", \"right_elbow_joint\", \"right_wrist_roll_joint\", \"right_wrist_pitch_joint\", \"right_wrist_yaw_joint\"], points: [{positions: [0, 0.14, 0, 0.349, 0, 0, 0, 0, -0.14, 0, 0.349, 0, 0, 0], time_from_start: {sec: 3, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/upper_body_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "left_shoulder_pitch_joint",
+          "left_shoulder_roll_joint",
+          "left_shoulder_yaw_joint",
+          "left_elbow_joint",
+          "left_wrist_roll_joint",
+          "left_wrist_pitch_joint",
+          "left_wrist_yaw_joint",
+          "right_shoulder_pitch_joint",
+          "right_shoulder_roll_joint",
+          "right_shoulder_yaw_joint",
+          "right_elbow_joint",
+          "right_wrist_roll_joint",
+          "right_wrist_pitch_joint",
+          "right_wrist_yaw_joint"
+         ],
+         "points": [
+          {
+           "positions": [
+            0,
+            0.14,
+            0,
+            0.349,
+            0,
+            0,
+            0,
+            0,
+            -0.14,
+            0,
+            0.349,
+            0,
+            0,
+            0
+           ],
+           "time_from_start": {
+            "sec": 3,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Arms · FollowJointTrajectory",
+     "label": "Right arm up (2 s)",
+     "line": "ros2 action send_goal /upper_body_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \"{trajectory: {joint_names: [\"right_shoulder_pitch_joint\", \"right_shoulder_roll_joint\", \"right_shoulder_yaw_joint\", \"right_elbow_joint\", \"right_wrist_roll_joint\", \"right_wrist_pitch_joint\", \"right_wrist_yaw_joint\"], points: [{positions: [-2.618, -0.349, 0, 0.698, 0, 0, 0], time_from_start: {sec: 2, nanosec: 0}}]}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/upper_body_controller/follow_joint_trajectory",
+       "type": "control_msgs/action/FollowJointTrajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "right_shoulder_pitch_joint",
+          "right_shoulder_roll_joint",
+          "right_shoulder_yaw_joint",
+          "right_elbow_joint",
+          "right_wrist_roll_joint",
+          "right_wrist_pitch_joint",
+          "right_wrist_yaw_joint"
+         ],
+         "points": [
+          {
+           "positions": [
+            -2.618,
+            -0.349,
+            0,
+            0.698,
+            0,
+            0,
+            0
+           ],
+           "time_from_start": {
+            "sec": 2,
+            "nanosec": 0
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Dex1-1 grippers · GripperCommand (opening in m)",
+     "label": "Left open",
+     "line": "ros2 action send_goal /left_gripper_controller/gripper_cmd control_msgs/action/GripperCommand \"{command: {position: 0.08, max_effort: 20}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/left_gripper_controller/gripper_cmd",
+       "type": "control_msgs/action/GripperCommand",
+       "msg": {
+        "command": {
+         "position": 0.08,
+         "max_effort": 20
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Dex1-1 grippers · GripperCommand (opening in m)",
+     "label": "Left close",
+     "line": "ros2 action send_goal /left_gripper_controller/gripper_cmd control_msgs/action/GripperCommand \"{command: {position: 0, max_effort: 20}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/left_gripper_controller/gripper_cmd",
+       "type": "control_msgs/action/GripperCommand",
+       "msg": {
+        "command": {
+         "position": 0,
+         "max_effort": 20
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Dex1-1 grippers · GripperCommand (opening in m)",
+     "label": "Right open",
+     "line": "ros2 action send_goal /right_gripper_controller/gripper_cmd control_msgs/action/GripperCommand \"{command: {position: 0.08, max_effort: 20}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/right_gripper_controller/gripper_cmd",
+       "type": "control_msgs/action/GripperCommand",
+       "msg": {
+        "command": {
+         "position": 0.08,
+         "max_effort": 20
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Dex1-1 grippers · GripperCommand (opening in m)",
+     "label": "Right close",
+     "line": "ros2 action send_goal /right_gripper_controller/gripper_cmd control_msgs/action/GripperCommand \"{command: {position: 0, max_effort: 20}}\"",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/right_gripper_controller/gripper_cmd",
+       "type": "control_msgs/action/GripperCommand",
+       "msg": {
+        "command": {
+         "position": 0,
+         "max_effort": 20
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "Services",
+     "label": "List controllers",
+     "line": "ros2 service call /controller_manager/list_controllers controller_manager_msgs/srv/ListControllers \"{}\"",
+     "action": {
+      "ros": {
+       "kind": "service",
+       "name": "/controller_manager/list_controllers",
+       "type": "controller_manager_msgs/srv/ListControllers",
+       "msg": {}
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Lift up 0.3 m",
+     "action": {
+      "lift": 0.3
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Lift down",
+     "action": {
+      "lift": 0.0
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Waist turned 0.4 rad, leaning 0.2 rad",
+     "action": {
+      "upper": {
+       "joints": {
+        "waist_yaw_joint": 0.4,
+        "waist_pitch_joint": 0.2
+       }
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Grippers: left open 80 mm, right closed",
+     "action": {
+      "grip": {
+       "left": 80,
+       "right": 0
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Pick the nearest block (left arm)",
+     "action": {
+      "skill": "pick",
+      "side": "left"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Place it",
+     "action": {
+      "skill": "place",
+      "side": "left"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Ready pose",
+     "action": {
+      "skill": "ready"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Arms down",
+     "action": {
+      "skill": "down"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "ROS 2: drive forward 0.3 m/s",
+     "action": {
+      "ros": {
+       "kind": "topic",
+       "name": "/cmd_vel",
+       "msg": {
+        "linear": {
+         "x": 0.3
+        },
+        "angular": {
+         "z": 0.0
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "ROS 2: upper body trajectory (lift and waist)",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/upper_body_controller/follow_joint_trajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "lift_joint",
+          "waist_yaw_joint"
+         ],
+         "points": [
+          {
+           "positions": [
+            0.2,
+            0.3
+           ],
+           "time_from_start": {
+            "sec": 3
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "model": "g1d-u6",
+    "topics": {
+     "/odom": {
+      "header": "{…}",
+      "child_frame_id": "base_footprint",
+      "pose": "{…}",
+      "twist": "{…}"
+     },
+     "/scan": {
+      "header": "{…}",
+      "angle_min": -3.142,
+      "angle_max": 3.124,
+      "angle_increment": 0.017,
+      "scan_time": 0.1,
+      "range_min": 0.08,
+      "range_max": 30,
+      "ranges": [
+       10.696,
+       10.611,
+       10.619,
+       10.636,
+       "…"
+      ]
+     },
+     "/joint_states": {
+      "header": "{…}",
+      "name": [
+       "waist_yaw_joint",
+       "waist_pitch_joint",
+       "lift_joint",
+       "left_shoulder_pitch_joint",
+       "…"
+      ],
+      "position": [
+       0,
+       0,
+       0.2,
+       0,
+       "…"
+      ],
+      "velocity": [
+       0,
+       0,
+       0,
+       0,
+       "…"
+      ],
+      "effort": []
+     }
+    },
+    "upper": {
+     "joints": {
+      "waist_yaw_joint": 0,
+      "waist_pitch_joint": 0,
+      "lift_joint": 0.2,
+      "left_shoulder_pitch_joint": 0,
+      "left_shoulder_roll_joint": 0.14,
+      "left_shoulder_yaw_joint": 0,
+      "left_elbow_joint": 0.349,
+      "left_wrist_roll_joint": 0,
+      "left_wrist_pitch_joint": 0,
+      "left_wrist_yaw_joint": 0,
+      "right_shoulder_pitch_joint": 0,
+      "right_shoulder_roll_joint": -0.14
+     },
+     "height_m": 1.465,
+     "grip_mm": [
+      80,
+      80
+     ],
+     "holding": [
+      null,
+      null
+     ],
+     "busy": false,
+     "message": ""
+    },
+    "blocks": [
+     {
+      "id": 0,
+      "color": "#e23b3b",
+      "x": 0.77,
+      "y": 0.742,
+      "z": -0.28,
+      "held": false
+     },
+     {
+      "id": 1,
+      "color": "#2f8cff",
+      "x": 0.84,
+      "y": 0.742,
+      "z": -0.28,
+      "held": false
+     },
+     {
+      "id": 2,
+      "color": "#13e084",
+      "x": 0.77,
+      "y": 0.742,
+      "z": 0,
+      "held": false
+     },
+     {
+      "id": 3,
+      "color": "#f2c200",
+      "x": 0.84,
+      "y": 0.742,
+      "z": 0,
+      "held": false
+     },
+     "…"
+    ],
+    "goal": null,
+    "ros": []
+   }
+  },
+  {
+   "robot": "omxduo",
+   "page": "indexOMXDuo.php",
+   "name": "OMX Duo torso (DIY)",
+   "title": "OMX Duo torso (DIY)",
+   "text": "Two OpenMANIPULATOR-X arms with a wrist roll joint on a 3D-printed torso: one holds the mug, the other scoops coffee, cocoa and sugar",
+   "category": "Robot arms",
+   "image": "img/omxduo.jpg",
+   "interfaces": [
+    {
+     "key": "ros",
+     "family": "ROS 2"
+    }
+   ],
+   "drive": [],
+   "motors": [
+    {
+     "id": "left_joint1",
+     "name": "Left arm J1 base",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -162,
+      162
+     ]
+    },
+    {
+     "id": "left_joint2",
+     "name": "Left arm J2 shoulder",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -103,
+      90
+     ]
+    },
+    {
+     "id": "left_joint3",
+     "name": "Left arm J3 elbow",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -54,
+      79
+     ]
+    },
+    {
+     "id": "left_joint4",
+     "name": "Left arm J4 wrist tilt",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -103,
+      117
+     ]
+    },
+    {
+     "id": "left_joint5",
+     "name": "Left arm J5 wrist roll",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "left_gripper",
+     "name": "Left arm gripper (mm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      13,
+      65
+     ]
+    },
+    {
+     "id": "right_joint1",
+     "name": "Right arm J1 base",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -162,
+      162
+     ]
+    },
+    {
+     "id": "right_joint2",
+     "name": "Right arm J2 shoulder",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -103,
+      90
+     ]
+    },
+    {
+     "id": "right_joint3",
+     "name": "Right arm J3 elbow",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -54,
+      79
+     ]
+    },
+    {
+     "id": "right_joint4",
+     "name": "Right arm J4 wrist tilt",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -103,
+      117
+     ]
+    },
+    {
+     "id": "right_joint5",
+     "name": "Right arm J5 wrist roll",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      -180,
+      180
+     ]
+    },
+    {
+     "id": "right_gripper",
+     "name": "Right arm gripper (mm)",
+     "type": "servo",
+     "overridable": true,
+     "range": [
+      13,
+      65
+     ]
+    }
+   ],
+   "events": [
+    "collision",
+    "blocked",
+    "stall",
+    "goal"
+   ],
+   "skills": [],
+   "views": [
+    "scene",
+    "robot",
+    "mask"
+   ],
+   "worlds": false,
+   "commands": [
+    {
+     "group": "More actions",
+     "label": "Make a drink: cocoa, 1 sugar, mug 2",
+     "action": {
+      "demo": {
+       "drink": "cocoa",
+       "sugar": 1,
+       "mug": 2
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Make a drink: coffee, no sugar, mug 1",
+     "action": {
+      "demo": {
+       "drink": "coffee",
+       "sugar": 0,
+       "mug": 1
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "New table",
+     "action": {
+      "reset_table": true
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Left arm: go to (250, 150, 150) mm, wrist rolled 45°",
+     "action": {
+      "moveTo": {
+       "arm": "left",
+       "x": 250,
+       "y": 150,
+       "z": 150,
+       "roll": 45
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Right arm: go to (250, -150, 120) mm, tilted 30° down",
+     "action": {
+      "moveTo": {
+       "arm": "right",
+       "x": 250,
+       "y": -150,
+       "z": 120,
+       "tilt": 30
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Right arm: pick the nearest mug",
+     "action": {
+      "pick": "right"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "Right arm: place it",
+     "action": {
+      "place": "right"
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "ROS 2: left arm trajectory (J1 and the wrist roll J5)",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/left_arm_controller/follow_joint_trajectory",
+       "msg": {
+        "trajectory": {
+         "joint_names": [
+          "left_joint1",
+          "left_joint5"
+         ],
+         "points": [
+          {
+           "positions": [
+            0.3,
+            1.0
+           ],
+           "time_from_start": {
+            "sec": 2
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    {
+     "group": "More actions",
+     "label": "ROS 2: right gripper open",
+     "action": {
+      "ros": {
+       "kind": "action",
+       "name": "/right_gripper_controller/gripper_cmd",
+       "msg": {
+        "command": {
+         "position": 0.019,
+         "max_effort": 1.0
+        }
+       }
+      }
+     }
+    }
+   ],
+   "telemetry": {
+    "left": {
+     "joints": [
+      17.7,
+      -20.9,
+      70.7,
+      -49.7,
+      "…"
+     ],
+     "gripper": 40,
+     "tcp_mm": [
+      220,
+      220,
+      210
+     ],
+     "tilt": 0,
+     "roll": 0,
+     "holding": null,
+     "busy": false
+    },
+    "right": {
+     "joints": [
+      -17.7,
+      -20.9,
+      70.7,
+      -49.7,
+      "…"
+     ],
+     "gripper": 40,
+     "tcp_mm": [
+      220,
+      -220,
+      210
+     ],
+     "tilt": 0,
+     "roll": 0,
+     "holding": null,
+     "busy": false
+    },
+    "demo": {
+     "running": false,
+     "text": "The right arm takes the mug by its handle and holds it in the middle; the left arm takes the spoon, scoops from the jars, pours with its wrist roll joint and stirs."
+    },
+    "spoon_load": null,
+    "mugs": [
+     {
+      "id": "mug1",
+      "name": "blue mug",
+      "x": 0.257,
+      "y": -0.456,
+      "z": 0,
+      "contents": [],
+      "stirred": false,
+      "heldBy": []
+     },
+     {
+      "id": "mug2",
+      "name": "white mug",
+      "x": 0.362,
+      "y": -0.319,
+      "z": 0,
+      "contents": [],
+      "stirred": false,
+      "heldBy": []
+     },
+     {
+      "id": "mug3",
+      "name": "red mug",
+      "x": 0.4,
+      "y": -0.15,
+      "z": 0,
+      "contents": [],
+      "stirred": false,
+      "heldBy": []
+     }
+    ],
+    "cutlery": [
+     {
+      "id": "spoon",
+      "inHolder": true,
+      "lying": false,
+      "heldBy": []
+     },
+     {
+      "id": "fork",
+      "inHolder": true,
+      "lying": false,
+      "heldBy": []
+     },
+     {
+      "id": "knife",
+      "inHolder": true,
+      "lying": false,
+      "heldBy": []
+     }
+    ]
+   }
   }
  ]
 }
